@@ -1,0 +1,45 @@
+/**
+ * Creates a new run for schedule revision p_srv_id.
+ */
+create procedure enk_back_schedule_revision_create_run( in p_srv_id @enk_schedule_revision.srv_id%type@ )
+reads sql data
+-- type: singleton1
+begin
+  declare l_one     bigint;
+  declare l_err_id  @enk_error.err_id%type@;
+  declare l_run_id  @enk_run.run_id%type@;
+
+
+  -- Mark current RUN (if any) as not longer current.
+  update ENK_RUN
+  set    run_current = 0
+  where  srv_id      = p_srv_id
+  and    run_current = 1
+  ;
+
+  -- Create a new RUN.
+  insert into ENK_RUN( srv_id
+  ,                    run_current )
+  values( p_srv_id
+  ,       1 )
+  ;
+
+  set l_run_id = last_insert_id();
+
+  -- Create new run nodes.
+  insert into ENK_RUN_NODE( nod_id
+  ,                         rst_id
+  ,                         run_id
+  ,                         rnd_current )
+  select nod_id
+  ,      @ENK_RST_ID_WAITING@
+  ,      l_run_id
+  ,      1
+  from   ENK_NODE
+  where  srv_id = p_srv_id
+  and    nod_master = 1
+  ;
+
+  select l_run_id run_id
+  ;
+end

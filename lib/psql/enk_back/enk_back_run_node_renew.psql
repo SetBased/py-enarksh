@@ -1,0 +1,43 @@
+/**
+ * xxx
+ */
+create procedure enk_back_run_node_renew( in p_rnd_id @enk_run_node.rnd_id%type@)
+modifies sql data
+-- type: singleton1
+begin
+  declare l_rnd_id  @enk_run_node.rnd_id%type@;
+
+  update ENK_RUN_NODE
+  set    rnd_current = 0
+  where  rnd_id = p_rnd_id
+  ;
+
+  insert into ENK_RUN_NODE( nod_id
+  ,                         rst_id
+  ,                         run_id
+  ,                         rnd_current)
+  select nod_id
+  ,      @ENK_RST_ID_WAITING@
+  ,      run_id
+  ,      1
+  from   ENK_RUN_NODE
+  where  rnd_id = p_rnd_id
+  ;
+
+  set l_rnd_id = last_insert_id();
+
+
+  insert into ENK_RUN_NODE_STATUS_CHANGE( rnd_id
+  ,                                       rnd_id_old
+  ,                                       run_id
+  ,                                       rst_id )
+  select l_rnd_id
+  ,      p_rnd_id
+  ,      run_id
+  ,      rst_id
+  from   ENK_RUN_NODE
+  where  rnd_id = l_rnd_id
+  ;
+
+  select l_rnd_id;
+end

@@ -1,0 +1,30 @@
+/**
+ * Selects all nodes of a a run.
+ *
+ * @param p_run_id The ID of the run.
+ */
+create procedure enk_front_run_get_all_run_nodes( in p_run_id @enk_run.run_id%type@ )
+reads sql data
+-- type: rows
+begin
+  select rnd.rnd_id
+  ,      rnd.rst_id
+
+  ,      par.rnd_id rnd_id_parent
+
+  ,      nod.ntp_id
+  ,      nod.nod_name
+  ,      nod.nod_user_name
+  ,      nod.nod_command
+  ,      nod.nod_recursion_level
+  ,      nod.nod_dependency_level
+  from            ENK_RUN_NODE rnd
+  inner join      ENK_NODE     nod  on  nod.nod_id = rnd.nod_id
+  left outer join ENK_RUN_NODE par  on  par.nod_id      = nod.nod_id_parent and
+                                        par.rnd_current = 1
+  where rnd.run_id      = p_run_id
+  and   rnd.rnd_current = 1
+  order by nod.nod_recursion_level desc
+  ,        nod.nod_name
+  ;
+end

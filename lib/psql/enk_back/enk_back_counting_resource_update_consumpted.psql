@@ -1,0 +1,16 @@
+/**
+ * Updates the amount consumpted of a counting resource.
+ *
+ * @param p_rsc_id                The ID of the counting resource.
+ * @param p_rsc_amount_consumpted The amount consumpted.
+ */
+create procedure enk_back_counting_resource_update_consumpted( in p_rsc_id                @enk_resource.rsc_id%type@,
+                                                               in p_rsc_amount_consumpted @enk_resource.rsc_amount_consumpted%type@ )
+modifies sql data
+-- type: none
+begin
+  update ENK_RESOURCE
+  set    rsc_amount_consumpted = p_rsc_amount_consumpted
+  where  rsc_id = p_rsc_id
+  ;
+end

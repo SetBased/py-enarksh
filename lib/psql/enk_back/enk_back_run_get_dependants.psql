@@ -1,0 +1,17 @@
+/**
+ * Selects all dependants of all ports of all nodes of a schedule revision.
+ *
+ * @param p_srv_id The Id of the schedule revision.
+ */
+create procedure enk_back_run_get_dependants( in p_srv_id @enk_schedule_revision.srv_id%type@ )
+reads sql data
+-- type: rows_with_index prt_id_predecessor
+begin
+  select dep.prt_id_dependant
+  ,      dep.prt_id_predecessor
+  from       ENK_NODE       nod
+  inner join ENK_PORT       prt  on  prt.nod_id = nod.nod_id
+  inner join ENK_DEPENDENCY dep  on  dep.prt_id_dependant = prt.prt_id
+  where  nod.srv_id = p_srv_id
+  ;
+end

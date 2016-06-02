@@ -1,0 +1,18 @@
+/**
+ * Selects the ID of a schedule of node.
+ *
+ * @param p_nod_id The ID of a node.
+ */
+create procedure enk_back_node_get_sch_id_by_nod_id( in p_nod_id @enk_node.nod_id%type@ )
+reads sql data
+-- type: singleton0
+begin
+  select srv.sch_id
+  from       ENK_NODE              nod
+  inner join ENK_RUN               run  on  run.run_id = nod.run_id
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = run.srv_id
+  where nod.nod_id      = p_nod_id
+  and   nod.nod_current = 1
+  and   srv.srv_current = 1
+  ;
+end

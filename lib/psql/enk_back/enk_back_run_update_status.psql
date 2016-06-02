@@ -1,0 +1,19 @@
+/**
+ * Update the status of a run.
+ *
+ * @param p_run_id             The ID of the run.
+ * @param p_run_datetime_start The start datetime of the run.
+ * @param p_run_datetime_stop  The stop datetime of the run.
+ */
+create procedure enk_back_run_update_status( in p_run_id             @enk_run.run_id%type@,
+                                             in p_run_datetime_start @enk_run.run_datetime_start%type@,
+                                             in p_run_datetime_stop  @enk_run.run_datetime_stop%type@ )
+modifies sql data
+-- type: none
+begin
+  update ENK_RUN
+  set    run_datetime_start = p_run_datetime_start
+  ,      run_datetime_stop  = p_run_datetime_stop
+  where  run_id = p_run_id
+  ;
+end

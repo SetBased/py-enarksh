@@ -1,0 +1,25 @@
+/**
+ * Stores additional information of a schedule revision and selects the ID of the new node.
+ *
+ * @param p_srv_id          The ID of the schedule revision.
+ * @param p_nod_id_activate The ID of the activate node of the schedule.
+ * @param p_nod_id_arrest   The ID of the arrest node of the schedule.
+ * @param p_nod_id_schedule The ID of the schedule node it self.
+ */
+create procedure enk_reader_node_store_schedule_addendum( in p_srv_id          @enk_node.srv_id%type@,
+                                                          in p_nod_id_activate @enk_node.nod_id%type@,
+                                                          in p_nod_id_arrest   @enk_node.nod_id%type@ ,
+                                                          in p_nod_id_schedule @enk_node.nod_id%type@ )
+modifies sql data
+-- type: none
+begin
+  insert into ENK_SCHEDULE_REVISION_ADDENDUM( srv_id
+  ,                                           nod_id_activate
+  ,                                           nod_id_arrest
+  ,                                           nod_id_schedule )
+  values( p_srv_id
+  ,       p_nod_id_activate
+  ,       p_nod_id_arrest
+  ,       p_nod_id_schedule )
+  ;
+end

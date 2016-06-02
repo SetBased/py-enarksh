@@ -1,0 +1,29 @@
+/**
+ * Stores a port of type "OutputPort" and selects the ID of the new port.
+ *
+ * @param p_nod_id   The ID of the node of the node of the output port.
+ * @param p_uri_id   The ID of the URI of the output port.
+ * @param p_prt_name The name of the output port.
+ */
+create procedure enk_reader_port_store_output_port( in p_nod_id   @enk_port.nod_id%type@,
+                                                    in p_uri_id   @enk_port.uri_id%type@,
+                                                    in p_prt_name @enk_port.prt_name%type@ )
+modifies sql data
+-- type: singleton1
+begin
+  declare l_prt_id @enk_port.prt_id%type@;
+
+  insert into ENK_PORT( nod_id
+  ,                     ptt_id
+  ,                     uri_id
+  ,                     prt_name )
+  values( p_nod_id
+  ,       @ENK_PTT_ID_OUTPUT@
+  ,       p_uri_id
+  ,       p_prt_name )
+  ;
+
+  set l_prt_id = last_insert_id();
+
+  select l_prt_id;
+end

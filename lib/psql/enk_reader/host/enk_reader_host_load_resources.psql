@@ -1,0 +1,15 @@
+/**
+ * Selects the resources of a host.
+ *
+ * @param p_hst_id The ID of the host.
+ */
+create procedure enk_reader_host_load_resources( in p_hst_id @enk_host.hst_id%type@ )
+modifies sql data
+-- type: rows
+begin
+  select rsc_id
+  ,      rtp_id
+  from   ENK_RESOURCE
+  where  hst_id = p_hst_id
+  ;
+end

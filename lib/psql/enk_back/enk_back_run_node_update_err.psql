@@ -1,0 +1,19 @@
+/**
+ * Updates a node with metadata about the STDERR log.
+ *
+ * @param p_rnd_id       The ID of the run node.
+ * @param p_blb_id       The ID of the BLOB with the log.
+ * @param p_rnd_size_err The total log size.
+ */
+create procedure enk_back_run_node_update_err( in p_rnd_id       @enk_run_node.rnd_id%type@,
+                                               in p_blb_id       @enk_run_node.blb_id_err%type@,
+                                               in p_rnd_size_err @enk_run_node.rnd_size_err%type@ )
+modifies sql data
+-- type: none
+begin
+  update ENK_RUN_NODE
+  set blb_id_err   = p_blb_id
+  ,   rnd_size_err = p_rnd_size_err
+  where rnd_id = p_rnd_id
+  ;
+end

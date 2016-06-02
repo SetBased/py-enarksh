@@ -1,0 +1,17 @@
+/**
+ * Selects the XML definition of the current version of a schedule.
+ *
+ * @param p_sch_id The ID of the schedule.
+ */
+create procedure enk_back_schedule_get_current_xml( in p_sch_id @enk_schedule.sch_id%type@ )
+reads sql data
+-- type: singleton1
+begin
+  select bdt_data
+  from       ENK_SCHEDULE_REVISION srv
+  inner join ENK_BLOB              blb  on  blb.blb_id = srv.blb_id
+  inner join ENK_BLOB_DATA         bdt  on  bdt.bdt_id = srv.bdt_id
+  where srv.sch_id      = p_sch_id
+  and   srv.srv_current = 1
+  ;
+end

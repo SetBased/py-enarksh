@@ -1,0 +1,40 @@
+/**
+ * Selects data of a dynamic node by the node ID of its generator.
+ *
+ * @param p_rnd_id_generator The run node ID of the generator.
+ */
+create procedure enk_back_run_node_get_dynamic_info_by_generator( in p_rnd_id_generator @enk_run_node.rnd_id%type@)
+modifies sql data
+-- type: row1
+begin
+  declare l_nod_id_parent       @enk_node.nod_id%type@;
+  declare l_nod_id_generator    @enk_node.nod_id%type@;
+  declare l_nod_id_outer_worker @enk_node.nod_id%type@;
+
+  select nod.nod_id
+  ,      nod.nod_id_parent
+  into   l_nod_id_generator
+  ,      l_nod_id_parent
+  from       ENK_RUN_NODE rnd
+  inner join ENK_NODE     nod  on  nod.nod_id = rnd.nod_id
+  where  rnd.rnd_id = p_rnd_id_generator
+  ;
+
+  select nod_id
+  into   l_nod_id_outer_worker
+  from   ENK_NODE
+  where  nod_id_parent = l_nod_id_parent
+  and    nod_id       <> l_nod_id_generator
+  ;
+
+  select rnd.rnd_id         as rnd_id_outer_worker
+  ,      nod.nod_id         as nod_id_outer_worker
+  ,      nod.nod_id_parent
+  ,      nod.srv_id
+  ,      nod.nod_recursion_level
+  from       ENK_NODE     nod
+  inner join ENK_RUN_NODE rnd  on  rnd.nod_id      = nod.nod_id and
+                                   rnd.rnd_current = 1
+  where  nod.nod_id = l_nod_id_outer_worker
+  ;
+end

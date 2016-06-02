@@ -1,0 +1,19 @@
+/**
+ * Updates a node with metadata about the STDOUT.
+ *
+ * @param p_rnd_id       The ID of the run node.
+ * @param p_blb_id       The ID of the BLOB with the log.
+ * @param p_rnd_size_log The total log size.
+ */
+create procedure enk_back_run_node_update_log( in p_rnd_id       @enk_run_node.rnd_id%type@,
+                                               in p_blb_id       @enk_run_node.blb_id_log%type@,
+                                               in p_rnd_size_log @enk_run_node.rnd_size_log%type@ )
+modifies sql data
+-- type: none
+begin
+  update ENK_RUN_NODE
+  set blb_id_log   = p_blb_id
+  ,   rnd_size_log = p_rnd_size_log
+  where rnd_id = p_rnd_id
+  ;
+end

@@ -1,0 +1,21 @@
+/**
+ * Selects the data of a BLOB.
+ *
+ * @param p_blb_id The ID of the BLOB.
+ */
+create procedure enk_blob_get_blob( in p_blb_id @enk_blob.blb_id%type@ )
+reads sql data
+-- type: row1
+begin
+
+  select blb.blb_id            blb_id
+  ,      blb_filename          blb_filename
+  ,      bdt_mime_type         blb_mime_type
+  ,      bdt_size              blb_size
+  ,      bdt_inserted          blb_date
+  ,      bdt_data              blb_data
+  from       ENK_BLOB       blb
+  inner join ENK_BLOB_DATA  bdt  on blb.bdt_id = bdt.bdt_id
+  where  blb.blb_id = p_blb_id
+  ;
+end

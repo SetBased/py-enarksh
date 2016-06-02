@@ -1,0 +1,27 @@
+/**
+ * Stores a host and selects the IF of the host.
+ *
+ * @param p_hst_name The hostname.
+ */
+create procedure enk_reader_host_store_host( in p_hst_name @enk_host.hst_name%type@ )
+modifies sql data
+-- type: singleton1
+begin
+  declare l_hst_id @enk_host.hst_id%type@;
+
+  select hst_id
+  into   l_hst_id
+  from   ENK_HOST
+  where  hst_name = p_hst_name
+  ;
+
+  if (l_hst_id is null) then
+    insert into ENK_HOST( hst_name )
+    values( p_hst_name )
+    ;
+
+    set l_hst_id = last_insert_id();
+  end if;
+
+  select l_hst_id;
+end

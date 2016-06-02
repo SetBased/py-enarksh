@@ -1,0 +1,23 @@
+/**
+ * Selects all runs of a schedule.
+ *
+ * @param p_sch_id The ID of the schedule.
+ */
+create procedure enk_front_schedule_get_all_runs( in p_sch_id @enk_schedule.sch_id%type@ )
+reads sql data
+-- type: rows
+begin
+  select srv.srv_id
+  ,      srv.srv_current
+
+  ,      run.run_id
+  ,      run.run_datetime_start
+  ,      run.run_datetime_stop
+  ,      run.run_current
+  from       ENK_SCHEDULE_REVISION srv
+  inner join ENK_RUN               run  on  run.srv_id = srv.srv_id
+  where srv.sch_id = p_sch_id
+  order by srv.srv_id desc
+  ,        ifnull(run.run_datetime_start,'9999-12-31 00:00:00') desc
+  ;
+end

@@ -1,0 +1,85 @@
+/**
+ * Stores a node of type "schedule" and selects the ID of the new schedule revision.
+ * If the schedule revision in ID is already loaded and up-to-date NULL is selected.
+ *
+ * @param p_blb_id     The ID of the blob of the XML definition of the schedule.
+ * @param p_node_name  The name of the schedule.
+ */
+create procedure enk_reader_schedule_create_revision( in p_blb_id    @enk_blob.blb_id%type@,
+                                                      in p_node_name @enk_node.nod_name%type@ )
+modifies sql data
+-- type: singleton1
+begin
+  declare l_bdt_id1    @enk_blob_data.bdt_id%type@;
+  declare l_bdt_id2    @enk_blob_data.bdt_id%type@;
+  declare l_sch_id     @enk_schedule.sch_id%type@;
+  declare l_srv_id     @enk_schedule_revision.srv_id%type@;
+  declare l_srv_number @enk_schedule_revision.srv_number%type@;
+
+
+  -- Insert or reuse existing schedule.
+  select sch_id
+  into   l_sch_id
+  from   ENK_SCHEDULE
+  where  sch_name = p_node_name
+  ;
+
+  if (l_sch_id is null) then
+    insert into ENK_SCHEDULE( sch_name )
+    values( p_node_name )
+    ;
+
+    set l_sch_id = last_insert_id();
+  end if;
+
+
+  -- Test schedule definition is indeed a new schedule revision.
+  select blb.bdt_id
+  into   l_bdt_id1
+  from       ENK_SCHEDULE_REVISION srv
+  inner join ENK_BLOB              blb  on  blb.blb_id = srv.blb_id
+  where  srv.sch_id      = l_sch_id
+  and    srv.srv_current = 1
+  ;
+
+  select bdt_id
+  into   l_bdt_id2
+  from   ENK_BLOB
+  where  blb_id  = p_blb_id
+  ;
+
+  if (ifnull(l_bdt_id1,0)<>l_bdt_id2) then
+    -- Schedule is a new schedule definition.
+
+    -- Create a new schedule revision and if necessary mark the old revision not as current anymore.
+    select max(srv_number)
+    into   l_srv_number
+    from   ENK_SCHEDULE_REVISION
+    where  sch_id = l_sch_id
+    ;
+
+    if (l_srv_number is not null) then
+      update ENK_SCHEDULE_REVISION
+      set    srv_current = 0
+      where  sch_id     = l_sch_id
+      and    srv_number = l_srv_number
+      ;
+    end if;
+
+    set l_srv_number = ifnull(l_srv_number,0) + 1;
+
+    insert into ENK_SCHEDULE_REVISION( blb_id
+    ,                                  sch_id
+    ,                                  srv_number
+    ,                                  srv_current )
+    values( p_blb_id
+    ,       l_sch_id
+    ,       l_srv_number
+    ,       1 )
+    ;
+
+    set l_srv_id = last_insert_id();
+  end if;
+
+  select l_srv_id;
+end

@@ -1,0 +1,33 @@
+/**
+  * Stores a consumption of type "ReadWriteLockConsumption" and selects the @c cns_id of the new consumption.
+  *
+  * @param p_nod_id     The ID of the node of that will make consumption.
+  * @param p_rsc_id     The ID of the resource that will be consumpted.
+  * @param p_uri_id     The ID of the URI of the consumption.
+  * @param p_cns_amount The amount that will be consumpted.
+ */
+create procedure enk_reader_consumption_store_counting_consumption( in p_nod_id     @enk_consumption.nod_id%type@,
+                                                                    in p_rsc_id     @enk_consumption.rsc_id%type@,
+                                                                    in p_uri_id     @enk_consumption.uri_id%type@,
+                                                                    in p_cns_amount @enk_consumption.cns_amount%type@ )
+modifies sql data
+-- type: singleton1
+begin
+  declare l_cns_id @enk_consumption.cns_id%type@;
+
+  insert into ENK_CONSUMPTION( ctp_id
+  ,                            nod_id
+  ,                            rsc_id
+  ,                            uri_id
+  ,                            cns_amount )
+  values( @ENK_CTP_ID_COUNTING@
+  ,       p_nod_id
+  ,       p_rsc_id
+  ,       p_uri_id
+  ,       p_cns_amount )
+  ;
+
+  set l_cns_id = last_insert_id();
+
+  select l_cns_id;
+end

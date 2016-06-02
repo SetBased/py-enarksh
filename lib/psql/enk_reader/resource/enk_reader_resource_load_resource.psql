@@ -1,0 +1,15 @@
+/**
+ * Selects the details of a resource.
+ *
+ * @param p_rsc_id The ID of the resource.
+ */
+create procedure enk_reader_resource_load_resource( in p_rsc_id @enk_resource.rsc_id%type@ )
+modifies sql data
+-- type: row1
+begin
+    select rsc_name
+    ,      rsc_amount
+    from   ENK_RESOURCE
+    where  rsc_id = p_rsc_id
+    ;
+end

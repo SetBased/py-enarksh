@@ -1,0 +1,8 @@
+*~
+.idea/
+__pycache__
+composer.lock
+etc/config.txt
+etc/routines.json
+var/
+vendor/

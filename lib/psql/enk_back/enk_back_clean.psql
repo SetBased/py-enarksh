@@ -1,0 +1,194 @@
+/**
+ * Cleans obsolete data from the database.
+ */
+create procedure enk_back_clean( in p_sch_id @enk_schedule.sch_id%type@,
+                                 in p_srv_id @enk_schedule_revision.sch_id%type@,
+                                 in p_run_id @enk_run.run_id%type@ )
+reads sql data
+-- type: log
+begin
+  -- Create temporary table for schedules to be deleted.
+  drop temporary table if exists TMP_SCHEDULE;
+
+  create temporary table TMP_SCHEDULE
+  (
+    sch_id @enk_schedule.sch_id%type@ not null,
+    primary key(sch_id)
+  ) engine=myisam
+  ;
+
+  -- Create temporary table for schedule revisions to be deleted.
+  drop temporary table if exists TMP_SCHEDULE_REVISION;
+
+  create temporary table TMP_SCHEDULE_REVISION
+  (
+    srv_id @enk_schedule_revision.srv_id%type@ not null,
+    primary key(srv_id)
+  ) engine=myisam
+  ;
+
+  -- Create temporary table for runs to be deleted.
+  drop temporary table if exists TMP_RUN;
+
+  create temporary table TMP_RUN
+  (
+    run_id @enk_run.run_id%type@ not null,
+    primary key(run_id)
+  ) engine=myisam
+  ;
+
+  -- Create temporary table for nodes to be deleted.
+  drop temporary table if exists TMP_NODE;
+
+  create temporary table TMP_NODE
+  (
+    nod_id @enk_node.nod_id%type@ not null,
+    primary key(nod_id)
+  ) engine=myisam
+  ;
+
+  -- Create temporary table for ports to be deleted.
+  drop temporary table if exists TMP_PORT;
+
+  create temporary table TMP_PORT
+  (
+    prt_id @enk_port.prt_id%type@ not null,
+    primary key(prt_id)
+  ) engine=myisam
+  ;
+
+
+  if (p_sch_id is not null) then
+    insert into TMP_SCHEDULE( sch_id )
+    values( p_sch_id )
+    ;
+  end if;
+
+  if (p_srv_id is not null) then
+    insert into TMP_SCHEDULE_REVISION( srv_id )
+    values( p_srv_id )
+    ;
+  end if;
+
+  if (p_run_id is not null) then
+    insert into TMP_RUN( run_id )
+    values( p_run_id )
+    ;
+  end if;
+
+
+  -- Remove schedule revisions of schedules to be deleted.
+  insert ignore TMP_SCHEDULE_REVISION( srv_id )
+  select srv.srv_id
+  from            ENK_SCHEDULE_REVISION srv
+  inner join      TMP_SCHEDULE          t01  on  t01.sch_id = srv.sch_id
+  ;
+
+  -- Remove schedule revisions without runs (expect the current schedule revision).
+  insert ignore TMP_SCHEDULE_REVISION( srv_id )
+  select srv.srv_id
+  from            ENK_SCHEDULE_REVISION srv
+  left outer join ENK_RUN               run  on  run.srv_id = srv.srv_id
+  where run.srv_id is null
+  and   srv.srv_current = 0
+  ;
+
+  -- Remove runs of schedule revisions to be deleted.
+  insert ignore TMP_RUN( run_id )
+  select run_id
+  from       ENK_RUN               run
+  inner join TMP_SCHEDULE_REVISION t01  on  t01.srv_id = run.srv_id
+  ;
+
+  -- Remove nodes of schedule revisions to be deleted.
+  insert into TMP_NODE( nod_id )
+  select nod.nod_id
+  from       ENK_NODE              nod
+  inner join TMP_SCHEDULE_REVISION tmp  on  tmp.srv_id = nod.srv_id
+  ;
+
+  -- Remove ports of nodes to be deleted.
+  insert into TMP_PORT( prt_id )
+  select prt.prt_id
+  from       ENK_PORT prt
+  inner join TMP_NODE tmp  on  tmp.nod_id = prt.nod_id
+  ;
+
+
+  -- Actually remove data.
+
+  delete from nod
+  using      ENK_NODE nod
+  inner join TMP_NODE tmp  on  tmp.nod_id = nod.nod_id
+  ;
+
+  delete from nod
+  using      ENK_NODE nod
+  inner join TMP_RUN  tmp  on  tmp.run_id = nod.run_id
+  ;
+
+  delete from rst
+  using      ENK_NODE_STATUS_CHANGE rst
+  inner join TMP_NODE               tmp  on  tmp.nod_id = rst.nod_id
+  ;
+
+  delete from rst
+  using      ENK_NODE_STATUS_CHANGE rst
+  inner join TMP_RUN                tmp  on  tmp.run_id = rst.run_id
+  ;
+
+  delete from run
+  using      ENK_RUN run
+  inner join TMP_RUN tmp  on  tmp.run_id = run.run_id
+  ;
+
+  delete from cns
+  using      ENK_CONSUMPTION cns
+  inner join TMP_NODE        tmp  on  tmp.nod_id = cns.nod_id
+  ;
+
+  delete from rsc
+  using      ENK_RESOURCE rsc
+  inner join TMP_NODE     tmp  on  tmp.nod_id = rsc.nod_id
+  ;
+
+  delete from dep
+  using      ENK_DEPENDENCY dep
+  inner join TMP_PORT       tmp  on  tmp.prt_id = dep.prt_id_predecessor
+  ;
+
+  delete from dep
+  using      ENK_DEPENDENCY dep
+  inner join TMP_PORT       tmp  on  tmp.prt_id = dep.prt_id_dependant
+  ;
+
+  delete from sra
+  using      ENK_SCHEDULE_REVISION_ADDENDUM sra
+  inner join TMP_SCHEDULE_REVISION          tmp  on  tmp.srv_id = sra.srv_id
+  ;
+
+  delete from prt
+  using      ENK_PORT prt
+  inner join TMP_PORT tmp  on  tmp.prt_id = prt.prt_id
+  ;
+
+  update     ENK_NODE nod
+  inner join TMP_NODE tmp  on  tmp.nod_id = nod.nod_id
+  set nod.nod_id_parent = null
+  ;
+
+  delete from nod
+  using      ENK_NODE nod
+  inner join TMP_NODE tmp  on  tmp.nod_id = nod.nod_id
+  ;
+
+  delete from srv
+  using      ENK_SCHEDULE_REVISION srv
+  inner join TMP_SCHEDULE_REVISION tmp  on  tmp.srv_id = srv.srv_id
+  ;
+
+  delete from sch
+  using      ENK_SCHEDULE sch
+  inner join TMP_SCHEDULE tmp  on  tmp.sch_id = sch.sch_id
+  ;
+end

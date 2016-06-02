@@ -1,0 +1,21 @@
+/**
+ * Selects all ports of all nodes in a schedule revision.
+ *
+ * @param p_run_id The ID of the run.
+ */
+create procedure enk_back_run_get_ports1( in p_run_id @enk_run.run_id%type@ )
+reads sql data
+-- type: rows_with_key prt_id
+begin
+  select rnd.rnd_id
+
+  ,      prt.prt_id
+  ,      prt.ptt_id
+  ,      prt.prt_name
+  from       ENK_RUN_NODE rnd
+  inner join ENK_NODE     nod  on  nod.nod_id = rnd.nod_id
+  inner join ENK_PORT     prt  on  prt.nod_id = nod.nod_id
+  where  rnd.run_id      = p_run_id
+  and    rnd.rnd_current = 1
+  ;
+end

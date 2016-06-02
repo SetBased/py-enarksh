@@ -1,0 +1,31 @@
+/**
+ * Marks node @a p_rnd_id as stopped with status @a p_rst_id.
+ */
+create procedure enk_back_run_node_update_status( in p_rnd_id             @enk_run_node.rnd_id%type@,
+                                                  in p_rst_id             @enk_run_node.rst_id%type@,
+                                                  in p_rnd_datetime_start @enk_run_node.rnd_datetime_start%type@,
+                                                  in p_rnd_datetime_stop  @enk_run_node.rnd_datetime_stop%type@,
+                                                  in p_rnd_exit_status    @enk_run_node.rnd_exit_status%type@ )
+modifies sql data
+-- type: none
+begin
+  update ENK_RUN_NODE
+  set    rst_id             = p_rst_id
+  ,      rnd_datetime_start = p_rnd_datetime_start
+  ,      rnd_datetime_stop  = p_rnd_datetime_stop
+  ,      rnd_duration       = unix_timestamp( rnd_datetime_stop ) - unix_timestamp( rnd_datetime_start )
+  ,      rnd_exit_status    = p_rnd_exit_status
+  where  rnd_id = p_rnd_id
+  ;
+
+  -- Mark the run status of the node has changed.
+  insert into ENK_RUN_NODE_STATUS_CHANGE( rnd_id
+  ,                                       run_id
+  ,                                       rst_id )
+  select rnd_id
+  ,      run_id
+  ,      p_rst_id
+  from   ENK_RUN_NODE
+  where  rnd_id = p_rnd_id
+  ;
+end

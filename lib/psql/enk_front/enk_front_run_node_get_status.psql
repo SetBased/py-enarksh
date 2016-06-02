@@ -1,0 +1,23 @@
+/**
+ * Selects current status of a run node.
+ *
+ * @param p_rnd_id The ID of the run node.
+ */
+create procedure enk_front_run_node_get_status( in p_rnd_id @enk_run_node.rnd_id%type@ )
+reads sql data
+-- type: row1
+begin
+  select nod.nod_name
+  ,      nod.nod_user_name
+  ,      nod.nod_command
+  ,      ntp.ntp_name
+  ,      uri.uri_uri
+  ,      rst.rst_name
+  from            ENK_RUN_NODE   rnd
+  inner join      ENK_NODE       nod  on  nod.nod_id = rnd.nod_id
+  inner join      ENK_NODE_TYPE  ntp  on  ntp.ntp_id = nod.ntp_id
+  inner join      ENK_URI        uri  on  uri.uri_id = nod.uri_id
+  inner join      ENK_RUN_STATUS rst  on  rst.rst_id = rnd.rst_id
+  where rnd.rnd_id = p_rnd_id
+  ;
+end

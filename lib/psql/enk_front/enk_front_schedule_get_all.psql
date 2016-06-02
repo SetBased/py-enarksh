@@ -1,0 +1,13 @@
+/**
+ * Selects all schedules.
+ */
+create procedure enk_front_schedule_get_all( )
+reads sql data
+-- type: rows
+begin
+  select sch_id
+  ,      sch_name
+  from   ENK_SCHEDULE
+  order by sch_name
+  ;
+end

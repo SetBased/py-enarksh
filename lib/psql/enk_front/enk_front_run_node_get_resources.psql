@@ -1,0 +1,23 @@
+/**
+ * Selects all resources of a node.
+ *
+ * @param p_rnd_id The ID of the node.
+ */
+create procedure enk_front_run_node_get_resources( in p_rnd_id @enk_run_node.rnd_id%type@ )
+reads sql data
+-- type: rows
+begin
+  select rsc.rsc_name
+  ,      rsc.rsc_amount
+  ,      rtp.rtp_id
+  ,      rtp.rtp_name
+  ,      rsc.rsc_amount_consumpted
+  ,      rws.rws_id
+  ,      rws.rws_name
+  from            ENK_RUN_NODE      rnd
+  inner join      ENK_RESOURCE      rsc  on  rsc.nod_id = rnd.nod_id
+  inner join      ENK_RESOURCE_TYPE rtp  on  rtp.rtp_id = rsc.rtp_id
+  left outer join ENK_RW_STATUS     rws  on  rws.rws_id = rsc.rws_id_consumpted
+  where rnd.rnd_id = p_rnd_id
+  ;
+end

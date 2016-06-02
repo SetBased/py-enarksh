@@ -1,0 +1,22 @@
+/**
+ * Selects all consumptions of all nodes of schedule revision.
+ *
+ * @param The ID of the schedule revision.
+ */
+create procedure enk_back_run_get_consumptions( in p_run_id @enk_run.run_id%type@ )
+reads sql data
+-- type: rows_with_index rnd_id
+begin
+  select rnd.rnd_id
+  ,      cns.cns_id
+  ,      cns.rws_id
+  ,      cns.ctp_id
+  ,      cns.rsc_id
+  ,      cns.cns_amount
+  from       ENK_RUN_NODE    rnd
+  inner join ENK_NODE        nod  on  nod.nod_id = rnd.nod_id
+  inner join ENK_CONSUMPTION cns  on  cns.nod_id = nod.nod_id
+  where  rnd.run_id      = p_run_id
+  and    rnd.rnd_current = 1
+  ;
+end

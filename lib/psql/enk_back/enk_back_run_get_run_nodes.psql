@@ -1,0 +1,28 @@
+/**
+ * Selects all current nodes in a schedule revision.
+ *
+ * @param p_run_id The ID of the run.
+ */
+create procedure enk_back_run_get_run_nodes( in p_run_id @enk_run.run_id%type@ )
+reads sql data
+-- type: rows_with_key rnd_id
+begin
+  select nod.ntp_id
+  ,      nod.nod_name
+  ,      nod.nod_user_name
+  ,      nod.nod_command
+
+  ,      rn1.rnd_id
+  ,      rn2.rnd_id   rnd_id_parent
+  ,      rn1.rst_id
+  ,      rn1.rnd_datetime_start
+  ,      rn1.rnd_datetime_stop
+  from            ENK_RUN_NODE rn1
+  inner join      ENK_NODE     nod  on  nod.nod_id      = rn1.nod_id and
+                                        rn1.rnd_current = 1
+  left outer join ENK_RUN_NODE rn2  on  rn2.nod_id      = nod.nod_id_parent and
+                                        rn2.rnd_current = 1 and
+                                        rn2.run_id      = p_run_id
+  where rn1.run_id = p_run_id
+  ;
+end

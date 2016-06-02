@@ -1,0 +1,44 @@
+/**
+ * Stores a node of type "terminator" and selects the ID of the new node.
+ *
+ * @param p_srv_id               The ID of the schedule revision.
+ * @param p_uri_id               The ID of the URI of the node.
+ * @param p_nod_id_parent        The ID of parent node of the node.
+ * @param p_nod_name             The name of the node.
+ * @param p_nod_recursion_level  The recursion level (i.e. the number of parents).
+ * @param p_nod_dependency_level The dependency level (i.e. the number of dependencies from the parent input ports).
+ */
+create procedure enk_reader_node_store_terminator( in p_srv_id               @enk_node.srv_id%type@,
+                                                   in p_uri_id               @enk_node.uri_id%type@,
+                                                   in p_nod_id_parent        @enk_node.nod_id_parent%type@,
+                                                   in p_nod_name             @enk_node.nod_name%type@,
+                                                   in p_nod_recursion_level  @enk_node.nod_recursion_level%type@,
+                                                   in p_nod_dependency_level @enk_node.nod_dependency_level%type@,
+                                                   in p_nod_master           @enk_node.nod_master%type@ )
+modifies sql data
+-- type: singleton1
+begin
+  declare l_nod_id @enk_node.nod_id%type@;
+
+  insert into ENK_NODE( nod_id_parent
+  ,                     ntp_id
+  ,                     srv_id
+  ,                     uri_id
+  ,                     nod_name
+  ,                     nod_master
+  ,                     nod_recursion_level
+  ,                     nod_dependency_level )
+  values( p_nod_id_parent
+  ,       @ENK_NTP_TERMINATOR@
+  ,       p_srv_id
+  ,       p_uri_id
+  ,       p_nod_name
+  ,       p_nod_master
+  ,       p_nod_recursion_level
+  ,       p_nod_dependency_level )
+  ;
+
+  set l_nod_id = last_insert_id();
+
+  select l_nod_id;
+end

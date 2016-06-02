@@ -1,0 +1,21 @@
+/**
+ * Selects all node status changes of a run after a run node status change.
+ *
+ * @param p_run_id The ID of the run.
+ * @param p_nsc_id The ID of the node status change.
+ */
+create procedure enk_front_run_node_get_status_change( in p_run_id @enk_run_node_status_change.run_id%type@,
+                                                       in p_nsc_id @enk_run_node_status_change.nsc_id%type@ )
+reads sql data
+-- type: rows
+begin
+  select nsc_id
+  ,      rnd_id
+  ,      rnd_id_old
+  ,      rst_id
+  from   ENK_RUN_NODE_STATUS_CHANGE
+  where  run_id = p_run_id
+  and    nsc_id > ifnull(p_nsc_id,0)
+  order by nsc_id
+  ;
+end

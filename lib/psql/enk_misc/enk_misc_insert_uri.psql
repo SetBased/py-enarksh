@@ -1,0 +1,67 @@
+/**
+ * Selects the ID of an URI. If the URI doesn't exists it will be inserted.
+ *
+ * @param p_uri_uri The URI.
+ */
+create procedure enk_misc_insert_uri( p_uri_uri @enk_uri.uri_uri%type@ )
+modifies sql data
+-- type: singleton1
+begin
+  -- $Revision: $
+  declare l_done          boolean default false;
+  declare l_uri_id        @enk_uri.uri_id%type@;
+  declare l_uri_crc32     @enk_uri.uri_crc32%type@;
+  declare l_uri_uri       @enk_uri.uri_uri%type@;
+
+  declare c_uri cursor
+  for
+  select uri_id
+  ,      uri_uri
+  from   ENK_URI
+  where  uri_crc32 = l_uri_crc32
+  ;
+
+  declare continue handler for sqlstate '02000' set l_done = true;
+
+  -- Compute the hash op p_uri_uri.
+  set l_uri_crc32 = crc32(p_uri_uri);
+
+  -- Try to find p_uri_uri in all URIs with the same hash.
+  open c_uri;
+  loop1: loop
+    fetch c_uri
+    into  l_uri_id
+    ,     l_uri_uri
+    ;
+    if (l_done) then
+      close c_uri;
+      leave loop1;
+    end if;
+
+    if (p_uri_uri=l_uri_uri) then
+      close c_uri;
+      leave loop1;
+    end if;
+  end loop;
+
+  if (l_done=true) then
+    -- URI p_uri_uri has not been found.
+    set l_uri_id = null;
+  end if;
+
+
+  if (l_uri_id is null) then
+    -- URI p_uri_uri does not exists in ENK_URI. Insert a new row in ENK_URI.
+    insert into ENK_URI( uri_crc32
+    ,                    uri_uri )
+    values( l_uri_crc32
+    ,       p_uri_uri )
+    ;
+
+    set l_uri_id = last_insert_id();
+  end if;
+
+  -- Return the ID via een select.
+  select l_uri_id
+  ;
+end

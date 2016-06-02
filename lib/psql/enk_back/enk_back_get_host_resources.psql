@@ -1,0 +1,15 @@
+/**
+ * Selects all host resources.
+ */
+create procedure enk_back_get_host_resources()
+reads sql data
+-- type: rows
+begin
+  select rsc_id
+  ,      rtp_id
+  ,      rsc_amount
+  ,      rsc_name
+  from   ENK_RESOURCE
+  where  hst_id is not null
+  ;
+end

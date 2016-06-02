@@ -1,0 +1,37 @@
+/**
+ * Selects all logs of a run node.
+ *
+ * @param p_nod_id The ID of the node.
+ */
+create procedure enk_front_run_node_get_logs( in p_rnd_id @enk_run_node.rnd_id%type@ )
+reads sql data
+-- type: rows
+begin
+  declare l_uri_id @enk_uri.uri_id%type@;
+
+  select nod.uri_id
+  into   l_uri_id
+  from       ENK_RUN_NODE rnd
+  inner join ENK_NODE     nod  on  nod.nod_id = rnd.nod_id
+  where  rnd.rnd_id  = p_rnd_id
+  ;
+
+  select rnd.rnd_id
+  ,      rnd.run_id
+  ,      rnd.rnd_current
+  ,      rnd.rnd_datetime_start
+  ,      rnd.rnd_datetime_stop
+  ,      rnd.rnd_duration
+  ,      rnd.rnd_exit_status
+  ,      rnd.rnd_size_log
+  ,      rnd.rnd_size_err
+  ,      rnd.blb_id_log
+  ,      rnd.blb_id_err
+  ,      rst.rst_label
+  from       ENK_NODE       nod
+  inner join ENK_RUN_NODE   rnd  on  rnd.nod_id = nod.nod_id
+  inner join ENK_RUN_STATUS rst  on  rst.rst_id = rnd.rst_id
+  where  nod.uri_id = l_uri_id
+  order by rnd.rnd_id desc
+  ;
+end

@@ -1,0 +1,33 @@
+/**
+ * Selects the addendum of a schedule revision of a run.
+ *
+ * @param p_run_id The ID of the run.
+ */
+create procedure enk_front_run_get_addendum( in p_run_id @enk_run.run_id%type@ )
+reads sql data
+-- type: row1
+begin
+  select srv.srv_id
+  ,      srv.srv_number
+
+  ,      run.run_id
+
+  ,      rn1.rnd_id             rnd_id_activate
+  ,      rn2.rnd_id             rnd_id_arrest
+  ,      rn3.rnd_id             rnd_id_schedule
+  from       ENK_SCHEDULE_REVISION          srv
+  inner join ENK_SCHEDULE_REVISION_ADDENDUM sra  on  sra.srv_id = srv.srv_id
+  inner join ENK_RUN                        run  on  run.srv_id = srv.srv_id and
+                                                     run.run_current = 1
+  inner join ENK_RUN_NODE                   rn1  on  rn1.nod_id = sra.nod_id_activate and
+                                                     rn1.run_id = run.run_id and
+                                                     rn1.rnd_current = 1
+  inner join ENK_RUN_NODE                   rn2  on  rn2.nod_id = sra.nod_id_arrest and
+                                                     rn2.run_id = run.run_id and
+                                                     rn2.rnd_current = 1
+  inner join ENK_RUN_NODE                   rn3  on  rn3.nod_id = sra.nod_id_schedule and
+                                                     rn3.run_id = run.run_id and
+                                                     rn3.rnd_current = 1
+  where run.run_id = p_run_id
+  ;
+end

@@ -1,0 +1,34 @@
+/**
+ * Sets the database in a predictable state. Must be called by the controller when the controller starts.
+ */
+create procedure enk_back_controller_init()
+reads sql data
+-- type: none
+begin
+  -- Reset the consumption of all host resources.
+  update ENK_RESOURCE
+  set    rws_id_consumpted     = @ENK_RWS_ID_NONE@
+  ,      rsc_amount_consumpted = NULL
+  where  hst_id is not null
+  ;
+
+  -- Reset the consumption of current schedules.
+  update     ENK_RESOURCE          rsc
+  inner join ENK_NODE              nod  on  nod.nod_id = rsc.nod_id
+  inner join ENK_RUN_NODE          rnd  on  rnd.nod_id = nod.nod_id
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = nod.srv_id
+  set    rsc.rws_id_consumpted     = @ENK_RWS_ID_NONE@
+  ,      rsc.rsc_amount_consumpted = NULL
+  where  srv.srv_current = 1
+  and    rnd.rnd_current = 1
+  ;
+
+  -- Set the status of jobs that are marked still running to ERROR.
+  update ENK_RUN_NODE
+  set    rst_id = @ENK_RST_ID_ERROR@
+  where  rst_id in (@ENK_RST_ID_RUNNING@,@ENK_RST_ID_QUEUED@)
+  ;
+
+  -- Remove all status changes.
+  truncate table ENK_RUN_NODE_STATUS_CHANGE;
+end

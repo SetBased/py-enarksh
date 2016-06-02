@@ -1,0 +1,58 @@
+/**
+ * Stores a resource of type "ReadWriteLockResource" and selects the ID of the new resource.
+ *
+ * @param p_hst_id   The ID of the host of the resource.
+ * @param p_nod_id   The ID of the node of the resource.
+ * @param p_uri_id   The ID of the URI of the resource.
+ * @param p_rsc_name The name of the resource.
+ */
+create procedure enk_reader_resource_store_read_write_lock_resource( in p_hst_id   @enk_resource.hst_id%type@,
+                                                                     in p_nod_id   @enk_resource.nod_id%type@,
+                                                                     in p_uri_id   @enk_resource.uri_id%type@,
+                                                                     in p_rsc_name @enk_resource.rsc_name%type@ )
+modifies sql data
+-- type: singleton1
+begin
+  declare l_rsc_id @enk_resource.rsc_id%type@;
+
+  if (p_hst_id is not null) then
+    select rsc_id
+    into   l_rsc_id
+    from   ENK_RESOURCE
+    where  hst_id   = p_hst_id
+    and    rsc_name = p_rsc_name
+    ;
+  end if;
+
+  if (l_rsc_id is null) then
+    insert into ENK_RESOURCE( nod_id
+    ,                         rtp_id
+    ,                         rws_id_consumpted
+    ,                         uri_id
+    ,                         rsc_name )
+    values( p_nod_id
+    ,       @ENK_RTP_ID_READ_WRITE@
+    ,       @ENK_RWS_ID_NONE@
+    ,       p_uri_id
+    ,       p_rsc_name )
+    ;
+
+    set l_rsc_id = last_insert_id();
+
+    if (p_hst_id is not null) then
+      insert into ENK_RESOURCE( hst_id
+      ,                         rtp_id
+      ,                         rws_id_consumpted
+      ,                         uri_id
+      ,                         rsc_name )
+      values( p_hst_id
+      ,       @ENK_RTP_ID_READ_WRITE@
+      ,       @ENK_RWS_ID_NONE@
+      ,       p_uri_id
+      ,       p_rsc_name )
+      ;
+    end if;
+  end if;
+
+  select l_rsc_id;
+end

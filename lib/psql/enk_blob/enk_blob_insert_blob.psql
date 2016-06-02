@@ -1,0 +1,93 @@
+/**
+ * Inserts a BLOB and selects the ID of the BLOB.
+ *
+ * @param p_filename  The filename associated with the BLOB.
+ * @param p_mime_type The mime type of the data.
+ * @param p_data      The data of the BLOB.
+ */
+create procedure enk_blob_insert_blob( in p_filename  @enk_blob.blb_filename%type@,
+                                       in p_mime_type @enk_blob.blb_mime_type%type@,
+                                       in p_data      @enk_blob_data.bdt_data%type@ )
+modifies sql data
+-- type: singleton1
+begin
+  declare l_done          boolean default false;
+  declare l_bdt_id        @enk_blob_data.bdt_id%type@;
+  declare l_bdt_crc32     @enk_blob_data.bdt_crc32%type@;
+  declare l_bdt_size      @enk_blob_data.bdt_size%type@;
+  declare l_bdt_data      @enk_blob_data.bdt_data%type@;
+  declare l_blb_id        @enk_blob.blb_id%type@;
+
+  declare c_data cursor
+  for
+  select bdt_id
+  ,      bdt_data
+  from   ENK_BLOB_DATA
+  where  bdt_size  = l_bdt_size
+  and    bdt_crc32 = l_bdt_crc32
+  ;
+
+  declare continue handler for sqlstate '02000' set l_done = true;
+
+  set l_bdt_crc32 = crc32(p_data);
+  set l_bdt_size  = length(p_data);
+
+  if (l_bdt_size=0) then
+    call enk_misc_raise_exception( 'Size of '''||p_filename||''' is zero.' );
+  end if;
+
+  open c_data;
+  loop1: loop
+    fetch c_data
+    into  l_bdt_id
+    ,     l_bdt_data
+    ;
+    if (l_done) then
+      close c_data;
+      leave loop1;
+    end if;
+
+    if (p_data=l_bdt_data) then
+      close c_data;
+      leave loop1;
+    end if;
+  end loop;
+
+  if (l_done=true) then
+    set l_bdt_id = null;
+  end if;
+
+  if (l_bdt_id is null) then
+    insert into ENK_BLOB_DATA( bdt_inserted
+    ,                          bdt_crc32
+    ,                          bdt_size
+    ,                          bdt_mime_type
+    ,                          bdt_data )
+    values( now()
+    ,       l_bdt_crc32
+    ,       l_bdt_size
+    ,       p_mime_type
+    ,       p_data )
+    ;
+
+    set l_bdt_id = last_insert_id();
+  end if;
+
+  insert into ENK_BLOB( bdt_id
+  ,                     blb_inserted
+  ,                     blb_crc32
+  ,                     blb_filename
+  ,                     blb_mime_type
+  ,                     blb_size )
+  values( l_bdt_id
+  ,       utc_timestamp()
+  ,       l_bdt_crc32
+  ,       p_filename
+  ,       p_mime_type
+  ,       l_bdt_size )
+  ;
+
+  set l_blb_id = last_insert_id();
+
+  select l_blb_id;
+end

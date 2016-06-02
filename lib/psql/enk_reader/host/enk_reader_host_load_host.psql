@@ -1,0 +1,15 @@
+/**
+ * Selects the details of a host.
+ *
+ * @param p_hst_name The hostname.
+ */
+create procedure enk_reader_host_load_host( in p_hst_name @enk_host.hst_name%type@ )
+modifies sql data
+-- type: row1
+begin
+  select hst_id
+  ,      hst_name
+  from   ENK_HOST
+  where  hst_name = p_hst_name
+  ;
+end

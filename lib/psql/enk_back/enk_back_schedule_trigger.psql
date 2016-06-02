@@ -1,0 +1,47 @@
+/**
+ * Triggers a schedule.
+ */
+create procedure enk_back_schedule_trigger( in p_sch_id @enk_schedule.sch_id%type@ )
+reads sql data
+-- type: singleton1
+begin
+  declare l_srv_id             @enk_schedule_revision.srv_id%type@;
+  declare l_run_id             @enk_run.run_id%type@;
+  declare l_run_datetime_start @enk_run.run_datetime_start%type@;
+
+  select srv.srv_id
+  ,      run.run_id
+  ,      run.run_datetime_start
+  into   l_srv_id
+  ,      l_run_id
+  ,      l_run_datetime_start
+  from       ENK_SCHEDULE_REVISION srv
+  inner join ENK_RUN               run  on  run.srv_id = srv.srv_id
+  where srv.sch_id      = p_sch_id
+  and   srv.srv_current = 1
+  and   run.run_current = 1
+  ;
+
+  if (l_run_datetime_start is not null) then
+    -- Cleanup previous run.
+    -- Mark run nodes that were queued as not queued.
+    update ENK_NODE
+    set rst_id = @ENK_RST_ID_WAITING@
+    where run_id = l_run_id
+    and   rst_id = @ENK_RST_ID_QUEUED@
+    ;
+
+    -- Mark old run as stopped.
+    update ENK_RUN
+    set run_current       = 0
+    ,   run_datetime_stop = ifnull(run_datetime_stop,now())
+    where run_id = l_run_id
+    ;
+
+
+    -- Create a new run.
+    call enk_back_schedule_revision_create_run(l_srv_id);
+  else
+    select null run_id;
+  end if;
+end

@@ -1,0 +1,17 @@
+/**
+ * Stores a dependency between two ports.
+ *
+ * @param p_prt_id_dependant   The ID of the dependant port
+ * @param p_prt_id_predecessor The ID of the predecessor port.
+ */
+create procedure enk_reader_dependency_store_dependency( in p_prt_id_dependant   @enk_dependency.prt_id_dependant%type@,
+                                                         in p_prt_id_predecessor @enk_dependency.prt_id_predecessor%type@ )
+modifies sql data
+-- type: none
+begin
+  insert into ENK_DEPENDENCY( prt_id_dependant
+  ,                           prt_id_predecessor )
+  values( p_prt_id_dependant
+  ,       p_prt_id_predecessor )
+  ;
+end
