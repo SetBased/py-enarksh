@@ -4,7 +4,7 @@ import sys
 
 sys.path.append(os.path.realpath(os.path.dirname(os.path.realpath(__file__)) + '/..'))
 
-from lib.enarksh.Logger.Logger import Logger
+from enarksh.Logger.Logger import Logger
 
 logger = Logger()
 logger.main()

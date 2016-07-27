@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid XML 2013 Designer Edition 11.1.0.4725 (http://www.liquid-technologies.com)-->
+<xs:schema elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:simpleType name="IdentifierType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:maxLength value="64" />
+            <xs:pattern value="[a-zA-Z0-9_]+(\[[a-zA-Z0-9_]+\])*" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="NodeNameType">
+        <xs:restriction base="IdentifierType" />
+    </xs:simpleType>
+    <xs:simpleType name="PortNameType">
+        <xs:restriction base="IdentifierType" />
+    </xs:simpleType>
+    <xs:simpleType name="ResourceNameType">
+        <xs:restriction base="IdentifierType" />
+    </xs:simpleType>
+    <xs:simpleType name="NodeReferenceType">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="IdentifierType" />
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:token">
+                    <xs:enumeration value="." />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+    <xs:simpleType name="ResourceReferenceType">
+        <xs:restriction base="IdentifierType" />
+    </xs:simpleType>
+    <xs:simpleType name="PortReferenceType">
+        <xs:restriction base="IdentifierType" />
+    </xs:simpleType>
+    <xs:complexType name="DependencyType">
+        <xs:sequence>
+            <xs:element name="NodeName"
+                        type="NodeReferenceType" />
+            <xs:element name="PortName"
+                        type="PortReferenceType" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="DependenciesType">
+        <xs:sequence>
+            <xs:element name="Dependency"
+                        type="DependencyType"
+                        maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="InputPortType">
+        <xs:sequence>
+            <xs:element name="PortName"
+                        type="PortNameType" />
+            <xs:element name="Dependencies"
+                        type="DependenciesType"
+                        minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="InputPortsType">
+        <xs:sequence>
+            <xs:element name="Port"
+                        type="InputPortType"
+                        maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="OutputPortType">
+        <xs:sequence>
+            <xs:element name="PortName"
+                        type="PortNameType" />
+            <xs:element name="Dependencies"
+                        type="DependenciesType"
+                        minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="OutputPortsType">
+        <xs:sequence>
+            <xs:element name="Port"
+                        type="OutputPortType"
+                        maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ResourceType"
+                    abstract="true">
+        <xs:sequence>
+            <xs:element name="ResourceName"
+                        type="ResourceNameType" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ReadWriteLockResourceType">
+        <xs:complexContent>
+            <xs:extension base="ResourceType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="CountingResourceType">
+        <xs:complexContent>
+            <xs:extension base="ResourceType">
+                <xs:sequence>
+                    <xs:element name="Amount">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:unsignedLong">
+                                <xs:minInclusive value="1" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ResourcesType">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="CountingResource"
+                        type="CountingResourceType" />
+            <xs:element name="ReadWriteLockResource"
+                        type="ReadWriteLockResourceType" />
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="ConsumptionType"
+                    abstract="true">
+        <xs:sequence>
+            <xs:element name="ResourceName"
+                        type="ResourceReferenceType" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ReadWriteLockConsumptionType">
+        <xs:complexContent>
+            <xs:extension base="ConsumptionType">
+                <xs:sequence>
+                    <xs:element name="Mode">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:token">
+                                <xs:enumeration value="read" />
+                                <xs:enumeration value="write" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="CountingConsumptionType">
+        <xs:complexContent>
+            <xs:extension base="ConsumptionType">
+                <xs:sequence>
+                    <xs:element name="Amount">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:unsignedLong">
+                                <xs:minInclusive value="1" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ConsumptionsType">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="CountingConsumption"
+                        type="CountingConsumptionType" />
+            <xs:element name="ReadWriteLockConsumption"
+                        type="ReadWriteLockConsumptionType" />
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="NodeType"
+                    abstract="true">
+        <xs:sequence>
+            <xs:element name="NodeName"
+                        type="NodeNameType" />
+            <xs:element name="UserName"
+                        minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="32" />
+                        <xs:minLength value="1" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="InputPorts"
+                        type="InputPortsType"
+                        minOccurs="0" />
+            <xs:element name="Consumptions"
+                        type="ConsumptionsType"
+                        minOccurs="0" />
+            <xs:element name="OutputPorts"
+                        type="OutputPortsType"
+                        minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="NodesType">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="CommandJob"
+                        type="CommandJobNodeType" />
+            <xs:element name="CompoundJob"
+                        type="CompoundJobNodeType" />
+            <xs:element name="ManualTrigger"
+                        type="ManualTriggerNodeType" />
+            <xs:element name="Terminator"
+                        type="TerminatorNodeType" />
+            <xs:element name="DynamicJob"
+                        type="DynamicJobNodeType" />
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="SimpleNodeType"
+                    abstract="true">
+        <xs:complexContent>
+            <xs:extension base="NodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ActivateNodeType"
+                    abstract="true">
+        <xs:complexContent>
+            <xs:extension base="SimpleNodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ComplexNodeType"
+                    abstract="true">
+        <xs:complexContent>
+            <xs:extension base="NodeType">
+                <xs:sequence>
+                    <xs:element name="Resources"
+                                type="ResourcesType"
+                                minOccurs="0" />
+                    <xs:element name="Nodes"
+                                type="NodesType"
+                                minOccurs="0"
+                                maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ArrestNodeType"
+                    abstract="true">
+        <xs:complexContent>
+            <xs:extension base="SimpleNodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="CommandJobNodeType">
+        <xs:annotation>
+            <xs:documentation>A CommandJon is a Node that fulfills the following conditions:
+ Has a singel input port.
+ Has a single output port.
+ Has no child nodes.
+ Has a commandline.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="SimpleNodeType">
+                <xs:sequence>
+                    <xs:element name="Path">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:minLength value="1" />
+                                <xs:maxLength value="1000" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="Args"
+                                minOccurs="0">
+                        <xs:complexType>
+                            <xs:sequence minOccurs="1"
+                                         maxOccurs="unbounded">
+                                <xs:element name="Arg"
+                                            type="xs:string" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="CompoundJobNodeType">
+        <xs:annotation>
+            <xs:documentation>A CommandJob is a Node that fulfills the following conditions:
+ Has one or more input ports.
+ Has one or more output ports.
+ Has zero or more child nodes.
+ Has no commandline.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ComplexNodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="DynamicJobNodeType">
+        <xs:complexContent>
+            <xs:extension base="NodeType">
+                <xs:sequence>
+                    <xs:element name="Generator"
+                                type="CommandJobNodeType" />
+                    <xs:element name="Worker"
+                                type="DynamicOuterWorkerNodeType" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="DynamicOuterWorkerNodeType">
+        <xs:sequence>
+            <xs:element name="NodeName"
+                        type="NodeNameType" />
+            <xs:element name="InputPorts"
+                        type="InputPortsType" />
+            <xs:element name="OutputPorts"
+                        type="OutputPortsType" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="DynamicInnerWorkerNodeType">
+        <xs:complexContent>
+            <xs:extension base="CompoundJobNodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ManualTriggerNodeType">
+        <xs:complexContent>
+            <xs:extension base="ActivateNodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="TerminatorNodeType">
+        <xs:complexContent>
+            <xs:extension base="ArrestNodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ScheduleNodeType">
+        <xs:complexContent>
+            <xs:extension base="ComplexNodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="HostType">
+        <xs:sequence>
+            <xs:element name="Hostname">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="64" />
+                        <xs:whiteSpace value="collapse" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="Resources"
+                        type="ResourcesType" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Schedule"
+                type="ScheduleNodeType" />
+    <xs:element name="Host"
+                type="HostType" />
+    <xs:element name="DynamicInnerWorker"
+                type="DynamicInnerWorkerNodeType" />
+</xs:schema>

@@ -4,7 +4,7 @@ import sys
 
 sys.path.append(os.path.realpath(os.path.dirname(os.path.realpath(__file__)) + '/..'))
 
-from lib.enarksh.Spawner.Spawner import Spawner
+from enarksh.Spawner.Spawner import Spawner
 
 spawner = Spawner()
 spawner.main()

@@ -4,7 +4,7 @@ import sys
 
 sys.path.append(os.path.realpath(os.path.dirname(os.path.realpath(__file__)) + '/..'))
 
-from lib.enarksh.Util.LoadSchedule import LoadSchedule
+from enarksh.Util.LoadSchedule import LoadSchedule
 
 reader = LoadSchedule()
 reader.main()
