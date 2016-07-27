@@ -179,7 +179,7 @@ class Spawner:
                                                    message['args'])
 
                 else:
-                    raise IndexError("Unknown message type '%s'." % message['type'])
+                    raise IndexError("Unknown message type '{0!s}'.".format(message['type']))
 
         except zmq.ZMQError as e:
             # Ignore ZMQError with EAGAIN. Otherwise, re-raise the error.

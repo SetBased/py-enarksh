@@ -48,7 +48,7 @@ class Dependency:
                 self._port_name = element.text
 
             else:
-                raise Exception("Unexpected tag '%s'." % tag)
+                raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
     def validate(self, errors: list) -> None:

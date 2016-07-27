@@ -140,7 +140,7 @@ class DynamicJobNode(Node):
         if node_name == self._worker._node_name:
             return self._worker
 
-        raise Exception("Unknown node '%s'." % node_name)
+        raise Exception("Unknown node '{0!s}'.".format(node_name))
 
 
 # ----------------------------------------------------------------------------------------------------------------------

@@ -49,6 +49,6 @@ class SimpleNode(Node):
             self._recompute_run_status()
 
         else:
-            raise Exception("Not possible to restart node with rst_id '%s'." % self.rst_id)
+            raise Exception("Not possible to restart node with rst_id '{0!s}'.".format(self.rst_id))
 
 # ----------------------------------------------------------------------------------------------------------------------
