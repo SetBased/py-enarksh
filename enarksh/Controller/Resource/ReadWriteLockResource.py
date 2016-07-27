@@ -61,7 +61,7 @@ class ReadWriteLockResource(Resource):
             self._read_write_lock_count += 1
 
         else:
-            raise Exception("Unknown rws_id '%s'." % rws_id)
+            raise Exception("Unknown rws_id '{0!s}'.".format(rws_id))
 
     # ------------------------------------------------------------------------------------------------------------------
     def inquire(self, rws_id: int) -> bool:
@@ -79,7 +79,7 @@ class ReadWriteLockResource(Resource):
             # resource.
             return self._read_write_lock_count == 0 and self._read_lock_count == 0
 
-        raise Exception("Unknown rws_id '%s'." % rws_id)
+        raise Exception("Unknown rws_id '{0!s}'.".format(rws_id))
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
@@ -96,7 +96,7 @@ class ReadWriteLockResource(Resource):
             self._read_write_lock_count -= 1
 
         else:
-            raise Exception("Unknown rws_id '%s'." % rws_id)
+            raise Exception("Unknown rws_id '{0!s}'.".format(rws_id))
 
     # ------------------------------------------------------------------------------------------------------------------
     def sync_state(self):

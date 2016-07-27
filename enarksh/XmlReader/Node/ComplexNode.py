@@ -115,7 +115,7 @@ class ComplexNode(Node):
 
             # Check for child nodes with duplicate names.
             if name in self._child_nodes:
-                raise Exception("Duplicate child node '%s'." % name)
+                raise Exception("Duplicate child node '{0!s}'.".format(name))
 
             # Add child node to map of child nodes.
             self._child_nodes[name] = node
@@ -131,13 +131,13 @@ class ComplexNode(Node):
                 resource = ReadWriteLockResource(self)
 
             else:
-                raise Exception("Unexpected tag '%s'." % tag)
+                raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
             resource.read_xml(element)
             name = resource.get_name()
             # Check for resources with duplicate names.
             if name in self._resources:
-                raise Exception("Duplicate resource '%s'." % name)
+                raise Exception("Duplicate resource '{0!s}'.".format(name))
 
             self._resources[name] = resource
 

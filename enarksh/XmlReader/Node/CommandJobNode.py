@@ -20,7 +20,7 @@ class CommandJobNode(SimpleNode):
             self._args.append(xml.text)
 
         else:
-            raise Exception("Unexpected tag '%s'." % tag)
+            raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
     def read_xml_element(self, xml: Element) -> None:

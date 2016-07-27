@@ -106,7 +106,7 @@ class Node:
             self._read_xml_output_ports(xml)
 
         else:
-            raise Exception("Unexpected tag '%s'." % tag)
+            raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
     def _read_xml_consumptions(self, xml: Element) -> None:
@@ -119,13 +119,13 @@ class Node:
                 consumption = ReadWriteLockConsumption(self)
 
             else:
-                raise Exception("Unexpected tag '%s'." % tag)
+                raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
             consumption.read_xml(element)
             name = consumption.get_name()
             # Check for consumptions with duplicate names.
             if name in self._consumptions:
-                raise Exception("Duplicate consumption '%s'." % name)
+                raise Exception("Duplicate consumption '{0!s}'.".format(name))
 
             self._consumptions[name] = consumption
 
@@ -140,12 +140,12 @@ class Node:
                 name = port.get_name()
                 # Check for ports with duplicate names.
                 if name in self._input_ports:
-                    raise Exception("Duplicate input port '%s'." % name)
+                    raise Exception("Duplicate input port '{0!s}'.".format(name))
 
                 self._input_ports[name] = port
 
             else:
-                raise Exception("Unexpected tag '%s'." % tag)
+                raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
     def _read_xml_output_ports(self, xml: Element) -> None:
@@ -158,12 +158,12 @@ class Node:
                 name = port.get_name()
                 # Check for ports with duplicate names.
                 if name in self._output_ports:
-                    raise Exception("Duplicate output port '%s'." % name)
+                    raise Exception("Duplicate output port '{0!s}'.".format(name))
 
                 self._output_ports[name] = port
 
             else:
-                raise Exception("Unexpected tag '%s'." % tag)
+                raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
