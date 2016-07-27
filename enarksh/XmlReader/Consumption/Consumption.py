@@ -47,7 +47,7 @@ class Consumption:
             self._resource_name = xml.text
 
         else:
-            raise Exception("Unexpected tag '%s'." % tag)
+            raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_uri(self, obj_type: str='consumption') -> str:

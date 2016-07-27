@@ -35,7 +35,7 @@ class ReadWriteLockConsumption(Consumption):
                 self.rws_id = enarksh.ENK_RWS_ID_WRITE
 
             else:
-                raise Exception("Unexpected mode '%s'." % mode)
+                raise Exception("Unexpected mode '{0!s}'.".format(mode))
 
         else:
             Consumption.read_xml_element(self, xml)
@@ -50,7 +50,7 @@ class ReadWriteLockConsumption(Consumption):
         if not resource:
             err = {'uri': self.get_uri(),
                    'rule': 'A consumption requires a resource.',
-                   'error': "Resource '%s' not found." % self._resource_name}
+                   'error': "Resource '{0!s}' not found.".format(self._resource_name)}
             errors.append(err)
             return
 
@@ -59,8 +59,7 @@ class ReadWriteLockConsumption(Consumption):
             # resource is not a valid resource for this consumption.
             err = {'uri': self.get_uri(),
                    'rule': 'A consumption requires a corresponding resource type.',
-                   'error': "Found a resource of type '%s', expecting a resource of type 'ReadWriteLockResource'."
-                            % resource_type}
+                   'error': "Found a resource of type '{0!s}', expecting a resource of type 'ReadWriteLockResource'.".format(resource_type)}
             errors.append(err)
 
     # ------------------------------------------------------------------------------------------------------------------

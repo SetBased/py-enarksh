@@ -70,7 +70,7 @@ class Port:
             self._read_xml_dependencies(xml)
 
         else:
-            raise Exception("Unexpected tag '%s'." % tag)
+            raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
     def _read_xml_dependencies(self, xml: Element) -> None:
@@ -82,7 +82,7 @@ class Port:
                 self._dependencies.append(dependency)
 
             else:
-                raise Exception("Unexpected tag '%s'." % tag)
+                raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
     def validate(self, errors: list) -> None:

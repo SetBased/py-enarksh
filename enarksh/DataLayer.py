@@ -89,7 +89,7 @@ class DataLayer(StaticDataLayer):
         rows = StaticDataLayer.execute_sp_rows("call enk_back_run_get_ports1(%s)", p_run_id)
         for row in rows:
             if row['prt_id'] in ret:
-                raise Exception('Duplicate key for %s.' % str((row['prt_id'])))
+                raise Exception('Duplicate key for {0!s}.'.format(str((row['prt_id']))))
             else:
                 ret[row['prt_id']] = row
 
@@ -128,7 +128,7 @@ class DataLayer(StaticDataLayer):
         rows = StaticDataLayer.execute_sp_rows("call enk_back_run_get_run_nodes(%s)", p_run_id)
         for row in rows:
             if row['rnd_id'] in ret:
-                raise Exception('Duplicate key for %s.' % str((row['rnd_id'])))
+                raise Exception('Duplicate key for {0!s}.'.format(str((row['rnd_id']))))
             else:
                 ret[row['rnd_id']] = row
 

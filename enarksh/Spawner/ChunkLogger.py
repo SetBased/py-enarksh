@@ -17,7 +17,7 @@ class ChunkLogger:
     def _get_filename():
         ChunkLogger._file_count += 1
 
-        return '%s/%s/%010d.log' % (enarksh.HOME, 'var/lib/logger', ChunkLogger._file_count)
+        return '{0!s}/{1!s}/{2:010d}.log'.format(enarksh.HOME, 'var/lib/logger', ChunkLogger._file_count)
 
     # ------------------------------------------------------------------------------------------------------------------
     def write(self, buffer: bytes):

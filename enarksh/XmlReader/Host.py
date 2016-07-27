@@ -68,7 +68,7 @@ class Host:
                 self._read_xml_resources(element)
 
             else:
-                raise Exception("Unexpected tag '%s'." % tag)
+                raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
     def validate(self) -> str:
@@ -87,7 +87,7 @@ class Host:
         if self._hostname != 'localhost':
             err = {'uri': self.get_uri(),
                    'rule': 'Currently, only localhost is supported.',
-                   'error': "Hostname must be 'localhost', found: '%s'." % self._hostname}
+                   'error': "Hostname must be 'localhost', found: '{0!s}'.".format(self._hostname)}
             errors.append(err)
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -133,13 +133,13 @@ class Host:
                 resource = ReadWriteLockResource(self)
 
             else:
-                raise Exception("Unexpected tag '%s'." % tag)
+                raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
             resource.read_xml(element)
             name = resource.get_name()
             # Check for resources with duplicate names.
             if name in self._resources:
-                raise Exception("Duplicate resource '%s'." % name)
+                raise Exception("Duplicate resource '{0!s}'.".format(name))
 
             self._resources[name] = resource
 
