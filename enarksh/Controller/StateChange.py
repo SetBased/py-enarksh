@@ -14,7 +14,7 @@ class StateChange:
         self._observers = []
         """
         The objects that observe the state of this object.
-        :type list:
+        :type: list
         """
 
     # ------------------------------------------------------------------------------------------------------------------

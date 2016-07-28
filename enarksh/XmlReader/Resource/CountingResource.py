@@ -13,7 +13,7 @@ class CountingResource(Resource):
         self._amount = 0
         """
         The available amount of this resource.
-        :type int:
+        :type: int
         """
 
     # ------------------------------------------------------------------------------------------------------------------

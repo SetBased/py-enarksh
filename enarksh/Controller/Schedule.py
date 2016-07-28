@@ -41,67 +41,67 @@ class Schedule:
         self._nodes = {}
         """
         A map from rnd_id to node for all the current nodes in this schedule.
-        :type dict:
+        :type: dict
         """
 
         self._children = {}
         """
         A map from rnd_id to a list with all child nodes.
-        :type dict:
+        :type: dict
         """
 
         self._successors = {}
         """
         A map from rnd_id to a list with all (direct and indirect) successor nodes.
-        :type dict:
+        :type: dict
         """
 
         self._schedule_load = 0
         """
         The load of this schedule. I.e. the current running (simple) nodes of this schedule.
-        :type dict:
+        :type: dict
         """
 
         self._schedule_node = None
         """
         The node that is the actual schedule.
-        :type Node:
+        :type: Node
         """
 
         self._activate_node = None
         """
         The node that is the activate node of the schedule.
-        :type Node:
+        :type: Node
         """
 
         self._arrest_node = None
         """
         The node that is the arrest node of the schedule.
-        :type Node:
+        :type: Node
         """
 
         self._mail_on_completion = True
         """
         If set a mail must be send to the operator when the schedule is finished running.
-         :type bool:
+         :type: bool
         """
 
         self._mail_on_error = True
         """
         If set a mail must be send to the operator for each failed (simple) node.
-         :type bool:
+         :type: bool
         """
 
         self._usr_login = ''
         """
         The user ID of the operator.
-        :type str:
+        :type: str
         """
 
         self._queue = set()
         """
         The queue of nodes that are ready to run.
-        :type set:
+        :type: set
         """
 
         self._load(sch_id, host_resources)
@@ -339,7 +339,7 @@ class Schedule:
     def get_node(self, rnd_id: int) -> Node:
         """
         Returns a node.
-        :type rnd_id: int The ID of the requested node.
+        :type: rnd_id int The ID of the requested node.
         :return Node:
         """
         return self._nodes[rnd_id]

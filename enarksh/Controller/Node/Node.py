@@ -368,7 +368,7 @@ class Node(StateChange):
         """
         Returns a resource.
 
-        :type name: string The name of the requested resource.
+        :type: name string The name of the requested resource.
         """
         for resource in self.resources:
             if resource.get_name() == name:
