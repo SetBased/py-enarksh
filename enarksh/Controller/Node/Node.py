@@ -41,7 +41,8 @@ class Node(StateChange):
         self._node_name = str(node_data['nod_name'], 'utf-8')  # XXX DataLayer encoding issue
         """
         The name of this node.
-        :type str:
+
+        :type: str
         """
 
         self.rst_id = node_data['rst_id']
@@ -175,6 +176,7 @@ class Node(StateChange):
     def _set_rst_id(self, rst_id) -> None:
         """
         Sets the run status of this node.
+
         :param rst_id: The new run status for this node.
         """
         old_rst_id = self.rst_id
