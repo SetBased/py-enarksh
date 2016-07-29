@@ -16,29 +16,39 @@ class Dependency:
         self._node_name = ''
         """
         The name of the referenced node of this dependency.
+
+        :type: str
         """
 
         self._port = port
         """
         The port (owner) of this dependency.
+
         :type: Port
         """
 
         self._port_name = ''
         """
         The name of the referenced port of this dependency.
+
         :type: str
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_dependency_level(self) -> int:
+    def get_dependency_level(self):
+        """
+        :rtype: int
+        """
         if self._node_name == '.':
             return -1
         else:
             return self._port.get_node().get_parent_node().get_node_by_name(self._node_name).get_dependency_level()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def read_xml(self, xml: Element) -> None:
+    def read_xml(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         for element in list(xml):
             tag = element.tag
             if tag == 'NodeName':
@@ -51,16 +61,21 @@ class Dependency:
                 raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def validate(self, errors: list) -> None:
+    def validate(self, errors):
         """
         Validates this dependency against rules which are not imposed by XSD.
-        :param errors: A list of error messages.
+
+        :param list errors: A list of error messages.
         """
-        # XXX Node named $this->myNodeName must exists.
-        # XXX Node must have port named $this->myPortName.
+        # @todo XXX Node named $this->myNodeName must exists.
+        # @todo XXX Node must have port named $this->myPortName.
 
     # ------------------------------------------------------------------------------------------------------------------
-    def store(self, port, node) -> None:
+    def store(self, port, node):
+        """
+        :param Port port:
+        :param Node node:
+        """
         prt_id_dependant = port.get_prt_id()
         prt_id_predecessor = node.get_port_by_name(self._node_name, self._port_name).get_prt_id()
 

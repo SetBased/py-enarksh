@@ -8,22 +8,26 @@ class ComplexNode(Node):
     Class for objects in the controller of type 'ComplexJob'.
     """
     # ------------------------------------------------------------------------------------------------------------------
-    def is_simple_node(self) -> bool:
+    def is_simple_node(self):
         """
         Returns False.
+
+        :rtype: bool
         """
         return False
 
     # ------------------------------------------------------------------------------------------------------------------
-    def is_complex_node(self) -> bool:
+    def is_complex_node(self):
         """
         Returns True.
+
+        :rtype: bool
         """
         return True
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
-    def restart(self) -> None:
+    def restart(self):
         """
         Restart this node. I.e. makes a new run node (if the run node has run before) and set the run status to
         waiting.
@@ -35,7 +39,7 @@ class ComplexNode(Node):
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
-    def restart_failed(self) -> None:
+    def restart_failed(self):
         """
         Restarts the failed child nodes of this node.
         """

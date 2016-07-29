@@ -20,11 +20,15 @@ class ReadWriteLockConsumption(Consumption):
         self.rws_id = 0
         """
         The lock type.
+
         :type: int
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def read_xml_element(self, xml: Element) -> None:
+    def read_xml_element(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         tag = xml.tag
         if tag == 'Mode':
             mode = xml.text
@@ -41,10 +45,11 @@ class ReadWriteLockConsumption(Consumption):
             Consumption.read_xml_element(self, xml)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def validate(self, errors: list) -> None:
+    def validate(self, errors):
         """
         Validates this consumption against rules which are not imposed by XSD.
-        :param errors: A list of error messages.
+
+        :param list errors: A list of error messages.
         """
         resource = self._node.get_resource_by_name(self._resource_name)
         if not resource:
@@ -63,10 +68,11 @@ class ReadWriteLockConsumption(Consumption):
             errors.append(err)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def store(self, nod_id: int) -> None:
+    def store(self, nod_id):
         """
         Stores the definition of this consumption into the database.
-        :param nod_id: The ID of the node to which this consumption belongs.
+
+        :param int nod_id: The ID of the node to which this consumption belongs.
         """
         resource = self._node.get_resource_by_name(self._resource_name)
         rsc_id = resource.get_rsc_id()

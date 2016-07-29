@@ -15,7 +15,12 @@ class ScheduleNode(ComplexNode):
     """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def __init__(self, node_data: dict):
+    def __init__(self, node_data):
+        """
+        Object constructor.
+
+        :param dict node_data:
+        """
         ComplexNode.__init__(self, node_data)
 
         self._run_id = 0
@@ -27,17 +32,30 @@ class ScheduleNode(ComplexNode):
 
     # ------------------------------------------------------------------------------------------------------------------
     def initialize(self,
-                   node_data: dict,
-                   schedule: dict,
-                   resources: dict,
-                   resources_data: dict,
-                   consumptions: dict,
-                   consumptions_data: dict,
-                   run_nodes: dict,
-                   child_nodes: dict,
-                   direct_predecessors: dict,
-                   direct_successors: dict,
-                   successors: dict) -> None:
+                   node_data,
+                   schedule,
+                   resources,
+                   resources_data,
+                   consumptions,
+                   consumptions_data,
+                   run_nodes,
+                   child_nodes,
+                   direct_predecessors,
+                   direct_successors,
+                   successors):
+        """
+        :param dict node_data:
+        :param dict schedule:
+        :param dict resources:
+        :param dict resources_data:
+        :param dict consumptions:
+        :param dict consumptions_data:
+        :param dict run_nodes:
+        :param dict child_nodes:
+        :param dict direct_predecessors:
+        :param dict direct_successors:
+        :param dict successors:
+        """
         ComplexNode.initialize(self,
                                node_data,
                                schedule,

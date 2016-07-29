@@ -19,26 +19,30 @@ class Host:
         self._hostname = ''
         """
         The name of this host.
+
         :type: str
         """
 
         self._hst_id = 0
         """
         The ID of this host when it is stored in the databases.
+
         :type: int
         """
 
         self._resources = {}
         """
         The resources of this host.
+
         :type: dict
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def load_db(self, hostname: str) -> None:
+    def load_db(self, hostname):
         """
         Loads the definition of this host from the database.
-        :param hostname: The name of the host that must be loaded.
+
+        :param str hostname: The name of the host that must be loaded.
         """
         self._hostname = hostname
 
@@ -52,13 +56,21 @@ class Host:
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_resource_by_name(self, resource_name):
+        """
+        :param str resource_name:
+
+        :rtype: Resource|None
+        """
         if resource_name in self._resources:
             return self._resources[resource_name]
 
         return None
 
     # ------------------------------------------------------------------------------------------------------------------
-    def read_xml(self, xml: Element) -> None:
+    def read_xml(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         for element in list(xml):
             tag = element.tag
             if tag == 'Hostname':
@@ -71,7 +83,7 @@ class Host:
                 raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def validate(self) -> str:
+    def validate(self):
         """
         Validates this node against rules which are not imposed by XSD.
         """
@@ -79,10 +91,11 @@ class Host:
         self._validate_helper(errors)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _validate_helper(self, errors: list) -> None:
+    def _validate_helper(self, errors):
         """
         Helper function for validation this node.
-        :param errors: A list of error messages.
+
+        :param list errors: A list of error messages.
         """
         if self._hostname != 'localhost':
             err = {'uri': self.get_uri(),
@@ -91,15 +104,18 @@ class Host:
             errors.append(err)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_uri(self, obj_type: str='host') -> str:
+    def get_uri(self, obj_type='host'):
         """
         Returns the URI of this host.
-        :param obj_type: The entity type.
+
+        :param str obj_type: The entity type.
+
+        :rtype: str
         """
         return '//' + obj_type + '/' + self._hostname
 
     # ------------------------------------------------------------------------------------------------------------------
-    def store(self) -> None:
+    def store(self):
         """
         Stores the definition of this host into the database.
         """
@@ -114,16 +130,20 @@ class Host:
             resource.store(self._hst_id, None)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _store_self(self, uri_id: int) -> None:
+    def _store_self(self, uri_id):
         """
         Stores the definition of this host into the database.
-        :param uri_id: The ID of the URI of this node.
+
+        :param int uri_id: The ID of the URI of this node.
         """
         details = DataLayer.enk_reader_host_load_host(self._hostname)
         self._hst_id = details['hst_id']
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _read_xml_resources(self, xml: Element) -> None:
+    def _read_xml_resources(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         for element in list(xml):
             tag = element.tag
             if tag == 'CountingResource':

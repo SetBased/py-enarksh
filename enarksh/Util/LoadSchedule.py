@@ -24,12 +24,14 @@ class LoadSchedule:
         self._zmq_context = None
         """
         The ZMQ context.
+
         :type: Context
         """
 
         self._zmq_controller = None
         """
         The socket for communicating with the controller.
+
         :type: zmq.sugar.socket.Socket
         """
 
@@ -74,11 +76,13 @@ class LoadSchedule:
         self._zmq_controller.connect(enarksh.CONTROLLER_LOCKSTEP_END_POINT)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _load_schedule(self, filename: str) -> bool:
+    def _load_schedule(self, filename):
         """
         Sends a message to the controller to load a new schedule definition.
-        :param filename: The name of XML file with the schedule definition.
-        :return: True on success. Otherwise False.
+
+        :param str filename: The name of XML file with the schedule definition.
+
+        :rtype bool: True on success. Otherwise False.
         """
         with open(filename, 'rt', encoding='utf-8') as f:
             xml = f.read()

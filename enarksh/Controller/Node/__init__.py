@@ -12,12 +12,13 @@ from enarksh.Controller.Node.TerminatorNode import TerminatorNode
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def create_node(data: dict) -> Node:
+def create_node(data):
     """
     A factory for creating nodes.
 
-    :param data: The parameters required for creating the node.
-    :return:
+    :param dict data: The parameters required for creating the node.
+
+    :rtype: enarksh.Controller.Node.Node.Node
     """
 
     if data['ntp_id'] == enarksh.ENK_NTP_SCHEDULE:

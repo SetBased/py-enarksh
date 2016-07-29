@@ -5,12 +5,13 @@ from enarksh.Controller.Resource.ReadWriteLockResource import ReadWriteLockResou
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def create_resource(data: dict) -> Resource:
+def create_resource(data):
     """
     A factory for creating a resource.
 
-    :param data: The parameters required for creating the resource.
-    :return:
+    :param dict data: The parameters required for creating the resource.
+
+    :rtype: enarksh.Controller.Resource.Resource.Resource
     """
     if data['rtp_id'] == enarksh.ENK_RTP_ID_COUNTING:
         return CountingResource(data)

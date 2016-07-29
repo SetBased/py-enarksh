@@ -153,6 +153,7 @@ class Spawner:
     def _event_handler_start_node(self, sch_id, rnd_id, user_name, args):
         """
         Creates a new job handler and starts the job.
+
         :param sch_id: The ID of the schedule of the job.
         :param rnd_id: The ID of the job.
         :param user_name: The user under which the job must run.

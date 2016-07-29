@@ -11,11 +11,13 @@ from enarksh.XmlReader.Node.ArrestNode import ArrestNode
 
 class TerminatorNode(ArrestNode):
     # ------------------------------------------------------------------------------------------------------------------
-    def _store_self(self, srv_id: int, uri_id: int, p_nod_master: int) -> None:
+    def _store_self(self, srv_id, uri_id, p_nod_master):
         """
         Stores the definition of this node into the database.
-        :param srv_id: The ID of the schedule to which this node belongs.
-        :param uri_id: The ID of the URI of this node.
+
+        :param int srv_id: The ID of the schedule to which this node belongs.
+        :param int uri_id: The ID of the URI of this node.
+        :param int p_nod_master:
         """
         self._nod_id = DataLayer.enk_reader_node_store_terminator(srv_id,
                                                                   uri_id,
