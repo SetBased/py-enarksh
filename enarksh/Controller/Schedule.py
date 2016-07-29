@@ -22,13 +22,15 @@ class Schedule:
     _observers_new_node = []
     """
     The objects that will notified when a schedule has create a new node.
-    :type list
+
+    :type: list
     """
 
     _observers_schedule_termination = []
     """
     The objects that will notified when a schedule has terminated.
-    :type list
+
+    :type: list
     """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -99,7 +101,7 @@ class Schedule:
         self._mail_on_completion = True
         """
         If set a mail must be send to the operator when the schedule is finished running.
-         :type bool:
+         :type: bool
         """
 
         self._mail_on_error = True

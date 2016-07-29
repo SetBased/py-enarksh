@@ -1,0 +1,16 @@
+<project name="Enarksh" default="build" basedir=".">
+    <taskdef name="ReadSemanticVersion" classname="vendor.setbased.phing-extensions.src.Task.ReadSemanticVersionTask"/>
+    <property name="BUILD_DIR" value="./build"/>
+    <property name="VERSION" value="0.0.0"/>
+
+    <!-- Runs all unit tests-->
+    <target name="unit">
+        <exec command="coverage3 run -m unittest discover -s test -p *Test.py" passthru="true" checkreturn="true"/>
+        <exec command="coverage3 html" passthru="true" checkreturn="true"/>
+    </target>
+
+    <!-- Default target -->
+    <target name="build">
+        <echo msg="And Now for Something Completely Different"/>
+    </target>
+</project>

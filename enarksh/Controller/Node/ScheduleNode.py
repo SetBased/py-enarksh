@@ -13,6 +13,7 @@ class ScheduleNode(ComplexNode):
     """
     Class for objects in the controller of type 'Schedule'.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, node_data):
         """
@@ -75,6 +76,5 @@ class ScheduleNode(ComplexNode):
         ComplexNode.sync_state(self)
 
         DataLayer.enk_back_run_update_status(self._run_id, self._rnd_datetime_start, self._rnd_datetime_stop)
-
 
 # ----------------------------------------------------------------------------------------------------------------------

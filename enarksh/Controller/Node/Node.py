@@ -49,7 +49,7 @@ class Node(StateChange):
         """
         The name of this node.
 
-        :type: str:
+        :type: str
         """
 
         self.rst_id = node_data['rst_id']

@@ -46,7 +46,7 @@ class Controller:
 
         self._zmq_spanner = None
         """
-        :type: Socket:
+        :type: Socket
         """
 
         self._zmq_logger = None
