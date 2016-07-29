@@ -14,7 +14,8 @@ class StateChange:
         self._observers = []
         """
         The objects that observe the state of this object.
-        :type list:
+
+        :type: list
         """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -23,23 +24,29 @@ class StateChange:
         pass
 
     # ------------------------------------------------------------------------------------------------------------------
-    def register_observer(self, method, **args) -> None:
+    def register_observer(self, method, **args):
         """
         Registers an object as an observer of the state of this object.
+
+        :param method:
+        :param dict **args:
         """
         self._observers.append((method, args))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def unregister_all_observers(self) -> None:
+    def unregister_all_observers(self):
         """
         Unregisters all observers.
         """
         self._observers = []
 
     # ------------------------------------------------------------------------------------------------------------------
-    def notify_observer(self, old: dict, new: dict) -> None:
+    def notify_observer(self, old, new):
         """
         Notifies all observer about the state change of this object.
+
+        :param dict old:
+        :param dict new:
         """
         for (method, args) in self._observers:
             method(self, old, new, *args)

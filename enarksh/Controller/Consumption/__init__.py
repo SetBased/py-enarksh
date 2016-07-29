@@ -5,12 +5,15 @@ from enarksh.Controller.Consumption.ReadWriteLockConsumption import ReadWriteLoc
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def create_consumption(data: dict, host_resources: dict, schedule_resources: dict) -> Consumption:
+def create_consumption(data, host_resources, schedule_resources):
     """
     A factory for creating a Consumption.
 
-    :param data: The parameters required for creating the Consumption.
-    :return:
+    :param dict data: The parameters required for creating the Consumption.
+    :param dict host_resources:
+    :param dict schedule_resources:
+
+    :rtype: enarksh.Controller.Consumption.Consumption.Consumption
     """
     if data['ctp_id'] == enarksh.ENK_CTP_ID_COUNTING:
         return CountingConsumption(data, host_resources, schedule_resources)

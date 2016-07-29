@@ -17,34 +17,46 @@ class Port:
         self._dependencies = []
         """
         The dependencies of this port.
+
+        :type: list
         """
 
         self._node = node
         """
         The node (owner) of this port.
+
+        :type: Node
         """
 
         self._port_name = ''
         """
         The port name of this port.
+
+        :type: str
         """
 
         self._prt_id = 0
         """
         The ID of this port when it is stored in the database.
+
+        :type: int
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_prt_id(self) -> int:
+    def get_prt_id(self):
         """
         Returns the ID of this port.
+
+        :rtype: int
         """
         return self._prt_id
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_name(self) -> str:
+    def get_name(self):
         """
         Returns the name of this port.
+
+        :rtype: str
         """
         return self._port_name
 
@@ -52,16 +64,24 @@ class Port:
     def get_node(self):
         """
         Returns the node of this port.
+
+        :rtype: Node
         """
         return self._node
 
     # ------------------------------------------------------------------------------------------------------------------
-    def read_xml(self, xml: Element) -> None:
+    def read_xml(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         for element in list(xml):
             self.read_xml_element(element)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def read_xml_element(self, xml: Element) -> None:
+    def read_xml_element(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         tag = xml.tag
         if tag == 'PortName':
             self._port_name = xml.text
@@ -73,7 +93,10 @@ class Port:
             raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _read_xml_dependencies(self, xml: Element) -> None:
+    def _read_xml_dependencies(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         for element in list(xml):
             tag = element.tag
             if tag == 'Dependency':
@@ -85,26 +108,28 @@ class Port:
                 raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def validate(self, errors: list) -> None:
+    def validate(self, errors):
         """
         Validates this port against rules which are not imposed by XSD.
-        :param errors: A list of error messages.
+
+        :param list errors: A list of error messages.
         """
         for dependency in self._dependencies:
             dependency.validate(errors)
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
-    def store(self, nod_id: int) -> None:
+    def store(self, nod_id):
         """
         Stores the definition of this port into the database.
-        :param nod_id: The ID of the node to which this node belongs
+
+        :param int nod_id: The ID of the node to which this node belongs
         """
         pass
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
-    def store_dependencies(self) -> None:
+    def store_dependencies(self):
         """
         Stores the dependencies of this port into the database.
         """

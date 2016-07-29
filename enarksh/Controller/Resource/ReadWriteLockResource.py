@@ -19,25 +19,33 @@ class ReadWriteLockResource(Resource):
     Class for objects in the controller of type 'CountingResource'.
     """
     # ------------------------------------------------------------------------------------------------------------------
-    def __init__(self, data: dict):
+    def __init__(self, data):
+        """
+        Object constructor.
+
+        :param dict data:
+        """
         Resource.__init__(self, data)
 
         self._read_lock_count = 0
         """
         The number of consumptions that have currently a read lock on this resource.
 
-        :type int
+        :type: int
         """
 
         self._read_write_lock_count = 0
         """
         The number of consumptions that have currently a read-write lock on this resource (0 or either 1).
 
-        :type int
+        :type: int
         """
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_state_attributes(self):
+        """
+        :rtype: dict[str,int]
+        """
         if self._read_write_lock_count:
             return {'rws_id': enarksh.ENK_RWS_ID_WRITE}
 
@@ -48,11 +56,11 @@ class ReadWriteLockResource(Resource):
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
-    def acquire(self, rws_id: int) -> None:
+    def acquire(self, rws_id):
         """
         Registers that a node has currently a lock on this resource.
 
-        :param rws_id: The ID of the lock type.
+        :param int rws_id: The ID of the lock type.
         """
         if rws_id == enarksh.ENK_RWS_ID_READ:
             self._read_lock_count += 1
@@ -64,11 +72,13 @@ class ReadWriteLockResource(Resource):
             raise Exception("Unknown rws_id '{0!s}'.".format(rws_id))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def inquire(self, rws_id: int) -> bool:
+    def inquire(self, rws_id):
         """
         Returns True when it is possible the acquire a lock on this resource. Returns False otherwise.
 
-        :param rws_id: The ID of the lock type.
+        :param int rws_id: The ID of the lock type.
+
+        :rtype: bool
         """
         if rws_id == enarksh.ENK_RWS_ID_READ:
             # Is is possible to acquire a read lock when no consumption has a read-write lock on this resource.
@@ -83,11 +93,11 @@ class ReadWriteLockResource(Resource):
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
-    def release(self, rws_id: int) -> None:
+    def release(self, rws_id):
         """
         Registers that a node has no longer a lock on this resource.
 
-        :param rws_id: The ID of the lock type.
+        :param int rws_id: The ID of the lock type.
         """
         if rws_id == enarksh.ENK_RWS_ID_READ:
             self._read_lock_count -= 1
@@ -110,9 +120,11 @@ class ReadWriteLockResource(Resource):
         DataLayer.enk_back_read_write_lock_resource_update_consumpted(self.rsc_id, rws_id)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_type(self) -> str:
+    def get_type(self):
         """
         Return the name of the type this resource type.
+
+        :rtype: str
         """
         return 'ReadWriteLockResource'
 

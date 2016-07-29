@@ -18,13 +18,13 @@ class JobHandler:
     _allowed_users = []
 
     # ------------------------------------------------------------------------------------------------------------------
-    def __init__(self, sch_id: int, rnd_id: int, user_name: str, args):
+    def __init__(self, sch_id, rnd_id, user_name, args):
         """
         Creates a job handler for starting a job.
 
-        :param sch_id: The ID of the schedule of the job.
-        :param rnd_id: The ID of the job.
-        :param user_name: The user under which the job must run.
+        :param int sch_id: The ID of the schedule of the job.
+        :param int rnd_id: The ID of the job.
+        :param str user_name: The user under which the job must run.
         :param args: The arguments for the job.
         """
         self._sch_id = sch_id
@@ -54,64 +54,65 @@ class JobHandler:
         print("End   rnd_id: %10d, %8s, %s" % (self._rnd_id, self._user_name, str(self._args)))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_pid(self) -> int:
+    def get_pid(self):
         """
         Returns the PID of the job. If the job is finished the pid is -1.
 
-        :return: The PID of the job.
+        :rtype int: The PID of the job.
         """
         return self._child_pid
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_stdout(self) -> int:
+    def get_stdout(self):
         """
         Returns the file descriptor for reading the stdout of the child process.
 
-        :return: file descriptor
+        :rtype int: file descriptor
         """
         return self._stdout
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_stderr(self) -> int:
+    def get_stderr(self):
         """
         Returns the file descriptor for reading the stderr of the child process.
 
-        :return: file descriptor
+        :rtype int: file descriptor
         """
         return self._stderr
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_sch_id(self) -> int:
+    def get_sch_id(self):
         """
         Returns the ID of the schedule of the job.
 
-        :return: sch_id
+        :rtype: int
         """
         return self._sch_id
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_rnd_id(self) -> int:
+    def get_rnd_id(self):
         """
         Returns the ID of the job.
 
-        :return: rnd_id
+        :rtype: int
         """
         return self._rnd_id
 
     # ------------------------------------------------------------------------------------------------------------------
-    def set_job_has_finished(self) -> None:
+    def set_job_has_finished(self):
         """
         Marks that the job has finished.
         """
         self._child_pid = -1
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_logger_message(self, std: str):
+    def get_logger_message(self, std):
         """
         Returns a message for the logger.
 
-        :param std: log for stdout, err for stderr
-        :return: The log message.
+        :param str std: log for stdout, err for stderr
+
+        :rtype dict[str,mixed]: The log message.
         """
         if std == 'out':
             chunk_logger = self.stdout_logger
@@ -128,10 +129,11 @@ class JobHandler:
                 'filename2': chunk_logger.get_filename2()}
 
     # ------------------------------------------------------------------------------------------------------------------
-    def read(self, fd: int):
+    def read(self, fd):
         """
         Reads data from the file descriptor and stores the data in a chunk logger.
-        :param fd: The file descriptor.
+
+        :param int fd: The file descriptor.
         """
         if fd == self._stdout:
             data = os.read(fd, 1000)
@@ -157,9 +159,6 @@ class JobHandler:
 
     # ------------------------------------------------------------------------------------------------------------------
     def end_job(self):
-        """
-
-        """
         self._log_job_stop()
 
         self.stdout_logger.close()

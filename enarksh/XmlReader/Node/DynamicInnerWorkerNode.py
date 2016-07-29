@@ -11,11 +11,13 @@ from enarksh.XmlReader.Node.CompoundJobNode import CompoundJobNode
 
 class DynamicInnerWorkerNode(CompoundJobNode):
     # ------------------------------------------------------------------------------------------------------------------
-    def _store_self(self, srv_id: int, uri_id: int, p_nod_master: int) -> None:
+    def _store_self(self, srv_id, uri_id, p_nod_master):
         """
         Stores the definition of this node into the database.
-        :param srv_id: The ID of the schedule to which this node belongs.
-        :param uri_id: The ID of the URI of this node.
+
+        :param int srv_id: The ID of the schedule to which this node belongs.
+        :param int uri_id: The ID of the URI of this node.
+        :param int p_nod_master:
         """
         self._nod_id = DataLayer.enk_reader_node_store_dynamic_inner_worker(srv_id,
                                                                             uri_id,
@@ -26,10 +28,11 @@ class DynamicInnerWorkerNode(CompoundJobNode):
                                                                             p_nod_master)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _validate_helper(self, errors: list) -> None:
+    def _validate_helper(self, errors):
         """
         Helper function for validation this node.
-        :param errors: A list of error messages.
+
+        :param list errors: A list of error messages.
         """
         CompoundJobNode._validate_helper(self, errors)
 
@@ -48,10 +51,12 @@ class DynamicInnerWorkerNode(CompoundJobNode):
             errors.append(err)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def store(self, srv_id: int, p_nod_master: int) -> None:
+    def store(self, srv_id, p_nod_master):
         """
         Stores the definition of this node into the database.
-        :param srv_id: The ID of the schedule revision to which this node belongs.
+
+        :param int srv_id: The ID of the schedule revision to which this node belongs.
+        :param int p_nod_master:
         """
         CompoundJobNode.store(self, srv_id, p_nod_master)
 

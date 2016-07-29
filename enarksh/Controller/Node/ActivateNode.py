@@ -10,27 +10,31 @@ class ActivateNode(SimpleNode):
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
     def start(self):
-        # Set the status of this node to running.
+        """
+        Sets the status of this node to running.
+
+        :rtype: bool
+        """
         self.rst_id = enarksh.ENK_RST_ID_RUNNING
 
         return False
 
     # ------------------------------------------------------------------------------------------------------------------
-    def restart_failed(self) -> None:
+    def restart_failed(self):
         """
         Raises an exception.
         """
         raise Exception("Not possible to restart an activate node")
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _renew(self) -> None:
+    def _renew(self):
         """
         Raises an exception.
         """
         raise Exception("Not possible to renew an activate node")
 
     # ------------------------------------------------------------------------------------------------------------------
-    def restart(self) -> None:
+    def restart(self):
         """
         Raises an exception.
         """

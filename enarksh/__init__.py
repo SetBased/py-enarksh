@@ -58,11 +58,16 @@ ENK_LOCK_DIR = HOME + '/var/lock'
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def daemonize(pid_filename: str, stdin: str, stdout: str, stderr: str):
+def daemonize(pid_filename, stdin, stdout, stderr):
     """
     Turns the current process into a daemon process.
+
     Note: Call this function before opening files or create (database) connections.
-    :param pid_filename: The filename where the PID of the daemon process must be stored.
+
+    :param str pid_filename: The filename where the PID of the daemon process must be stored.
+    :param str stdin:
+    :param str stdout:
+    :param str stderr:
     """
     if os.path.exists(pid_filename):
         file = open(pid_filename, 'r')

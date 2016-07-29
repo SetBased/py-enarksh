@@ -32,52 +32,68 @@ class Schedule:
     """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def __init__(self, sch_id: int, host_resources: dict):
+    def __init__(self, sch_id, host_resources):
+        """
+        Object constructor.
+
+        :param int sch_id:
+        :param dict host_resources:
+        """
+
         self._sch_id = sch_id
         """
         The ID of the schedule.
+
+        :type: int
         """
 
         self._nodes = {}
         """
         A map from rnd_id to node for all the current nodes in this schedule.
-        :type dict:
+
+        :type: dict
         """
 
         self._children = {}
         """
         A map from rnd_id to a list with all child nodes.
-        :type dict:
+
+        :type: dict
         """
 
         self._successors = {}
         """
         A map from rnd_id to a list with all (direct and indirect) successor nodes.
-        :type dict:
+
+        :type: dict
         """
 
         self._schedule_load = 0
         """
         The load of this schedule. I.e. the current running (simple) nodes of this schedule.
-        :type dict:
+
+        :type: dict
         """
 
         self._schedule_node = None
         """
         The node that is the actual schedule.
-        :type Node:
+
+        :type: Node
         """
 
         self._activate_node = None
         """
         The node that is the activate node of the schedule.
-        :type Node:
+
+        :type: Node
         """
 
         self._arrest_node = None
         """
         The node that is the arrest node of the schedule.
-        :type Node:
+
+        :type: Node
         """
 
         self._mail_on_completion = True
@@ -89,19 +105,22 @@ class Schedule:
         self._mail_on_error = True
         """
         If set a mail must be send to the operator for each failed (simple) node.
-         :type bool:
+
+         :type: bool
         """
 
         self._usr_login = ''
         """
         The user ID of the operator.
-        :type str:
+
+        :type: str
         """
 
         self._queue = set()
         """
         The queue of nodes that are ready to run.
-        :type set:
+
+        :type: set
         """
 
         self._load(sch_id, host_resources)
@@ -111,13 +130,12 @@ class Schedule:
         print("Deleting schedule %s" % self._sch_id)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _load(self, sch_id: int, host_resources: dict) -> None:
+    def _load(self, sch_id, host_resources):
         """
         Loads the schedule from the database.
 
-        :param sch_id:
-        :param host_resources:
-        :return:
+        :param int sch_id:
+        :param dict host_resources:
         """
         schedule = DataLayer.enk_back_schedule_get_schedule(sch_id)
 
@@ -251,11 +269,16 @@ class Schedule:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _create_successor_lookup_table1(nodes_data: dict,
-                                        child_nodes_data: dict,
-                                        node_ports_data: dict,
-                                        ports_data: dict,
-                                        dependants_data: dict) -> dict:
+    def _create_successor_lookup_table1(nodes_data, child_nodes_data, node_ports_data, ports_data, dependants_data):
+        """
+        :param dict nodes_data:
+        :param dict child_nodes_data:
+        :param dict node_ports_data:
+        :param dict ports_data:
+        :param dict dependants_data:
+
+        :rtype: dict
+        """
         direct_lookup = {}
         for node_data in nodes_data.values():
             if node_data['rnd_id'] not in child_nodes_data:
@@ -284,12 +307,15 @@ class Schedule:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _create_successor_lookup_table2(lookup: list,
-                                        nodes_data: dict,
-                                        child_nodes_data: dict,
-                                        ports_data: dict,
-                                        dependants_data: dict,
-                                        prt_id) -> None:
+    def _create_successor_lookup_table2(lookup, nodes_data, child_nodes_data, ports_data, dependants_data, prt_id):
+        """
+        :param list lookup:
+        :param dict nodes_data:
+        :param dict child_nodes_data:
+        :param dict ports_data:
+        :param dict dependants_data:
+        :param prt_id:
+        """
         rnd_id1 = ports_data[prt_id]['rnd_id']
         if rnd_id1 in child_nodes_data:
             # Node rnd_id is a complex node.
@@ -307,7 +333,12 @@ class Schedule:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _create_successor_lookup_table3(lookup: dict, direct_lookup: dict, rnd_id_predecessor: int) -> None:
+    def _create_successor_lookup_table3(lookup, direct_lookup, rnd_id_predecessor):
+        """
+        :param dict lookup:
+        :param dict direct_lookup:
+        :param int rnd_id_predecessor:
+        """
         if rnd_id_predecessor in direct_lookup:
             for rnd_id_successor in direct_lookup[rnd_id_predecessor]:
                 if rnd_id_successor not in lookup:
@@ -316,7 +347,11 @@ class Schedule:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _create_predecessor_lookup_table1(direct_successors: dict) -> dict:
+    def _create_predecessor_lookup_table1(direct_successors):
+        """
+        :param dict direct_successors:
+        :rtype: dict
+        """
         predecessors = {}
 
         for rnd_id_predecessor in direct_successors.keys():
@@ -328,33 +363,37 @@ class Schedule:
         return predecessors
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_all_nodes(self) -> dict:
+    def get_all_nodes(self):
         """
         Returns all nodes in this schedule.
-        :return:
+
+        :rtype: dict
         """
         return self._nodes
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_node(self, rnd_id: int) -> Node:
+    def get_node(self, rnd_id):
         """
         Returns a node.
-        :type rnd_id: int The ID of the requested node.
-        :return Node:
+
+        :param int rnd_id: int The ID of the requested node.
+
+        :rtype: enarksh.Controller.Node.Node
         """
         return self._nodes[rnd_id]
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_sch_id(self) -> int:
+    def get_sch_id(self):
         """
         Returns the ID of this schedule.
-        :return:
+
+        :rtype: int
         """
         return self._sch_id
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def register_observer_new_node(method) -> None:
+    def register_observer_new_node(method):
         """
         Registers an object as an observer of the state of this object.
         """
@@ -362,7 +401,7 @@ class Schedule:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def register_observer_schedule_termination(method) -> None:
+    def register_observer_schedule_termination(method):
         """
         Registers an object as an observer for termination of this schedule.
         """
@@ -370,24 +409,37 @@ class Schedule:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _notify_observers_new_node(schedule, node: Node) -> None:
+    def _notify_observers_new_node(schedule, node):
         """
         Notifies all observers that a new node has been created.
+
+        :param schedule:
+        :param enarksh.Controller.Node.Node node:
         """
         for method in Schedule._observers_new_node:
             method(schedule, node)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _notify_observers_schedule_termination(schedule, rst_id: int) -> None:
+    def _notify_observers_schedule_termination(schedule, rst_id):
         """
         Notifies all observers that a schedule has terminated.
+
+        :param schedule:
+        :param int rst_id:
         """
         for method in Schedule._observers_schedule_termination:
             method(schedule, rst_id)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _test_node_run_status_of_successor(self, rnd_id: int, statuses: tuple, seen) -> bool:
+    def _test_node_run_status_of_successor(self, rnd_id, statuses, seen):
+        """
+        :param int rnd_id:
+        :param tuple statuses:
+        :param seen:
+
+        :rtype: bool
+        """
         if rnd_id in self._children:
             # Node rnd_id is complex node.
             for node in self._children[rnd_id]:
@@ -414,13 +466,14 @@ class Schedule:
         return False
 
     # ------------------------------------------------------------------------------------------------------------------
-    def request_possible_node_actions(self, rnd_id: int, message: dict) -> dict:
+    def request_possible_node_actions(self, rnd_id, message):
         """
         Returns the possible actions for a node.
 
-        :param rnd_id: The ID of the node.
-        :param message: The message containing possible actions and mail options.
-        :return: The message with possible node actions enabled.
+        :param int rnd_id: The ID of the node.
+        :param dict message: The message containing possible actions and mail options.
+
+        :rtype dict: The message with possible node actions enabled.
         """
         # Find node in map from rnd_id to node.
         node = self._nodes.get(rnd_id, None)
@@ -519,11 +572,13 @@ class Schedule:
         return message
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _node_action_restart(self, rnd_id: int) -> bool:
+    def _node_action_restart(self, rnd_id):
         """
         Restarts a node.
-        :param rnd_id: The ID of the node.
-        :return: True if the controller must reload the schedule. False otherwise.
+
+        :param int rnd_id: The ID of the node.
+
+        :rtype bool: True if the controller must reload the schedule. False otherwise.
         """
         # Find node in map from rnd_id to node.
         node = self._nodes.get(rnd_id, None)
@@ -536,10 +591,13 @@ class Schedule:
         return False
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _node_action_trigger_schedule(self, rnd_id: int) -> bool:
+    def _node_action_trigger_schedule(self, rnd_id):
         """
         Triggers the schedule.
-        :return: True if the controller must reload the schedule. False otherwise.
+
+        :param int rnd_id:
+
+        :rtype bool: True if the controller must reload the schedule. False otherwise.
         """
         run_id = DataLayer.enk_back_schedule_trigger(self._sch_id)
 
@@ -550,11 +608,13 @@ class Schedule:
         return run_id
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _node_action_restart_failed(self, rnd_id: int) -> bool:
+    def _node_action_restart_failed(self, rnd_id):
         """
         Restarts a node.
-        :param rnd_id: The ID of the node.
-        :return: False.
+
+        :param int rnd_id: The ID of the node.
+
+        :rtype bool: False.
         """
         # Find node in map from rnd_id to node.
         node = self._nodes.get(rnd_id, None)
@@ -567,7 +627,13 @@ class Schedule:
         return False
 
     # ------------------------------------------------------------------------------------------------------------------
-    def event_node_stop(self, rnd_id, exit_status) -> None:
+    def event_node_stop(self, rnd_id, exit_status):
+        """
+        :param int rnd_id:
+        :param int exit_status:
+
+        :rtype: None
+        """
         # Find node in map from rnd_id to node.
         node = self._nodes.get(rnd_id, None)
         if not node:
@@ -577,10 +643,11 @@ class Schedule:
         node.stop(exit_status)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _send_mail_on_error(self, node: Node) -> None:
+    def _send_mail_on_error(self, node):
         """
         Sends an email to the administrator that a simple node has failed.
-        :param node: The node that has failed.
+
+        :param enarksh.Controller.Node.Node node: The node that has failed.
         """
         try:
             user = DataLayer.enk_back_get_user_info(self._usr_login)
@@ -606,7 +673,7 @@ class Schedule:
             traceback.print_exc(file=sys.stderr)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _send_mail_on_completion(self) -> None:
+    def _send_mail_on_completion(self):
         """
         Sends an email to the administrator that the schedule has completed.
         """
@@ -642,7 +709,12 @@ class Schedule:
             traceback.print_exc(file=sys.stderr)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def slot_node_state_change(self, node: Node, old: dict, new: dict) -> None:
+    def slot_node_state_change(self, node, old, new):
+        """
+        :param enarksh.Controller.Node.Node node:
+        :param dict old:
+        :param dict new:
+        """
         # If required: sync the status of the node to the database.
         if old['rst_id'] != new['rst_id']:
             node.sync_state()
@@ -692,35 +764,44 @@ class Schedule:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def slot_resource_state_change(resource: Resource, old: dict, new: dict) -> None:
+    def slot_resource_state_change(resource, old, new):
+        """
+        :param enarksh.Controller.Resource resource:
+        :param dict old:
+        :param dict new:
+        """
         resource.sync_state()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_schedule_load(self) -> int:
+    def get_schedule_load(self):
         """
         Returns the schedule load of this schedule. I.e. the number of nodes of ths schedule that are currently running.
+
+        :rtype: int
         """
         return self._schedule_load
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_activate_node(self) -> Node:
+    def get_activate_node(self):
         """
         Returns the node that is the activate node of this schedule.
+
+        :rtype: enarksh.Controller.Node.Node
         """
         return self._activate_node
 
     # ------------------------------------------------------------------------------------------------------------------
-    def request_node_action(self,
-                            rnd_id: int,
-                            act_id: int,
-                            usr_login: str,
-                            mail_on_completion: bool,
-                            mail_on_error: bool) -> bool:
+    def request_node_action(self, rnd_id, act_id, usr_login, mail_on_completion, mail_on_error):
         """
         Executes a node action.
-        :param rnd_id: The ID of the node.
-        :param act_id: The ID of the action.
-        :return: True if the controller must reload the schedule. False otherwise.
+
+        :param int rnd_id: The ID of the node.
+        :param int act_id: The ID of the action.
+        :param str usr_login:
+        :param bool mail_on_completion:
+        :param bool mail_on_error:
+
+        :rtype bool: True if the controller must reload the schedule. False otherwise.
         """
         # Store the mail options.
         self._usr_login = usr_login
@@ -759,11 +840,14 @@ class Schedule:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def queue_compare(node1: Node, node2: Node):
+    def queue_compare(node1, node2):
         """
         Compares two nodes for sorting queued nodes.
-        :param node1:
-        :param node2:
+
+        :param enarksh.Controller.Node.Node node1:
+        :param enarksh.Controller.Node.Node node2:
+
+        :rtype: int
         """
         # Sort by scheduling weight.
         cmp = node1.get_schedule_wait() - node2.get_schedule_wait()
@@ -782,7 +866,8 @@ class Schedule:
     def get_queue(self):
         """
         Returns the queued nodes sorted by scheduling wait.
-        :return:
+
+        :rtype: set
         """
         return sorted(self._queue, key=functools.cmp_to_key(Schedule.queue_compare))
 

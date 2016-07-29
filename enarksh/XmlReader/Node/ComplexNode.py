@@ -1,3 +1,4 @@
+
 from pydoc import locate
 
 from lxml.etree import Element
@@ -14,17 +15,19 @@ class ComplexNode(Node):
         self._child_nodes = {}
         """
         The child nodes of this node.
-        :type dict:
+
+        :type: dict
         """
 
         self._resources = {}
         """
         The resources of this node.
-        :type dict:
+
+        :type: dict
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def store_dependencies(self) -> None:
+    def store_dependencies(self):
         """
         Stores the dependencies of this node into the database.
         """
@@ -35,10 +38,12 @@ class ComplexNode(Node):
             child_node.store_dependencies()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def store(self, srv_id: int, p_nod_master: int) -> None:
+    def store(self, srv_id, p_nod_master):
         """
         Stores the definition of this node into the database.
-        :param srv_id: The ID of the schedule revision to which this node belongs.
+
+        :param int srv_id: The ID of the schedule revision to which this node belongs.
+        :param int p_nod_master:
         """
         Node.store(self, srv_id, p_nod_master)
 
@@ -54,6 +59,8 @@ class ComplexNode(Node):
     def get_node_by_name(self, node_name):
         """
         Return a child node of this node.
+
+        :param str node_name:
         """
         if node_name == '.':
             return self
@@ -61,10 +68,11 @@ class ComplexNode(Node):
         return self._child_nodes[node_name]
 
     # ------------------------------------------------------------------------------------------------------------------
-    def set_levels(self, recursion_level: int=0) -> None:
+    def set_levels(self, recursion_level=0):
         """
         Sets the recursion level (i.e. the number of parent nodes) of the child nodes of this node.
-        :param recursion_level: The recursion level of this node.
+
+        :param int recursion_level: The recursion level of this node.
         """
         self._recursion_level = recursion_level
         for child_node in self._child_nodes.values():
@@ -73,10 +81,11 @@ class ComplexNode(Node):
         self._dependency_level = self.get_dependency_level()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _validate_helper(self, errors: list) -> None:
+    def _validate_helper(self, errors):
         """
         Helper function for validation this node.
-        :param errors: A list of error messages.
+
+        :param list errors: A list of error messages.
         """
         Node._validate_helper(self, errors)
 
@@ -91,11 +100,13 @@ class ComplexNode(Node):
         # @todo Validate no circular references exists.
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_resource_by_name(self, resource_name: str):
+    def get_resource_by_name(self, resource_name):
         """
         Returns a resource of the node.
-        :param resource_name: The name of the resource.
-        :return:
+
+        :param str resource_name: The name of the resource.
+
+        :rtype: mixed
         """
         if resource_name in self._resources:
             return self._resources[resource_name]
@@ -106,7 +117,10 @@ class ComplexNode(Node):
         return None
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _read_xml_nodes(self, xml: Element) -> None:
+    def _read_xml_nodes(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         for element in list(xml):
             module = locate('enarksh.XmlReader.Node')
             node = module.create_node(element.tag, self)
@@ -121,7 +135,10 @@ class ComplexNode(Node):
             self._child_nodes[name] = node
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _read_xml_resources(self, xml: Element) -> None:
+    def _read_xml_resources(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         for element in list(xml):
             tag = element.tag
             if tag == 'CountingResource':
@@ -142,7 +159,10 @@ class ComplexNode(Node):
             self._resources[name] = resource
 
     # ------------------------------------------------------------------------------------------------------------------
-    def read_xml_element(self, xml: Element) -> None:
+    def read_xml_element(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         tag = xml.tag
         if tag == 'Resources':
             self._read_xml_resources(xml)

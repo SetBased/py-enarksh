@@ -30,77 +30,110 @@ class Node(StateChange):
                       1: enarksh.ENK_RST_ID_COMPLETED}
 
     # ------------------------------------------------------------------------------------------------------------------
-    def __init__(self, node_data: dict):
+    def __init__(self, node_data):
+        """
+        Object constructor
+
+        :param dict node_data:
+        """
         StateChange.__init__(self)
 
         self.rnd_id = node_data['rnd_id']
         """
         The ID of this (run) node.
+
+        :type:
         """
 
-        self._node_name = str(node_data['nod_name'], 'utf-8')  # XXX DataLayer encoding issue
+        self._node_name = str(node_data['nod_name'], 'utf-8')  # @todo XXX DataLayer encoding issue
         """
         The name of this node.
-        :type str:
+
+        :type: str:
         """
 
         self.rst_id = node_data['rst_id']
         """
         The ID of the run status of this node.
+
+        :type:
         """
 
         self._rnd_datetime_start = node_data['rnd_datetime_start']
         """
         The epoch this node has been started.
+
+        :type:
         """
 
         self._rnd_datetime_stop = node_data['rnd_datetime_stop']
         """
         The epoch this node has finished.
+
+        :type:
         """
 
         self._exit_status = None
         """
         The exit status of the job of this node.
+
+        :type: bool
         """
 
         self.consumptions = []
         """
         The consumptions of this node.
+
+        :type: list
         """
 
         self.resources = []
         """
         The resources of this node.
+
+        :type: list
         """
 
         self.scheduling_weight = 0
         """
         The weight of this node to be taken into account when sorting queued nodes.
+
+        :type: int
         """
 
         self._parent_node = None
         """
         The parent node of this node.
+
+        :type: None|enarksh.Controller.Node.Node.Node
         """
 
         self._child_nodes = []
         """
         The child nodes of this node. This list is empty for simple nodes.
+
+        :type: list
         """
 
         self._predecessor_nodes = []
         """
         The direct (simple) predecessor nodes of this node. This list is empty for complex nodes.
+
+        :type: list
         """
 
         self._successor_nodes = []
         """
         The direct (simple) successor nodes of this node. This list is empty for complex nodes.
+
+        :type: list
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_state_attributes(self) -> dict:
+    def get_state_attributes(self):
+        """
+        :rtype: dict[str,int]
+        """
         return {'rnd_id': self.rnd_id,
                 'rst_id': self.rst_id}
 
@@ -120,7 +153,7 @@ class Node(StateChange):
         self._successor_nodes = []
 
     # ------------------------------------------------------------------------------------------------------------------
-    def acquire_resources(self) -> None:
+    def acquire_resources(self):
         """
         Acquires the resources required by this node.
         """
@@ -128,9 +161,11 @@ class Node(StateChange):
             consumption.acquire_resource()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def inquire_resources(self) -> bool:
+    def inquire_resources(self):
         """
         Returns true when there enough resources available to start this node. Otherwise returns false.
+
+        :rtype: bool
         """
         ret = True
 
@@ -142,7 +177,7 @@ class Node(StateChange):
         return ret
 
     # ------------------------------------------------------------------------------------------------------------------
-    def release_resources(self) -> None:
+    def release_resources(self):
         """
         Releases the resources required by this node.
         """
@@ -150,7 +185,7 @@ class Node(StateChange):
             consumption.release_resource()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _recompute_run_status(self) -> None:
+    def _recompute_run_status(self):
         if self._predecessor_nodes:
             count_not_completed = 0
             count_not_finished = 0
@@ -172,10 +207,11 @@ class Node(StateChange):
                 self._set_rst_id(enarksh.ENK_RST_ID_WAITING)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _set_rst_id(self, rst_id) -> None:
+    def _set_rst_id(self, rst_id):
         """
         Sets the run status of this node.
-        :param rst_id: The new run status for this node.
+
+        :param int rst_id: The new run status for this node.
         """
         old_rst_id = self.rst_id
         self.rst_id = rst_id
@@ -192,7 +228,12 @@ class Node(StateChange):
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
-    def slot_child_node_state_change(self, node, old: dict, new: dict) -> None:
+    def slot_child_node_state_change(self, node, old, new):
+        """
+        :param node:
+        :param dict old:
+        :param dict new:
+        """
         # Compute the running status of this complex node based on the running statuses of its child nodes.
         weight = 0
         for child_node in self._child_nodes:
@@ -203,12 +244,17 @@ class Node(StateChange):
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
-    def slot_predecessor_node_state_change(self, node, old: dict, new: dict) -> None:
+    def slot_predecessor_node_state_change(self, node, old, new):
+        """
+        :param node:
+        :param dict old:
+        :param dict new:
+        """
         if old['rst_id'] != new['rst_id']:
             self._recompute_run_status()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _renew(self) -> None:
+    def _renew(self):
         """
         If required renews this node, i.e. creates a new row in ENK_RUN_NODE.
         """
@@ -220,58 +266,76 @@ class Node(StateChange):
             self._exit_status = None
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_rnd_id(self) -> int:
+    def get_rnd_id(self):
         """
         Returns the ID of this node.
+
+        :rtype: int
         """
         return self.rnd_id
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_rst_id(self) -> int:
+    def get_rst_id(self):
         """
         Returns the ID of the run status of this node.
+
+        :rtype: int
         """
         return self.rst_id
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_name(self) -> str:
+    def get_name(self):
         """
         Returns the name of this node.
+
+        :rtype: str
         """
         return self._node_name
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_schedule_wait(self) -> int:
+    def get_schedule_wait(self):
         """
         Return the scheduling wait (i.e. the number (direct and indirect) of simple successors).
+
+        :rtype: int
         """
         return self.scheduling_weight
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
-    def set_rst_id(self, rst_id) -> None:
+    def set_rst_id(self, rst_id):
         """
         Sets the the run status of this node.
 
-        :param rst_id: The ID of the run status.
+        :param int rst_id: The ID of the run status.
         """
         self.rst_id = rst_id
 
     # ------------------------------------------------------------------------------------------------------------------
     def initialize(self,
-                   node_data: dict,
-                   schedule: dict,
-                   resources: dict,
-                   resources_data: dict,
-                   consumptions: dict,
-                   consumptions_data: dict,
-                   run_nodes: dict,
-                   child_nodes: dict,
-                   direct_predecessors: dict,
-                   direct_successors: dict,
-                   successors: dict) -> None:
+                   node_data,
+                   schedule,
+                   resources,
+                   resources_data,
+                   consumptions,
+                   consumptions_data,
+                   run_nodes,
+                   child_nodes,
+                   direct_predecessors,
+                   direct_successors,
+                   successors):
         """
-        Initialize this node.
+        :param dict node_data:
+        :param dict schedule:
+        :param dict resources:
+        :param dict resources_data:
+        :param dict consumptions:
+        :param dict consumptions_data:
+        :param dict run_nodes:
+        :param dict child_nodes:
+        :param dict direct_predecessors:
+        :param dict direct_successors:
+        :param dict successors:
         """
         # Initialize the resources of this node.
         if self.rnd_id in resources_data:
@@ -313,7 +377,10 @@ class Node(StateChange):
             self.scheduling_weight = len(successors[self.rnd_id])
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_start_message(self) -> dict:
+    def get_start_message(self):
+        """
+        :rtype: dict[str,str|int]
+        """
         message = {'type': 'start_node',
                    'rnd_id': self.rnd_id}
 
@@ -321,7 +388,7 @@ class Node(StateChange):
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
-    def restart(self) -> None:
+    def restart(self):
         """
         Restarts this node.
         """
@@ -329,7 +396,7 @@ class Node(StateChange):
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
-    def restart_failed(self) -> None:
+    def restart_failed(self):
         """
         Restarts all failed simple nodes.
         """
@@ -337,7 +404,10 @@ class Node(StateChange):
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
-    def start(self) -> bool:
+    def start(self):
+        """
+        :rtype: bool
+        """
         # Acquire the required resources of this node.
         self.acquire_resources()
 
@@ -348,7 +418,7 @@ class Node(StateChange):
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
-    def stop(self, exit_status) -> None:
+    def stop(self, exit_status):
         # Release all by this node consumed resources.
         self.release_resources()
 
@@ -362,11 +432,13 @@ class Node(StateChange):
             self._set_rst_id(enarksh.ENK_RST_ID_ERROR)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def fake_get_resource_by_name(self, name: str):
+    def fake_get_resource_by_name(self, name):
         """
         Returns a resource.
 
-        :type name: string The name of the requested resource.
+        :param str name: string The name of the requested resource.
+
+        :rtype: mixed
         """
         for resource in self.resources:
             if resource.get_name() == name:
@@ -387,17 +459,20 @@ class Node(StateChange):
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
-    def is_simple_node(self) -> bool:
+    def is_simple_node(self):
         """
         Returns True if this node is a simple node. Otherwise, returns False.
         """
         pass
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_uri(self, obj_type: str='node') -> str:
+    def get_uri(self, obj_type='node'):
         """
         Returns the URI of this node.
-        :param obj_type: The entity type.
+
+        :param str obj_type: The entity type.
+
+        :rtype: str
         """
         if self._parent_node:
             uri = self._parent_node.get_uri(obj_type)
@@ -408,7 +483,7 @@ class Node(StateChange):
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
-    def is_complex_node(self) -> bool:
+    def is_complex_node(self):
         """
         Returns True if this node is a complex node. Otherwise, returns False.
         """

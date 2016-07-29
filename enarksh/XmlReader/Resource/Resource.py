@@ -8,27 +8,37 @@ class Resource:
         self._node = node
         """
         The node that owns this resource.
+
+        :type: Node
         """
 
         self._resource_name = ''
         """
         The name of this resource.
-        :type str:
+
+        :type: str
         """
 
         self._rsc_id = 0
         """
         The ID of this resource when it is stored in the databases.
-        :type int:
+
+        :type: int
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def read_xml(self, xml: Element) -> None:
+    def read_xml(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         for element in list(xml):
             self.read_xml_element(element)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def read_xml_element(self, xml: Element) -> None:
+    def read_xml_element(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         tag = xml.tag
         if tag == 'ResourceName':
             self._resource_name = xml.text
@@ -37,24 +47,31 @@ class Resource:
             Resource.read_xml_element(self, xml)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_rsc_id(self) -> str:
+    def get_rsc_id(self):
         """
         Returns the ID of this resource.
+
+        :rtype: str
         """
         return self._rsc_id
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_name(self) -> str:
+    def get_name(self):
         """
         Returns the name of this resource.
+
+        :rtype: str
         """
         return self._resource_name
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_uri(self, obj_type: str='resource') -> str:
+    def get_uri(self, obj_type='resource'):
         """
         Returns the URI of this resource.
-        :param obj_type: The entity type.
+
+        :param str obj_type: The entity type.
+
+        :rtype: str
         """
         if self._node:
             uri = self._node.get_uri(obj_type)
@@ -65,14 +82,19 @@ class Resource:
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
-    def store(self, hst_id: int, nod_id: int) -> None:
+    def store(self, hst_id, nod_id):
+        """
+        :param int hst_id:
+        :param int nod_id:
+        """
         pass
 
     # ------------------------------------------------------------------------------------------------------------------
-    def validate(self, errors: list) -> None:
+    def validate(self, errors):
         """
         Validates this resource against rules which are not imposed by XSD.
-        :param errors: A list of error messages.
+
+        :param list errors: A list of error messages.
         """
         # Nothing to do.
 

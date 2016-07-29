@@ -25,21 +25,29 @@ class Logger:
         self._events = []
         """
         A list of events that needs be be processed.
+
+        :type: list
         """
 
         self._exit_flag = False
         """
         If set the logger must terminate.
+
+        :type: bool
         """
 
         self._zmq_context = None
         """
         The ZMQ context.
+
+        :type:
         """
 
         self._zmq_pull_socket = None
         """
         ZMQ socket for asynchronous incoming messages.
+
+        :type:
         """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -81,9 +89,11 @@ class Logger:
                 traceback.print_exc(file=sys.stderr)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _add_event(self, event: dict) -> None:
+    def _add_event(self, event):
         """
         Adds an event to the event queue.
+
+        :param dict event:
         """
         self._events.append(event)
 
@@ -98,6 +108,8 @@ class Logger:
     def _event_handler_log_file(self, message):
         """
         Handles a new log file available message from the spawner.
+
+        :param dict message:
         """
         print("%s %s %s" % (message['rnd_id'], message['name'], message['total_size']))
 
@@ -184,7 +196,7 @@ class Logger:
         os.unlink(filename)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _shutdown(self) -> None:
+    def _shutdown(self):
         """
         Performs the necessary actions for stopping the logger.
         """
@@ -199,7 +211,7 @@ class Logger:
         print('Stop logger')
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _startup(self) -> None:
+    def _startup(self):
         """
         Performs the necessary actions for starting up the logger.
         """
@@ -220,7 +232,7 @@ class Logger:
         self._create_pid_file()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _zmq_init(self) -> None:
+    def _zmq_init(self):
         """
         Initializes the ZMQ socket.
         """

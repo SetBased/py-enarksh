@@ -31,40 +31,41 @@ class Controller:
 
         self._zmq_context = None
         """
-        :type Context:
+        :type: zmq.Context
         """
 
         self._zmq_pull_socket = zmq.sugar.socket.Socket
         """
-        :type zmq.sugar.socket.Socket:
+        :type: zmq.sugar.socket.Socket
         """
 
         self._zmq_lockstep_socket = None
         """
-        :type zmq.sugar.socket.Socket:
+        :type: zmq.sugar.socket.Socket
         """
 
         self._zmq_spanner = None
         """
-        :type Socket:
+        :type: Socket:
         """
 
         self._zmq_logger = None
         """
-        :type Socket:
+        :type: Socket
         """
 
         self._host_resources = {}
         """
         All resources defined at host level.
 
-        :type dict:
+        :type: dict
         """
 
         self._schedules = {}
         """
         All the current schedules.
-        :type dict:
+
+        :type: dict
         """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -107,7 +108,7 @@ class Controller:
         os.setresuid(uid, uid, 0)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _create_host_resources(self) -> None:
+    def _create_host_resources(self):
         """
         Creates resources defined at host level.
         """
@@ -155,13 +156,22 @@ class Controller:
         DataLayer.disconnect()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def slot_schedule_termination(self, schedule: Schedule, rst_id: int) -> None:
+    def slot_schedule_termination(self, schedule, rst_id):
+        """
+        :param enarksh.Controller.Schedule.Schedule schedule:
+        :param int rst_id:
+        """
         print("Schedule %s has terminated with status %s" % (schedule.get_sch_id(), rst_id))
 
         self._unload_schedule(schedule.get_sch_id())
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _load_schedule(self, sch_id: int) -> Schedule:
+    def _load_schedule(self, sch_id):
+        """
+        :param int sch_id:
+
+        :rtype: enarksh.Controller.Schedule.Schedule
+        """
         print("Loading schedule '%s'." % sch_id)
 
         # Load the schedule.
@@ -173,8 +183,12 @@ class Controller:
         return schedule
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _unload_schedule(self, sch_id: int) -> None:
+    def _unload_schedule(self, sch_id):
+        """
+        :param int sch_id:
+        """
         print("Unloading schedule '%s'." % sch_id)
+
         if sch_id in self._schedules:
             schedule = self._schedules[sch_id]
 
@@ -186,18 +200,26 @@ class Controller:
             gc.collect()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _reload_schedule(self, sch_id: int) -> Schedule:
+    def _reload_schedule(self, sch_id):
+        """
+        :param int sch_id:
+
+        :rtype: enarksh.Controller.Schedule.Schedule
+        """
         self._unload_schedule(sch_id)
 
         return self._load_schedule(sch_id)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def queue_compare(schedule1: Schedule, schedule2: Schedule):
+    def queue_compare(schedule1, schedule2):
         """
         Compares two schedules for sorting queued nodes.
-        :param schedule1:
-        :param schedule2:
+
+        :param enarksh.Controller.Schedule.Schedule schedule1:
+        :param enarksh.Controller.Schedule.Schedule schedule2:
+
+        :rtype:
         """
         return -(schedule1.get_schedule_load() - schedule2.get_schedule_load)
 
@@ -246,10 +268,13 @@ class Controller:
         DataLayer.disconnect()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _get_schedule_by_sch_id(self, sch_id: int) -> Schedule:
+    def _get_schedule_by_sch_id(self, sch_id):
         """
         Returns a schedule.
-        :param sch_id: The ID of the schedule.
+
+        :param int sch_id: The ID of the schedule.
+
+        :rtype: enarksh.Controller.Schedule.Schedule
         """
         schedule = self._schedules.get(int(sch_id), None)
         if not schedule:
@@ -259,13 +284,14 @@ class Controller:
         return schedule
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _get_possible_node_actions(self, sch_id: int, rnd_id: int) -> dict:
+    def _get_possible_node_actions(self, sch_id, rnd_id):
         """
         Returns the possible actions for a node.
 
-        :param sch_id: The ID of the schedule of the node.
-        :param rnd_id: The ID of the node.
-        :return: Dictionary with possible node actions.
+        :param int sch_id: The ID of the schedule of the node.
+        :param int rnd_id: The ID of the node.
+
+        :rtype dict[str, bool|dict[int, dict[str, mixed]]]: Dictionary with possible node actions.
         """
         message = {'actions': {enarksh.ENK_ACT_ID_TRIGGER: {'act_id': enarksh.ENK_ACT_ID_TRIGGER,
                                                             'act_title': 'Trigger',
@@ -288,11 +314,11 @@ class Controller:
         return schedule.request_possible_node_actions(rnd_id, message)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _message_handler_request_possible_node_actions(self, message: dict) -> None:
+    def _message_handler_request_possible_node_actions(self, message):
         """
         Handles a request (from the web interface) for possible actions of a certain node.
 
-        :type message: The message of the request.
+        :param dict message: The message of the request.
         """
         sch_id = int(message['sch_id'])
         rnd_id = int(message['rnd_id'])
@@ -303,10 +329,11 @@ class Controller:
         self._zmq_lockstep_socket.send_json(response)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _message_handler_schedule_definition(self, message: dict) -> None:
+    def _message_handler_schedule_definition(self, message):
         """
         Handles a request (from the operator) for loading a new schedule.
-        :param message: The message of the request.
+
+        :param dict message: The message of the request.
         """
         try:
             # Validate XML against XSD.
@@ -339,10 +366,11 @@ class Controller:
         self._zmq_lockstep_socket.send_json(response)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _message_handler_dynamic_worker_definition(self, message: dict) -> None:
+    def _message_handler_dynamic_worker_definition(self, message):
         """
         Handles a request for loading a dynamic worker definition.
-        :param message: The message of the request.
+
+        :param dict message: The message of the request.
         """
         try:
             sch_id = int(message['sch_id'])
@@ -390,11 +418,11 @@ class Controller:
         self._zmq_lockstep_socket.send_json(response)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _message_handler_request_node_action(self, message: dict) -> None:
+    def _message_handler_request_node_action(self, message):
         """
         Executes a node action request.
 
-        :type message dict The message of the request.
+        :param dict message dict The message of the request.
         """
         # Compose a response message for the web interface.
         response = {'ret': 0,
@@ -445,6 +473,8 @@ class Controller:
     def _message_handler_node_stop(self, message):
         """
         Handles a message sent by the spanner after a job has finished.
+
+        :param dict message:
         """
         schedule = self._get_schedule_by_sch_id(message['sch_id'])
         schedule.event_node_stop(message['rnd_id'], message['exit_status'])
