@@ -55,7 +55,8 @@ class Event:
         """
         # Remove this event as an event in the current program.
         Event.event_controller.friend_unregister_event(self)
-        del self._source
+        if hasattr(self, '_source'):
+            del self._source
 
     # ------------------------------------------------------------------------------------------------------------------
     def fire(self, event_data=None):

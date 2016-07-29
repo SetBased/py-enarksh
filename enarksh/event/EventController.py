@@ -121,7 +121,10 @@ class EventController(EventActor):
         """
         self._dispatch_event(self._event_loop_start, None)
 
-        while not self._exit or self._queue:
+        if not self._exit and not self._queue:
+            self._dispatch_event(self._event_queue_empty, None)
+
+        while self._queue:
             event, event_data = self._queue.pop(0)
 
             self._dispatch_event(event, event_data)
@@ -179,7 +182,7 @@ class EventController(EventActor):
                 if not events:
                     del self._listener_objects[listener_object]
 
-        del self._events[event]
+            del self._events[event]
 
     # ------------------------------------------------------------------------------------------------------------------
     def friend_unregister_listener_object(self, listener_object):
