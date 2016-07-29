@@ -19,19 +19,19 @@ class Host:
         self._hostname = ''
         """
         The name of this host.
-        :type str:
+        :type: str
         """
 
         self._hst_id = 0
         """
         The ID of this host when it is stored in the databases.
-        :type int:
+        :type: int
         """
 
         self._resources = {}
         """
         The resources of this host.
-        :type dict:
+        :type: dict
         """
 
     # ------------------------------------------------------------------------------------------------------------------

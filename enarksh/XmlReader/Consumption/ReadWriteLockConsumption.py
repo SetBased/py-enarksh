@@ -20,7 +20,7 @@ class ReadWriteLockConsumption(Consumption):
         self.rws_id = 0
         """
         The lock type.
-        :type int:
+        :type: int
         """
 
     # ------------------------------------------------------------------------------------------------------------------

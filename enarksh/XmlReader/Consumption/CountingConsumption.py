@@ -20,7 +20,7 @@ class CountingConsumption(Consumption):
         self._amount = 0
         """
         The amount that will be consumpted.
-        :type int:
+        :type: int
         """
 
     # ------------------------------------------------------------------------------------------------------------------

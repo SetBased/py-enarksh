@@ -14,13 +14,13 @@ class ComplexNode(Node):
         self._child_nodes = {}
         """
         The child nodes of this node.
-        :type dict:
+        :type: dict
         """
 
         self._resources = {}
         """
         The resources of this node.
-        :type dict:
+        :type: dict
         """
 
     # ------------------------------------------------------------------------------------------------------------------

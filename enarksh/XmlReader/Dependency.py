@@ -21,13 +21,13 @@ class Dependency:
         self._port = port
         """
         The port (owner) of this dependency.
-        :type Port:
+        :type: Port
         """
 
         self._port_name = ''
         """
         The name of the referenced port of this dependency.
-        :type str:
+        :type: str
         """
 
     # ------------------------------------------------------------------------------------------------------------------

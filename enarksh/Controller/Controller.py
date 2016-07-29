@@ -31,40 +31,40 @@ class Controller:
 
         self._zmq_context = None
         """
-        :type Context:
+        :type: Context
         """
 
         self._zmq_pull_socket = zmq.sugar.socket.Socket
         """
-        :type zmq.sugar.socket.Socket:
+        :type: zmq.sugar.socket.Socket
         """
 
         self._zmq_lockstep_socket = None
         """
-        :type zmq.sugar.socket.Socket:
+        :type: zmq.sugar.socket.Socket
         """
 
         self._zmq_spanner = None
         """
-        :type Socket:
+        :type: Socket
         """
 
         self._zmq_logger = None
         """
-        :type Socket:
+        :type: Socket
         """
 
         self._host_resources = {}
         """
         All resources defined at host level.
 
-        :type dict:
+        :type: dict
         """
 
         self._schedules = {}
         """
         All the current schedules.
-        :type dict:
+        :type: dict
         """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -292,7 +292,7 @@ class Controller:
         """
         Handles a request (from the web interface) for possible actions of a certain node.
 
-        :type message: The message of the request.
+        :type: message The message of the request.
         """
         sch_id = int(message['sch_id'])
         rnd_id = int(message['rnd_id'])

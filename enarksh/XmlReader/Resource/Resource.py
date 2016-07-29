@@ -13,13 +13,13 @@ class Resource:
         self._resource_name = ''
         """
         The name of this resource.
-        :type str:
+        :type: str
         """
 
         self._rsc_id = 0
         """
         The ID of this resource when it is stored in the databases.
-        :type int:
+        :type: int
         """
 
     # ------------------------------------------------------------------------------------------------------------------

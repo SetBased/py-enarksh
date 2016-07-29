@@ -15,7 +15,7 @@ class Consumption:
         self._cns_id = 0
         """
         The ID of this consumption when it is stored in the databases.
-        :type int:
+        :type: int
         """
 
         self._node = node
