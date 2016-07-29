@@ -8,15 +8,18 @@ Licence MIT
 import sys
 import traceback
 
-from enarksh.event.Actor import Actor
 from enarksh.event.Event import Event
+from enarksh.event.EventActor import EventActor
 
 
-class EventController(Actor):
+class EventController(EventActor):
     """
     A single threaded and a run-to-completion event controller. That is, each event is processed completely before any
     other event is processed. Hence, an event listener will run entirely before any other code runs (which can
     potentially modify the data the event listener invokes).
+
+    Methods with name starting with 'friend_' MUST not be called from your application (only friend classes are allowed
+    to call these methods).
     """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -24,7 +27,7 @@ class EventController(Actor):
         """
         Object constructor.
         """
-        Actor.__init__(self)
+        EventActor.__init__(self)
 
         Event.event_controller = self
 
@@ -110,10 +113,15 @@ class EventController(Actor):
     def loop(self):
         """
         Start the event handler loop.
+
+        The event handler loop terminates under each of the conditions below:
+        * The event handler for 'event_queue_empty' completes without adding new events on the event queue.
+        * Property exit has been set to True and the event queue is empty. Note: after property exit has been set to
+          True event 'event_queue_empty' will not be fired any more.
         """
         self._dispatch_event(self._event_loop_start, None)
 
-        while not self._exit:
+        while not self._exit or self._queue:
             event, event_data = self._queue.pop(0)
 
             self._dispatch_event(event, event_data)
@@ -133,18 +141,19 @@ class EventController(Actor):
         :param enarksh.event.Event.Event event: The event to be dispatch.
         :param * event_data: Additional data supplied by the event source.
         """
-        try:
-            for listeners in self._events[event].values():
-                for listener, listener_data in listeners:
+        for listeners in self._events[event].values():
+            for listener, listener_data in listeners:
+                try:
                     listener(event, event_data, listener_data)
-        except Exception as exception:
-            print(exception, file=sys.stderr)
-            traceback.print_exc(file=sys.stderr)
+                except Exception as exception:
+                    # @todo Improve logging.
+                    print(exception, file=sys.stderr)
+                    traceback.print_exc(file=sys.stderr)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def queue_event(self, event, event_data):
+    def friend_queue_event(self, event, event_data):
         """
-        Puts a event that has fired on the event queue.
+        Puts an event that has fired on the event queue.
 
         Note: Do not use this method directly. Use enarksh.event.Event.Event.fire() instead.
 
@@ -154,11 +163,11 @@ class EventController(Actor):
         self._queue.append((event, event_data))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def unregister_event(self, event):
+    def friend_unregister_event(self, event):
         """
         Removes an event as an event in the current program.
 
-        Note: Do not use this method directly. Use enarksh.event.Actor.Actor.destroy() instead.
+        Note: Do not use this method directly. Use enarksh.event.EventActor.EventActor.destroy() instead.
 
         :param enarksh.event.Event.Event event: The event that must be removed.
         """
@@ -173,11 +182,11 @@ class EventController(Actor):
         del self._events[event]
 
     # ------------------------------------------------------------------------------------------------------------------
-    def unregister_listener_object(self, listener_object):
+    def friend_unregister_listener_object(self, listener_object):
         """
         Removes an object as a listener object (i.e. an object with one or more methods registered as event listeners).
 
-        Note: Do not use this method directly. Use enarksh.event.Actor.Actor.destroy() instead.
+        Note: Do not use this method directly. Use enarksh.event.EventActor.EventActor.destroy() instead.
 
         :param enarksh.event.Listener.Listener listener_object: The listener object.
         """
@@ -190,9 +199,9 @@ class EventController(Actor):
             del self._listener_objects[listener_object]
 
     # ------------------------------------------------------------------------------------------------------------------
-    def register_event(self, event):
+    def friend_register_event(self, event):
         """
-        Registers an event as, well, an event in the current program.
+        Registers an event as an event in the current program.
 
         Note: Do not use this method directly. This method is automatically called by
         enarksh.event.Event.Event#__init__()
@@ -201,30 +210,34 @@ class EventController(Actor):
         """
         self._events[event] = dict()
 
-        event.source.registered_events.add(event)
+        event.source.friend_registered_events.add(event)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def register_listener(self, event, listener, listener_data=None):
+    def friend_register_listener(self, event, listener, listener_data=None):
         """
-        Registers an object as a listener for this event.
+        Registers a callable as a listener for an event.
 
         Note: Do not use this method directly. Use enarksh.event.Event.Event.register_listener() instead.
 
         :param enarksh.event.Event.Event event: The event for which the listener needs to notified.
-        :param callable listener: The method that must be called when the event has fired.
-        :param listener_data: Additional data supplied by the listener.
+        :param callable listener: The callable that must be called when the event fires. If the callable is a class
+                                  method it object must be an instance of enarksh.event.EventActor.EventActor.
+        :param listener_data: Additional data supplied by the listener. This data will be passed to the listener when
+                              the event fires.
         """
         if hasattr(listener, '__self__'):
-            if not isinstance(listener.__self__, Actor):
-                raise ValueError('Only an actor can be a listener, got {0}'.format(listener.__class__))
+            if not isinstance(listener.__self__, EventActor):
+                raise ValueError('Only an event actor can be a listener, got {0}'.format(listener.__self__))
             listener_object = listener.__self__
         else:
             listener_object = None
 
+        # Register the event and the listener.
         if listener_object not in self._events[event]:
             self._events[event][listener_object] = list()
         self._events[event][listener_object].append((listener, listener_data))
 
+        # Register the listener's object as a listener object.
         if listener_object not in self._listener_objects:
             self._listener_objects[listener_object] = set()
         self._listener_objects[listener_object].add(event)

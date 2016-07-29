@@ -1,7 +1,7 @@
 import unittest
 from io import StringIO
 
-from enarksh.event.Actor import Actor
+from enarksh.event.EventActor import EventActor
 from enarksh.event.Event import Event
 from enarksh.event.EventController import EventController
 
@@ -21,16 +21,16 @@ class EventControllerTest(unittest.TestCase):
 
         controller = EventController()
 
-        class Spam(Actor):
+        class Spam(EventActor):
             def __init__(self, message):
-                Actor.__init__(self)
+                EventActor.__init__(self)
 
                 self.message = message
                 self.event = Event(self)
 
-        class Eggs(Actor):
+        class Eggs(EventActor):
             def __init__(self, spam):
-                Actor.__init__(self)
+                EventActor.__init__(self)
                 self.spam = spam
 
             def handle_event(self, event, again, *_):

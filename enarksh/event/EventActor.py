@@ -1,17 +1,17 @@
 from enarksh.event.Event import Event
 
 
-class Actor:
+class EventActor:
     """
     Parent class for classes that fire events and for classes that listen for events.
     """
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self):
-        self.registered_events = set()
+        self.friend_registered_events = set()
         """
-        All the (active) event this object can fire.
+        All the (active) events this object can fire.
 
-        Note: this field MUST only be touched by the event controller.
+        Note: This field MUST be touched by the event controller only.
 
         :type: set[enarksh.event.Event.Event]
         """
@@ -19,11 +19,12 @@ class Actor:
     # ------------------------------------------------------------------------------------------------------------------
     def destroy(self):
         """
-        Removes this object from the event system. This as preparation for removing this object.
+        Removes this object from the event system. This as preparation for removing this object such that there aren't
+        references (from the event system) to this object and the garbage collector can remove this object.
         """
-        for event in self.registered_events:
+        for event in self.friend_registered_events:
             event.destroy()
 
-        Event.event_controller.unregister_listener_object(self)
+        Event.event_controller.friend_unregister_listener_object(self)
 
 # ----------------------------------------------------------------------------------------------------------------------
