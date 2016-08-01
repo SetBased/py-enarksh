@@ -19,11 +19,13 @@ class ScheduleNode(ComplexNode):
         self._host.load_db('localhost')
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_resource_by_name(self, resource_name: str):
+    def get_resource_by_name(self, resource_name):
         """
         Returns a resource of this node.
-        :param resource_name: The name of the resource.
-        :return:
+
+        :param str resource_name: The name of the resource.
+
+        :rtype: Resource
         """
         resource = ComplexNode.get_resource_by_name(self, resource_name)
 
@@ -33,10 +35,12 @@ class ScheduleNode(ComplexNode):
         return resource
 
     # ------------------------------------------------------------------------------------------------------------------
-    def store(self, srv_id: int, p_nod_master: int) -> None:
+    def store(self, srv_id, p_nod_master):
         """
         Stores the definition of this node into the database.
-        :param srv_id: The ID of the schedule revision to which this node belongs.
+
+        :param int srv_id: The ID of the schedule revision to which this node belongs.
+        :param int p_nod_master:
         """
         ComplexNode.store(self, srv_id, p_nod_master)
 
@@ -56,11 +60,13 @@ class ScheduleNode(ComplexNode):
                                                           self._nod_id)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _store_self(self, srv_id: int, uri_id: int, p_nod_master: int) -> None:
+    def _store_self(self, srv_id, uri_id, p_nod_master):
         """
         Stores the definition of this node into the database.
-        :param srv_id: The ID of the schedule to which this node belongs.
-        :param uri_id: The ID of the URI of this node.
+
+        :param int srv_id: The ID of the schedule to which this node belongs.
+        :param int uri_id: The ID of the URI of this node.
+        :param int p_nod_master:
         """
         self._nod_id = DataLayer.enk_reader_node_store_schedule(srv_id,
                                                                 uri_id,

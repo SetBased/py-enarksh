@@ -5,9 +5,15 @@ from enarksh.XmlReader.Resource.Resource import Resource
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def create_resource(rtp_id, rsc_id, node) -> Resource:
+def create_resource(rtp_id, rsc_id, node):
     """
     A factory for creating nodes.
+
+    :param rtp_id:
+    :param rsc_id:
+    :param node:
+
+    :rtype: enarksh.XmlReader.Resource.Resource.Resource
     """
     if rtp_id == enarksh.ENK_RTP_ID_COUNTING:
         resource = CountingResource(node)

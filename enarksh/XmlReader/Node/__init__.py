@@ -10,12 +10,14 @@ from enarksh.XmlReader.Node.TerminatorNode import TerminatorNode
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def create_node(tag: str, parent_node: Node=None) -> Node:
+def create_node(tag, parent_node=None):
     """
     A factory for creating nodes.
 
-    :param data: The parameters required for creating the node.
-    :return: Node
+    :param str tag:
+    :param enarksh.XmlReader.Node.Node.Node parent_node:
+
+    :rtype: enarksh.XmlReader.Node.Node import Node
     """
     if tag == 'Schedule':
         return ScheduleNode(parent_node)

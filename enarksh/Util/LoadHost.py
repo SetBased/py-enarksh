@@ -69,8 +69,9 @@ class LoadHost:
         exit(exit_status)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _load_host(self, filename: str) -> bool:
+    def _load_host(self, filename):
         """
+        :param str filename:
         """
         reader = XmlReader()
         host = reader.parse_host(filename)

@@ -29,11 +29,13 @@ class DynamicJobNode(Node):
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _store_self(self, srv_id: int, uri_id: int, p_nod_master: int) -> None:
+    def _store_self(self, srv_id, uri_id, p_nod_master):
         """
         Stores the definition of this node into the database.
-        :param srv_id: The ID of the schedule to which this node belongs.
-        :param uri_id: The ID of the URI of this node.
+
+        :param int srv_id: The ID of the schedule to which this node belongs.
+        :param int uri_id: The ID of the URI of this node.
+        :param int p_nod_master:
         """
         self._nod_id = DataLayer.enk_reader_node_store_dynamic_job(srv_id,
                                                                    uri_id,
@@ -44,12 +46,17 @@ class DynamicJobNode(Node):
                                                                    p_nod_master)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_resource_by_name(self, resource_name: str):
+    def get_resource_by_name(self, resource_name):
+        """
+        :param str resource_name:
+
+        :rtype: str
+        """
         # A dynamic doesn't have resources.
         return self._parent_node.get_resource_by_name(resource_name)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def store_dependencies(self) -> None:
+    def store_dependencies(self):
         """
         Stores the dependencies of this node into the database.
         """
@@ -60,10 +67,12 @@ class DynamicJobNode(Node):
         self._worker.store_dependencies()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def store(self, srv_id: int, p_nod_master: int) -> None:
+    def store(self, srv_id, p_nod_master):
         """
         Stores the definition of this node into the database.
-        :param srv_id: The ID of the schedule revision to which this node belongs.
+
+        :param int srv_id: The ID of the schedule revision to which this node belongs.
+        :param int p_nod_master:
         """
         Node.store(self, srv_id, p_nod_master)
 
@@ -71,10 +80,11 @@ class DynamicJobNode(Node):
         self._worker.store(srv_id, p_nod_master)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def set_levels(self, recursion_level: int=0) -> None:
+    def set_levels(self, recursion_level=0):
         """
         Sets the recursion level (i.e. the number of parent nodes) of the child nodes of this node.
-        :param recursion_level: The recursion level of this node.
+
+        :param int recursion_level: The recursion level of this node.
         """
         self._recursion_level = recursion_level
 
@@ -84,7 +94,10 @@ class DynamicJobNode(Node):
         self._dependency_level = self.get_dependency_level()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _read_xml_generator(self, xml: Element) -> None:
+    def _read_xml_generator(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         module = locate('enarksh.XmlReader.Node')
         node = module.create_node('CommandJob', self)
         node.read_xml(xml)
@@ -93,7 +106,10 @@ class DynamicJobNode(Node):
         self._generator = node
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _read_xml_worker(self, xml: Element) -> None:
+    def _read_xml_worker(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         module = locate('enarksh.XmlReader.Node')
         node = module.create_node('DynamicOuterWorker', self)
         node.read_xml(xml)
@@ -102,7 +118,10 @@ class DynamicJobNode(Node):
         self._worker = node
 
     # ------------------------------------------------------------------------------------------------------------------
-    def read_xml_element(self, xml: Element) -> None:
+    def read_xml_element(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         tag = xml.tag
         if tag == 'Generator':
             self._read_xml_generator(xml)
@@ -114,10 +133,11 @@ class DynamicJobNode(Node):
             Node.read_xml_element(self, xml)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _validate_helper(self, errors: list) -> None:
+    def _validate_helper(self, errors):
         """
         Helper function for validation this node.
-        :param errors: A list of error messages.
+
+        :param list errors: A list of error messages.
         """
         Node._validate_helper(self, errors)
 
@@ -130,6 +150,10 @@ class DynamicJobNode(Node):
     def get_node_by_name(self, node_name):
         """
         Return a child node of this node.
+
+        :param str node_name:
+
+        :rtype: mixed
         """
         if node_name == '.':
             return self

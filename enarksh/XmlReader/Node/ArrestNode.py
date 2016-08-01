@@ -11,9 +11,11 @@ from enarksh.XmlReader.Node.SimpleNode import SimpleNode
 class ArrestNode(SimpleNode):
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def is_arrest_node() -> bool:
+    def is_arrest_node():
         """
         Returns true.
+
+        :rtype: bool
         """
         return True
 

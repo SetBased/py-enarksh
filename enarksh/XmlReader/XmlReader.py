@@ -15,10 +15,14 @@ from enarksh.XmlReader.Node import create_node, ScheduleNode, CompoundJobNode
 class XmlReader:
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def parse_schedule(xml: str, filename: str) -> ScheduleNode:
+    def parse_schedule(xml, filename):
         """
         Parses a schedule definition in XML.
-        :param xml: The XML with a schedule definition
+
+        :param str xml: The XML with a schedule definition
+        :param str filename:
+
+        :rtype: enarksh.XmlReader.Node.ScheduleNode
         """
         with open(enarksh.HOME + '/etc/enarksh.xsd', 'rb') as f:
             xsd = f.read()
@@ -50,10 +54,14 @@ class XmlReader:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def parse_dynamic_worker(xml: str, parent) -> CompoundJobNode:
+    def parse_dynamic_worker(xml, parent):
         """
         Parses a schedule definition in XML.
-        :param xml: The XML with a schedule definition
+
+        :param str xml: The XML with a schedule definition
+        :param parent:
+
+        :rtype: enarksh.XmlReader.Node.CompoundJobNode
         """
         with open(enarksh.HOME + '/etc/enarksh.xsd', 'rb') as f:
             xsd = f.read()
@@ -80,11 +88,13 @@ class XmlReader:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def parse_host(filename: str) -> Host:
+    def parse_host(filename):
         """
         Parses a host definition in XML.
-        :param filename: The XML file with a host definition
-        :return: Host
+
+        :param str filename: The XML file with a host definition
+
+        :rtype: enarksh.XmlReader.Host.Host
         """
         with open(filename, 'rt', encoding='utf-8') as f:
             xml = f.read()

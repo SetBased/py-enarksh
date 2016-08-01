@@ -16,48 +16,59 @@ class Resource(StateChange):
     Class for objects in the controller of type 'Resource'.
     """
     # ------------------------------------------------------------------------------------------------------------------
-    def __init__(self, data: dict):
+    def __init__(self, data):
+        """
+        Object constructor.
+
+        :param dict data:
+        """
         StateChange.__init__(self)
 
-        self.name = str(data['rsc_name'], 'utf-8')  # XXX pystratum
+        self.name = str(data['rsc_name'], 'utf-8')  # @todo XXX pystratum
         """
         The name of this resource.
+
         :type: int
         """
 
         self.rsc_id = data['rsc_id']
         """
         The ID of this resource.
+
         :type: int
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_name(self) -> str:
+    def get_name(self):
         """
         Returns the name of this resource.
+
+        :rtype: str
         """
         return self.name
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_rsc_id(self) -> str:
+    def get_rsc_id(self):
         """
         Returns the ID of this resource.
+
+        :rtype: str
         """
         return self.rsc_id
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
-    def acquire(self, *args) -> bool:
+    def acquire(self, *args):
         raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
-    def inquire(self, *args) -> bool:
+    def inquire(self, *args):
         raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
-    def release(self, *args) -> None:
+    def release(self, *args):
         raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------

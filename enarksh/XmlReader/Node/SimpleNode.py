@@ -10,11 +10,13 @@ from enarksh.XmlReader.Node.Node import Node
 
 class SimpleNode(Node):
     # ------------------------------------------------------------------------------------------------------------------
-    def get_resource_by_name(self, resource_name: str):
+    def get_resource_by_name(self, resource_name):
         """
         Returns a resource of the node.
-        :param resource_name: The name of the resource.
-        :return:
+
+        :param str resource_name: The name of the resource.
+
+        :rtype: mixed
         """
         if self._parent_node:
             return self._parent_node.get_resource_by_name(resource_name)
@@ -22,10 +24,11 @@ class SimpleNode(Node):
         return None
 
     # ------------------------------------------------------------------------------------------------------------------
-    def set_levels(self, recursion_level: int=0) -> None:
+    def set_levels(self, recursion_level=0):
         """
         Sets the recursion level (i.e. the number of parent nodes) of the child nodes of this node.
-        :param recursion_level: The recursion level of this node.
+
+        :param int recursion_level: The recursion level of this node.
         """
         self._recursion_level = recursion_level
         self._dependency_level = self.get_dependency_level()

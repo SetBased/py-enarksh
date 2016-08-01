@@ -11,11 +11,13 @@ from enarksh.XmlReader.Node.ComplexNode import ComplexNode
 
 class DynamicOuterWorkerNode(ComplexNode):
     # ------------------------------------------------------------------------------------------------------------------
-    def _store_self(self, srv_id: int, uri_id: int, p_nod_master: int) -> None:
+    def _store_self(self, srv_id, uri_id, p_nod_master):
         """
         Stores the definition of this node into the database.
-        :param srv_id: The ID of the schedule to which this node belongs.
-        :param uri_id: The ID of the URI of this node.
+
+        :param int srv_id: The ID of the schedule to which this node belongs.
+        :param int uri_id: The ID of the URI of this node.
+        :param int p_nod_master:
         """
         self._nod_id = DataLayer.enk_reader_node_store_dynamic_outer_worker(srv_id,
                                                                             uri_id,
@@ -26,10 +28,11 @@ class DynamicOuterWorkerNode(ComplexNode):
                                                                             p_nod_master)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _validate_helper(self, errors: list) -> None:
+    def _validate_helper(self, errors):
         """
         Helper function for validation this node.
-        :param errors: A list of error messages.
+
+        :param list errors: A list of error messages.
         """
         ComplexNode._validate_helper(self, errors)
 

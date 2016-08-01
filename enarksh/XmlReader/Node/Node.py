@@ -25,70 +25,86 @@ class Node:
         self._node_name = ''
         """
         The name of this node.
+
         :type: str
         """
 
         self._user_name = ''
         """
         The user under which this node or its child nodes must run.
+
         :type: str
         """
 
         self._input_ports = {}
         """
         The input ports of this node.
+
         :type: dict
         """
 
         self._output_ports = {}
         """
         The output ports of this node.
+
         :type: dict
         """
 
         self._consumptions = {}
         """
         The consumptions of this node.
+
         :type: dict
         """
 
         self._nod_id = 0
         """
         The ID of this node when it is stored in the database.
+
         :type: int
         """
 
         self._parent_node = parent_node
         """
         The parent node of this node.
+
         :type: Node
         """
 
         self._recursion_level = -1
         """
         The recursion level of this node. I.e. the total number of (recursive) parent nodes.
+
         :type: int
         """
 
         self._dependency_level = -1
         """
         The dependency level of this node. I.e. the number of predecessors of this node (with the parent node).
+
         :type: int
         """
 
         self._user_name = ''
         """
         The user under which this node or its child nodes must run.
+
         :type: str
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def read_xml(self, xml: Element) -> None:
+    def read_xml(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         for element in list(xml):
             self.read_xml_element(element)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def read_xml_element(self, xml: Element) -> None:
+    def read_xml_element(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         tag = xml.tag
         if tag == 'NodeName':
             self._node_name = xml.text
@@ -109,7 +125,10 @@ class Node:
             raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _read_xml_consumptions(self, xml: Element) -> None:
+    def _read_xml_consumptions(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         for element in list(xml):
             tag = element.tag
             if tag == 'CountingConsumption':
@@ -130,7 +149,10 @@ class Node:
             self._consumptions[name] = consumption
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _read_xml_input_ports(self, xml: Element) -> None:
+    def _read_xml_input_ports(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         for element in list(xml):
             tag = element.tag
             if tag == 'Port':
@@ -148,7 +170,10 @@ class Node:
                 raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _read_xml_output_ports(self, xml: Element) -> None:
+    def _read_xml_output_ports(self, xml):
+        """
+        :param xml.etree.ElementTree.Element xml:
+        """
         for element in list(xml):
             tag = element.tag
             if tag == 'Port':
@@ -167,34 +192,40 @@ class Node:
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
-    def get_resource_by_name(self, resource_name: str):
+    def get_resource_by_name(self, resource_name):
         """
         Returns a resource of the node.
-        :param resource_name: The name of the resource.
-        :return:
+
+        :param str resource_name: The name of the resource.
         """
         pass
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def is_activate_node() -> bool:
+    def is_activate_node():
         """
         Returns true if this node is a ActivateNode. Otherwise return false.
+
+        :rtype: bool
         """
         return False
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def is_arrest_node() -> bool:
+    def is_arrest_node():
         """
         Returns true if this node is a ActivateNode. Otherwise return false.
+
+        :rtype: bool
         """
         return False
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_dependency_level(self) -> int:
+    def get_dependency_level(self):
         """
         Returns the dependency level (i.e. the number of predecessors of this node within the parent node) of this node.
+
+        :rtype: int
         """
         if self._dependency_level == -1:
             self._dependency_level = 0
@@ -206,10 +237,13 @@ class Node:
         return self._dependency_level
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_uri(self, obj_type: str='node') -> str:
+    def get_uri(self, obj_type='node'):
         """
         Returns the URI of this node.
-        :param obj_type: The entity type.
+
+        :param str obj_type: The entity type.
+
+        :rtype: str
         """
         if self._parent_node:
             uri = self._parent_node.get_uri(obj_type)
@@ -219,9 +253,11 @@ class Node:
         return uri + '/' + self._node_name
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_user_name(self) -> str:
+    def get_user_name(self):
         """
         Returns the user name under which this node must run.
+
+        :rtype: str
         """
         if self._user_name:
             return self._user_name
@@ -232,9 +268,13 @@ class Node:
         return self._user_name
 
     # ------------------------------------------------------------------------------------------------------------------
-    def validate(self, fake_parent=None) -> str:
+    def validate(self, fake_parent=None):
         """
         Validates this node against rules which are not imposed by XSD.
+
+        :param fake_partnt:
+
+        :rtype: str
         """
         self._parent_node = fake_parent
 
@@ -253,10 +293,11 @@ class Node:
         return ''
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _validate_helper(self, errors: list) -> None:
+    def _validate_helper(self, errors):
         """
         Helper function for validation this node.
-        :param errors: A list of error messages.
+
+        :param list errors: A list of error messages.
         """
         # Validate all input ports.
         for port in self._input_ports.values():
@@ -273,16 +314,20 @@ class Node:
             port.validate(errors)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_nod_id(self) -> int:
+    def get_nod_id(self):
         """
         Returns the ID of this node.
+
+        :rtype: int
         """
         return self._nod_id
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_name(self) -> str:
+    def get_name(self):
         """
         Returns the name of this node.
+
+        :rtype: str
         """
         return self._node_name
 
@@ -290,14 +335,18 @@ class Node:
     def get_parent_node(self):
         """
         Returns the parent node of this node.
+
+        :rtype: Node
         """
         return self._parent_node
 
     # ------------------------------------------------------------------------------------------------------------------
-    def store(self, srv_id: int, p_nod_master: int) -> None:
+    def store(self, srv_id, p_nod_master):
         """
         Stores the definition of this node into the database.
-        :param srv_id: The ID of the schedule revision to which this node belongs.
+
+        :param int srv_id: The ID of the schedule revision to which this node belongs.
+        :param int p_nod_master:
         """
         # Get uri_id for this node.
         uri_id = DataLayer.enk_misc_insert_uri(self.get_uri())
@@ -318,9 +367,14 @@ class Node:
             port.store(self._nod_id)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_port_by_name(self, node_name: str, port_name: str):
+    def get_port_by_name(self, node_name, port_name):
         """
         Return an output port of a child node of this node or an input port this node.
+
+        :param str node_name:
+        :param str port_name:
+
+        :rtype: str
         """
         if node_name == '.':
             return self._input_ports[port_name]
@@ -334,11 +388,13 @@ class Node:
     def get_node_by_name(self, node_name):
         """
         Returns a child node of this node by name.
+
+        :param str node_name:
         """
         pass
 
     # ------------------------------------------------------------------------------------------------------------------
-    def store_dependencies(self) -> None:
+    def store_dependencies(self):
         """
         Stores the dependencies of this node into the database.
         """
@@ -352,20 +408,23 @@ class Node:
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
-    def set_levels(self, recursion_level: int=0) -> None:
+    def set_levels(self, recursion_level=0):
         """
         Sets the recursion level (i.e. the number of parent nodes) of the child nodes of this node.
-        :param recursion_level: The recursion level of this node.
+
+        :param int recursion_level: The recursion level of this node.
         """
         pass
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
-    def _store_self(self, srv_id: int, uri_id: int, p_nod_master: int) -> None:
+    def _store_self(self, srv_id, uri_id, p_nod_master):
         """
         Stores the definition of this node into the database.
-        :param srv_id: The ID of the schedule to which this node belongs.
-        :param uri_id: The ID of the URI of this node.
+
+        :param int srv_id: The ID of the schedule to which this node belongs.
+        :param int uri_id: The ID of the URI of this node.
+        :param int p_nod_master:
         """
         pass
 

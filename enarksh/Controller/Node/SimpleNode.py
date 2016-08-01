@@ -15,22 +15,26 @@ class SimpleNode(Node):
     Class for objects in the controller of type 'SimpleJob'.
     """
     # ------------------------------------------------------------------------------------------------------------------
-    def is_simple_node(self) -> bool:
+    def is_simple_node(self):
         """
         Returns True.
+
+        :rtype: bool
         """
         return True
 
     # ------------------------------------------------------------------------------------------------------------------
-    def is_complex_node(self) -> bool:
+    def is_complex_node(self):
         """
         Returns False.
+
+        :rtype: bool
         """
         return False
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
-    def restart(self) -> None:
+    def restart(self):
         """
         Restart this node and its successors.
         """
@@ -40,7 +44,7 @@ class SimpleNode(Node):
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
-    def restart_failed(self) -> None:
+    def restart_failed(self):
         """
         Restart this node.
         """
