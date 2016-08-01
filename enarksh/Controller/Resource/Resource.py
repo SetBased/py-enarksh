@@ -10,7 +10,6 @@ import abc
 from enarksh.Controller.StateChange import StateChange
 
 
-
 class Resource(StateChange):
     """
     Class for objects in the controller of type 'Resource'.
@@ -24,14 +23,14 @@ class Resource(StateChange):
         """
         StateChange.__init__(self)
 
-        self.name = str(data['rsc_name'], 'utf-8')  # @todo XXX pystratum
+        self._name = str(data['rsc_name'], 'utf-8')  # @todo XXX pystratum
         """
         The name of this resource.
 
         :type: int
         """
 
-        self.rsc_id = data['rsc_id']
+        self._rsc_id = data['rsc_id']
         """
         The ID of this resource.
 
@@ -39,22 +38,23 @@ class Resource(StateChange):
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_name(self):
+    @property
+    def name(self):
         """
         Returns the name of this resource.
 
         :rtype: str
         """
-        return self.name
+        return self._name
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_rsc_id(self):
+    def rsc_id(self):
         """
         Returns the ID of this resource.
 
         :rtype: str
         """
-        return self.rsc_id
+        return self._rsc_id
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod

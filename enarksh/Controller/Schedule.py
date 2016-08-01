@@ -128,6 +128,16 @@ class Schedule:
         self._load(sch_id, host_resources)
 
     # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def sch_id(self):
+        """
+        Returns the ID of this schedule.
+
+        :rtype: int
+        """
+        return self._sch_id
+
+    # ------------------------------------------------------------------------------------------------------------------
     def __del__(self):
         print("Deleting schedule %s" % self._sch_id)
 
@@ -385,15 +395,6 @@ class Schedule:
         return self._nodes[rnd_id]
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_sch_id(self):
-        """
-        Returns the ID of this schedule.
-
-        :rtype: int
-        """
-        return self._sch_id
-
-    # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def register_observer_new_node(method):
         """
@@ -490,7 +491,7 @@ class Schedule:
         # Get the current run status of the node.
         rst_id = node.get_rst_id()
 
-        if self._schedule_node.get_rnd_id() == rnd_id:
+        if self._schedule_node.rnd_id == rnd_id:
             # Node rnd_id is the schedule it self.
             if rst_id == enarksh.ENK_RST_ID_WAITING:
                 message['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
@@ -519,7 +520,7 @@ class Schedule:
 
             return message
 
-        if self._activate_node.get_rnd_id() == rnd_id:
+        if self._activate_node.rnd_id == rnd_id:
             # Node rnd_id is the trigger of the schedule.
             busy = self._test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_RUNNING,
                                                                     enarksh.ENK_RST_ID_QUEUED), set())
@@ -528,7 +529,7 @@ class Schedule:
 
             return message
 
-        if self._arrest_node.get_rnd_id() == rnd_id:
+        if self._arrest_node.rnd_id == rnd_id:
             # No actions are possible for an arrest node of a schedule.
             return message
 
@@ -659,7 +660,7 @@ class Schedule:
             "Job " + node.get_name() + " has run unsuccessfully."
             ""
             "Greetings from Enarksh"
-            subject = "Job of schedule " + self._schedule_node.get_name() + "failed."
+            subject = "Job of schedule " + self._schedule_node.name + "failed."
 
             msg = MIMEText(body)
             msg['Subject'] = subject
@@ -682,20 +683,20 @@ class Schedule:
         try:
             user = DataLayer.enk_back_get_user_info(self._usr_login)
 
-            if self._schedule_node.get_rst_id() == enarksh.ENK_RST_ID_ERROR:
+            if self._schedule_node.rst_id == enarksh.ENK_RST_ID_ERROR:
                 body = "Dear Enarksh user,"
                 ""
-                "Schedule " + self._schedule_node.get_name() + " has finished unsuccessfully."
+                "Schedule " + str(self._schedule_node.name) + " has finished unsuccessfully."
                 ""
                 "Greetings from Enarksh"
-                subject = "Schedule " + self._schedule_node.get_name() + "finished unsuccessfully."
+                subject = "Schedule " + self._schedule_node.name + "finished unsuccessfully."
             else:
                 body = "Dear Enarksh user,"
                 ""
-                "Schedule " + self._schedule_node.get_name() + " has finished successfully."
+                "Schedule " + str(self._schedule_node.name) + " has finished successfully."
                 ""
                 "Greetings from Enarksh"
-                subject = "Schedule " + self._schedule_node.get_name() + "finished successfully."
+                subject = "Schedule " + self._schedule_node.name + "finished successfully."
 
             msg = MIMEText(body)
             msg['Subject'] = subject
@@ -810,7 +811,7 @@ class Schedule:
         self._mail_on_completion = mail_on_completion
         self._mail_on_error = mail_on_error
 
-        if self._schedule_node.get_rnd_id() == rnd_id:
+        if self._schedule_node.rnd_id == rnd_id:
             # Node is the schedule is self.
             if act_id == enarksh.ENK_ACT_ID_TRIGGER:
                 return self._node_action_trigger_schedule(rnd_id)
@@ -820,14 +821,14 @@ class Schedule:
 
             raise Exception("Unknown or unsupported act_id '%s'." % act_id)
 
-        if self._activate_node.get_rnd_id() == rnd_id:
+        if self._activate_node.rnd_id == rnd_id:
             # Node is the activate node of the schedule.
             if act_id == enarksh.ENK_ACT_ID_TRIGGER:
                 return self._node_action_trigger_schedule(rnd_id)
 
             raise Exception("Unknown or unsupported act_id '%s'." % act_id)
 
-        if self._arrest_node.get_rnd_id() == rnd_id:
+        if self._arrest_node.rnd_id == rnd_id:
             # Node is the arrest node of the schedule. No actions are possible.
             raise Exception("Unknown or unsupported act_id '%s'." % act_id)
 

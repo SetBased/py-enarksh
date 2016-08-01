@@ -27,6 +27,26 @@ class Resource:
         """
 
     # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def name(self):
+        """
+        Returns the name of this resource.
+
+        :rtype: str
+        """
+        return self._resource_name
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def rsc_id(self):
+        """
+        Returns the ID of this resource.
+
+        :rtype: str
+        """
+        return self._rsc_id
+
+    # ------------------------------------------------------------------------------------------------------------------
     def read_xml(self, xml):
         """
         :param xml.etree.ElementTree.Element xml:
@@ -45,24 +65,6 @@ class Resource:
 
         else:
             Resource.read_xml_element(self, xml)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_rsc_id(self):
-        """
-        Returns the ID of this resource.
-
-        :rtype: str
-        """
-        return self._rsc_id
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_name(self):
-        """
-        Returns the name of this resource.
-
-        :rtype: str
-        """
-        return self._resource_name
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_uri(self, obj_type='resource'):

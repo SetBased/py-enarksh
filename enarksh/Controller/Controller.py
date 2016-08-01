@@ -422,7 +422,7 @@ class Controller:
         """
         Executes a node action request.
 
-        :param dict message dict The message of the request.
+        :param dict message: dict The message of the request.
         """
         # Compose a response message for the web interface.
         response = {'ret': 0,
@@ -447,7 +447,7 @@ class Controller:
                                                       (message['mail_on_error']))
                 if reload:
                     # Schedule must be reloaded.
-                    schedule = self._reload_schedule(schedule.get_sch_id())
+                    schedule = self._reload_schedule(schedule.sch_id)
                     # A reload is only required when the schedule is been triggered. However, this trigger is lost by
                     # reloading the schedule. So, resend the trigger.
                     schedule.request_node_action(schedule.get_activate_node().get_rnd_id(),

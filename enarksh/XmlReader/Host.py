@@ -156,7 +156,7 @@ class Host:
                 raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
             resource.read_xml(element)
-            name = resource.get_name()
+            name = resource.name
             # Check for resources with duplicate names.
             if name in self._resources:
                 raise Exception("Duplicate resource '{0!s}'.".format(name))

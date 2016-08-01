@@ -40,6 +40,56 @@ class JobHandler:
         self._stderr = -1
 
     # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def pid(self):
+        """
+        Returns the PID of the job. If the job is finished the pid is -1.
+
+        :rtype int: The PID of the job.
+        """
+        return self._child_pid
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def stderr(self):
+        """
+        Returns the file descriptor for reading the stderr of the child process.
+
+        :rtype int: file descriptor
+        """
+        return self._stderr
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def stdout(self):
+        """
+        Returns the file descriptor for reading the stdout of the child process.
+
+        :rtype int: file descriptor
+        """
+        return self._stdout
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def rnd_id(self):
+        """
+        Returns the ID of the job.
+
+        :rtype: int
+        """
+        return self._rnd_id
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def sch_id(self):
+        """
+        Returns the ID of the schedule of the job.
+
+        :rtype: int
+        """
+        return self._sch_id
+
+    # ------------------------------------------------------------------------------------------------------------------
     def _log_job_start(self):
         """
         Logs the starting of a job.
@@ -52,51 +102,6 @@ class JobHandler:
         Logs the end of job.
         """
         print("End   rnd_id: %10d, %8s, %s" % (self._rnd_id, self._user_name, str(self._args)))
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_pid(self):
-        """
-        Returns the PID of the job. If the job is finished the pid is -1.
-
-        :rtype int: The PID of the job.
-        """
-        return self._child_pid
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_stdout(self):
-        """
-        Returns the file descriptor for reading the stdout of the child process.
-
-        :rtype int: file descriptor
-        """
-        return self._stdout
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_stderr(self):
-        """
-        Returns the file descriptor for reading the stderr of the child process.
-
-        :rtype int: file descriptor
-        """
-        return self._stderr
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_sch_id(self):
-        """
-        Returns the ID of the schedule of the job.
-
-        :rtype: int
-        """
-        return self._sch_id
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_rnd_id(self):
-        """
-        Returns the ID of the job.
-
-        :rtype: int
-        """
-        return self._rnd_id
 
     # ------------------------------------------------------------------------------------------------------------------
     def set_job_has_finished(self):
@@ -125,8 +130,8 @@ class JobHandler:
                 'rnd_id': self._rnd_id,
                 'name': std,
                 'total_size': chunk_logger.get_total_log_size(),
-                'filename1': chunk_logger.get_filename1(),
-                'filename2': chunk_logger.get_filename2()}
+                'filename1': chunk_logger.filename1,
+                'filename2': chunk_logger.filename2}
 
     # ------------------------------------------------------------------------------------------------------------------
     def read(self, fd):

@@ -313,9 +313,9 @@ Ignition ...
         spam = Spam()
 
         # Register event listener
-        controller.event_loop_start.register_listener(spam.handle_event,'event_loop_start')
-        controller.event_loop_end.register_listener(spam.handle_event,'event_loop_end')
-        controller.event_queue_empty.register_listener(spam.handle_event,'event_queue_empty')
+        controller.event_loop_start.register_listener(spam.handle_event, 'event_loop_start')
+        controller.event_loop_end.register_listener(spam.handle_event, 'event_loop_end')
+        controller.event_queue_empty.register_listener(spam.handle_event, 'event_queue_empty')
 
         # Start the event loop.
         controller.loop()

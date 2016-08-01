@@ -43,16 +43,8 @@ class Port:
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_prt_id(self):
-        """
-        Returns the ID of this port.
-
-        :rtype: int
-        """
-        return self._prt_id
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_name(self):
+    @property
+    def name(self):
         """
         Returns the name of this port.
 
@@ -61,13 +53,24 @@ class Port:
         return self._port_name
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_node(self):
+    @property
+    def node(self):
         """
         Returns the node of this port.
 
         :rtype: Node
         """
         return self._node
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def prt_id(self):
+        """
+        Returns the ID of this port.
+
+        :rtype: int
+        """
+        return self._prt_id
 
     # ------------------------------------------------------------------------------------------------------------------
     def read_xml(self, xml):
