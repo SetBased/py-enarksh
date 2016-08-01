@@ -1,0 +1,33 @@
+"""
+Enarksh
+
+Copyright 2013-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
+# ----------------------------------------------------------------------------------------------------------------------
+from cleo import Command
+
+from enarksh.Util.LoadSchedule import LoadSchedule
+from enarksh.style.EnarkshStyle import EnarkshStyle
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+class LoadScheduleCommand(Command):
+    """
+    Loads the schedule.
+    """
+
+    name = 'load_schedule'
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def handle(self):
+        """
+        Executes the load schedule command.
+        """
+        self._io = EnarkshStyle(self.input, self.output)
+
+        reader = LoadSchedule()
+        reader.main()
+
+# ----------------------------------------------------------------------------------------------------------------------

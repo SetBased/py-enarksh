@@ -1,0 +1,40 @@
+"""
+Enarksh
+
+Copyright 2013-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
+# ----------------------------------------------------------------------------------------------------------------------
+import os
+
+from cleo import Command
+
+import enarksh
+from enarksh.Bootsrap import Bootstrap
+from enarksh.style.EnarkshStyle import EnarkshStyle
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+class BootstrapCommand(Command):
+    """
+    Executes bootstrap.
+    """
+
+    name = 'bootstrap'
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def handle(self):
+        """
+        Executes the bootstrap command.
+        """
+        self._io = EnarkshStyle(self.input, self.output)
+
+        os.chdir(enarksh.HOME)
+
+        bootstrap = Bootstrap()
+        ret = bootstrap.main()
+
+        exit(ret)
+
+# ----------------------------------------------------------------------------------------------------------------------
