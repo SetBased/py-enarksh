@@ -28,7 +28,7 @@ class BootstrapCommand(Command):
         """
         Executes the bootstrap command.
         """
-        self._io = EnarkshStyle(self.input, self.output)
+        self.output = EnarkshStyle(self.input, self.output)
 
         os.chdir(enarksh.HOME)
 

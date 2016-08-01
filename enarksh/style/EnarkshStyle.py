@@ -1,3 +1,10 @@
+"""
+Enarksh
+
+Copyright 2013-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 from cleo import OutputFormatterStyle
 from cleo.styles import CleoStyle
 

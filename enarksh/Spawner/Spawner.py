@@ -49,7 +49,7 @@ class Spawner:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _daemonize():
+    def daemonize():
         enarksh.daemonize(enarksh.HOME + '/var/lock/spawnerd.pid',
                           '/dev/null',
                           enarksh.HOME + '/var/log/spawnerd.log',

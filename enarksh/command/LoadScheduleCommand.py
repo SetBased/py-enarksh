@@ -25,7 +25,7 @@ class LoadScheduleCommand(Command):
         """
         Executes the load schedule command.
         """
-        self._io = EnarkshStyle(self.input, self.output)
+        self.output = EnarkshStyle(self.input, self.output)
 
         reader = LoadSchedule()
         reader.main()

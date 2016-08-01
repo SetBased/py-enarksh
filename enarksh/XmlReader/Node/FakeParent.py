@@ -5,7 +5,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-from enarksh.XmlReader.Resource import Resource
 
 
 class FakeParent:

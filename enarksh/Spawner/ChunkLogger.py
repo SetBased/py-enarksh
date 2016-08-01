@@ -1,7 +1,17 @@
+"""
+Enarksh
+
+Copyright 2013-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 import enarksh
 
 
 class ChunkLogger:
+    """
+    A class for logging the first and lats chunk of a stream.
+    """
     _file_count = 0
 
     # ------------------------------------------------------------------------------------------------------------------

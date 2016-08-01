@@ -1,7 +1,11 @@
+"""
+Enarksh
 
+Copyright 2013-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 from pydoc import locate
-
-from lxml.etree import Element
 
 from enarksh.XmlReader.Node.Node import Node
 from enarksh.XmlReader.Resource import CountingResource, ReadWriteLockResource

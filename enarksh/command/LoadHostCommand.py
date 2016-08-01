@@ -25,7 +25,7 @@ class LoadHostCommand(Command):
         """
         Executes the load host command.
         """
-        self._io = EnarkshStyle(self.input, self.output)
+        self.output = EnarkshStyle(self.input, self.output)
 
         reader = LoadHost()
         reader.main()

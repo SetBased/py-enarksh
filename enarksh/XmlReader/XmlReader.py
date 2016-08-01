@@ -9,7 +9,7 @@ from lxml import etree
 
 import enarksh
 from enarksh.XmlReader.Host import Host
-from enarksh.XmlReader.Node import create_node, ScheduleNode, CompoundJobNode
+from enarksh.XmlReader.Node import create_node
 
 
 class XmlReader:

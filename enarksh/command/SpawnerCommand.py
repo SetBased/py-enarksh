@@ -34,12 +34,12 @@ class SpawnerCommand(Command):
         """
         Executes the logger command.
         """
-        self._io = EnarkshStyle(self.input, self.output)
+        self.output = EnarkshStyle(self.input, self.output)
 
         spawner = Spawner()
 
         if self.option('daemonize'):
-            spawner._daemonize()
+            spawner.daemonize()
 
         spawner.main()
 

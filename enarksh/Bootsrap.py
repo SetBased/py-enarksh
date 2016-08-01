@@ -8,7 +8,7 @@ Licence MIT
 import subprocess
 import sys
 import traceback
-from pystratum.mysql.StaticDataLayer import StaticDataLayer
+from pystratum_mysql.StaticDataLayer import StaticDataLayer
 import enarksh
 
 from enarksh.DataLayer import DataLayer

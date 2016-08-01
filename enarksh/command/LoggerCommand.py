@@ -34,7 +34,7 @@ class LoggerCommand(Command):
         """
         Executes the logger command.
         """
-        self._io = EnarkshStyle(self.input, self.output)
+        self.output = EnarkshStyle(self.input, self.output)
 
         logger = Logger()
 

@@ -34,12 +34,12 @@ class ControllerCommand(Command):
         """
         Executes the controller command.
         """
-        self._io = EnarkshStyle(self.input, self.output)
+        self.output = EnarkshStyle(self.input, self.output)
 
         controller = Controller()
 
         if self.option('daemonize'):
-            controller._daemonize()
+            controller.daemonize()
 
         controller.main()
 

@@ -23,7 +23,7 @@ class CountingConsumption(Consumption):
         """
         Consumption.__init__(self, data, host_resources, schedule_resources)
 
-        self.amount_Consumption = data['cns_amount']
+        self.amount_consumption = data['cns_amount']
         """
         The amount consumpted by this Consumption.
 
@@ -37,7 +37,7 @@ class CountingConsumption(Consumption):
 
         :rtype: None
         """
-        return self._resource.acquire(self.amount_Consumption)
+        return self._resource.acquire(self.amount_consumption)
 
     # ------------------------------------------------------------------------------------------------------------------
     def inquire_resource(self):
@@ -46,13 +46,13 @@ class CountingConsumption(Consumption):
 
         :rtype: bool
         """
-        return self._resource.inquire(self.amount_Consumption)
+        return self._resource.inquire(self.amount_consumption)
 
     # ------------------------------------------------------------------------------------------------------------------
     def release_resource(self):
         """
         Releases the resource.
         """
-        self._resource.release(self.amount_Consumption)
+        self._resource.release(self.amount_consumption)
 
 # ----------------------------------------------------------------------------------------------------------------------

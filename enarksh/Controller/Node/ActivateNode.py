@@ -1,3 +1,10 @@
+"""
+Enarksh
+
+Copyright 2013-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 import enarksh
 from enarksh.Controller.StateChange import StateChange
 from enarksh.Controller.Node.SimpleNode import SimpleNode

@@ -1,5 +1,10 @@
-from xml.etree.ElementTree import Element
+"""
+Enarksh
 
+Copyright 2013-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 from enarksh.DataLayer import DataLayer
 
 from enarksh.XmlReader.Resource.Resource import Resource

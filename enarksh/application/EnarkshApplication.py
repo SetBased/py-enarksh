@@ -5,7 +5,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-# ----------------------------------------------------------------------------------------------------------------------
 from cleo import Application
 
 from enarksh.command.BootstrapCommand import BootstrapCommand
@@ -13,7 +12,6 @@ from enarksh.command.LoadHostCommand import LoadHostCommand
 from enarksh.command.LoadScheduleCommand import LoadScheduleCommand
 
 
-# ----------------------------------------------------------------------------------------------------------------------
 class EnarkshApplication(Application):
     """
     The Enarksh application.

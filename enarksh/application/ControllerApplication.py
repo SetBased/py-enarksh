@@ -5,13 +5,11 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-# ----------------------------------------------------------------------------------------------------------------------
 from cleo import Application
 
 from enarksh.command.ControllerCommand import ControllerCommand
 
 
-# ----------------------------------------------------------------------------------------------------------------------
 class ControllerApplication(Application):
     """
     The Enarksh controller application.

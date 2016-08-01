@@ -5,7 +5,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-from lxml.etree import Element
 from enarksh.DataLayer import DataLayer
 from enarksh.XmlReader.Resource import create_resource, ReadWriteLockResource, CountingResource
 

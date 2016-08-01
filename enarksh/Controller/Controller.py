@@ -90,7 +90,7 @@ class Controller:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _daemonize():
+    def daemonize():
         enarksh.daemonize(enarksh.HOME + '/var/lock/controllerd.pid',
                           '/dev/null',
                           enarksh.HOME + '/var/log/controllerd.log',
