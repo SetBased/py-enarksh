@@ -657,10 +657,10 @@ class Schedule:
 
             body = "Dear Enarksh user,"
             ""
-            "Job " + node.get_name() + " has run unsuccessfully."
+            "Job " + str(node.name) + " has run unsuccessfully."
             ""
             "Greetings from Enarksh"
-            subject = "Job of schedule " + self._schedule_node.name + "failed."
+            subject = "Job of schedule " + str(self._schedule_node.name) + "failed."
 
             msg = MIMEText(body)
             msg['Subject'] = subject
