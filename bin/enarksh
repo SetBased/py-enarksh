@@ -5,7 +5,7 @@ import sys
 
 sys.path.insert(0, os.path.realpath(os.path.dirname(os.path.realpath(__file__)) + '/..'))
 
-from enarksh.application.SpawnerApplication import SpawnerApplication
+from enarksh.application.EnarkshApplication import EnarkshApplication
 
-controller = SpawnerApplication()
-controller.run()
+enarksh = EnarkshApplication()
+enarksh.run()

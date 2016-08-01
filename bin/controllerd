@@ -1,10 +1,11 @@
 #!/usr/bin/python3
+
 import os
 import sys
 
-sys.path.append(os.path.realpath(os.path.dirname(os.path.realpath(__file__)) + '/..'))
+sys.path.insert(0, os.path.realpath(os.path.dirname(os.path.realpath(__file__)) + '/..'))
 
-from enarksh.Controller.Controller import Controller
+from enarksh.application.ControllerApplication import ControllerApplication
 
-controller = Controller()
-controller.main()
+controller = ControllerApplication()
+controller.run()
