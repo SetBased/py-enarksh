@@ -93,6 +93,36 @@ class Node:
         """
 
     # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def name(self):
+        """
+        Returns the name of this node.
+
+        :rtype: str
+        """
+        return self._node_name
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def nod_id(self):
+        """
+        Returns the ID of this node.
+
+        :rtype: int
+        """
+        return self._nod_id
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def parent_node(self):
+        """
+        Returns the parent node of this node.
+
+        :rtype: Node
+        """
+        return self._parent_node
+
+    # ------------------------------------------------------------------------------------------------------------------
     def read_xml(self, xml):
         """
         :param xml.etree.ElementTree.Element xml:
@@ -159,7 +189,7 @@ class Node:
                 port = InputPort(self)
                 port.read_xml(element)
 
-                name = port.get_name()
+                name = port.name
                 # Check for ports with duplicate names.
                 if name in self._input_ports:
                     raise Exception("Duplicate input port '{0!s}'.".format(name))
@@ -180,7 +210,7 @@ class Node:
                 port = OutputPort(self)
                 port.read_xml(element)
 
-                name = port.get_name()
+                name = port.name
                 # Check for ports with duplicate names.
                 if name in self._output_ports:
                     raise Exception("Duplicate output port '{0!s}'.".format(name))
@@ -312,33 +342,6 @@ class Node:
         # Validate all output ports.
         for port in self._output_ports.values():
             port.validate(errors)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_nod_id(self):
-        """
-        Returns the ID of this node.
-
-        :rtype: int
-        """
-        return self._nod_id
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_name(self):
-        """
-        Returns the name of this node.
-
-        :rtype: str
-        """
-        return self._node_name
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_parent_node(self):
-        """
-        Returns the parent node of this node.
-
-        :rtype: Node
-        """
-        return self._parent_node
 
     # ------------------------------------------------------------------------------------------------------------------
     def store(self, srv_id, p_nod_master):

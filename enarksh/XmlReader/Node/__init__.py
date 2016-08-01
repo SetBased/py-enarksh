@@ -46,4 +46,3 @@ def create_node(tag, parent_node=None):
     raise Exception("Unexpected node type '%s'.", tag)
 
 # ----------------------------------------------------------------------------------------------------------------------
-

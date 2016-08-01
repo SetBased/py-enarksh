@@ -52,7 +52,7 @@ class Host:
         resources_data = DataLayer.enk_back_get_host_resources()
         for resource_data in resources_data:
             resource = create_resource(resource_data['rtp_id'], resource_data['rsc_id'], None)
-            self._resources[resource.get_name()] = resource
+            self._resources[resource.name] = resource
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_resource_by_name(self, resource_name):
@@ -156,7 +156,7 @@ class Host:
                 raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
             resource.read_xml(element)
-            name = resource.get_name()
+            name = resource.name
             # Check for resources with duplicate names.
             if name in self._resources:
                 raise Exception("Duplicate resource '{0!s}'.".format(name))

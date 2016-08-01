@@ -341,7 +341,7 @@ class Controller:
             schedule = reader.parse_schedule(message['xml'], message['filename'])
 
             # Test schedule is currently running.
-            name = schedule.get_name()
+            name = schedule.name
             if name in self._schedules:
                 raise Exception("Schedule '%s' is currently running." % name)
 
@@ -390,7 +390,7 @@ class Controller:
             # Validate XML against XSD.
             reader = XmlReader()
             inner_worker = reader.parse_dynamic_worker(message['definition'], parent)
-            name = inner_worker.get_name()
+            name = inner_worker.name
 
             # Note: Dynamic node is the parent of the worker node which is the parent of the inner worker node.
             inner_worker.set_levels(info['nod_recursion_level']+2)
@@ -399,7 +399,7 @@ class Controller:
             inner_worker.store(info['srv_id'], 0)
 
             # Create dependencies between the input and output port of the worker node and its child node(s).
-            DataLayer.enk_back_node_dynamic_add_dependencies(info['nod_id_outer_worker'], inner_worker.get_nod_id())
+            DataLayer.enk_back_node_dynamic_add_dependencies(info['nod_id_outer_worker'], inner_worker.nod_id)
 
             # XXX trigger reload of front end
 
@@ -422,7 +422,7 @@ class Controller:
         """
         Executes a node action request.
 
-        :param dict message dict The message of the request.
+        :param dict message: dict The message of the request.
         """
         # Compose a response message for the web interface.
         response = {'ret': 0,
@@ -447,7 +447,7 @@ class Controller:
                                                       (message['mail_on_error']))
                 if reload:
                     # Schedule must be reloaded.
-                    schedule = self._reload_schedule(schedule.get_sch_id())
+                    schedule = self._reload_schedule(schedule.sch_id)
                     # A reload is only required when the schedule is been triggered. However, this trigger is lost by
                     # reloading the schedule. So, resend the trigger.
                     schedule.request_node_action(schedule.get_activate_node().get_rnd_id(),

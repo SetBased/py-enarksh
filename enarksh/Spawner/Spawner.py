@@ -162,7 +162,7 @@ class Spawner:
         job_handler = JobHandler(sch_id, rnd_id, user_name, args)
         job_handler.start_job()
 
-        self._job_handlers[job_handler.get_pid()] = job_handler
+        self._job_handlers[job_handler.pid] = job_handler
 
     # ------------------------------------------------------------------------------------------------------------------
     def _read_message(self):
