@@ -8,8 +8,6 @@ Licence MIT
 import enarksh
 from enarksh.Controller.Resource.Resource import Resource
 
-
-# ----------------------------------------------------------------------------------------------------------------------
 from enarksh.Controller.StateChange import StateChange
 from enarksh.DataLayer import DataLayer
 
@@ -18,6 +16,7 @@ class ReadWriteLockResource(Resource):
     """
     Class for objects in the controller of type 'CountingResource'.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, data):
         """
@@ -127,6 +126,5 @@ class ReadWriteLockResource(Resource):
         :rtype: str
         """
         return 'ReadWriteLockResource'
-
 
 # ----------------------------------------------------------------------------------------------------------------------

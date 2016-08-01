@@ -15,7 +15,7 @@ from enarksh.XmlReader.Port.InputPort import InputPort
 from enarksh.XmlReader.Port.OutputPort import OutputPort
 
 
-class Node:
+class Node(metaclass=abc.ABCMeta):
     # ------------------------------------------------------------------------------------------------------------------
     """
     Abstract class for parsing XML definition of nodes.
@@ -301,7 +301,7 @@ class Node:
         """
         Validates this node against rules which are not imposed by XSD.
 
-        :param fake_partnt:
+        :param fake_parent:
 
         :rtype: str
         """
@@ -391,7 +391,9 @@ class Node:
         """
         Returns a child node of this node by name.
 
-        :param str node_name:
+        :param str node_name: The name of the searched child node.
+
+        :rtype: enarksh.XmlReader.Node.Node.Node
         """
         pass
 

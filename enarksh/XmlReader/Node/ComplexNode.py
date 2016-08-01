@@ -5,13 +5,14 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import abc
 from pydoc import locate
 
 from enarksh.XmlReader.Node.Node import Node
 from enarksh.XmlReader.Resource import CountingResource, ReadWriteLockResource
 
 
-class ComplexNode(Node):
+class ComplexNode(metaclass=abc.ABCMeta, Node):
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, parent_node=None):
         Node.__init__(self, parent_node)
