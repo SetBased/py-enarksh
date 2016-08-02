@@ -8,7 +8,7 @@ Licence MIT
 # ----------------------------------------------------------------------------------------------------------------------
 from cleo import Command
 
-from enarksh.Logger.Logger import Logger
+from enarksh.logger.Logger import Logger
 from enarksh.style.EnarkshStyle import EnarkshStyle
 
 

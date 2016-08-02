@@ -8,7 +8,7 @@ Licence MIT
 # ----------------------------------------------------------------------------------------------------------------------
 from cleo import Command
 
-from enarksh.Controller.Controller import Controller
+from enarksh.controller.Controller import Controller
 from enarksh.style.EnarkshStyle import EnarkshStyle
 
 
