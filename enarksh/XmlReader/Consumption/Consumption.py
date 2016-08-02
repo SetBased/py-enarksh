@@ -9,7 +9,7 @@ import abc
 from xml.etree.ElementTree import Element
 
 
-class Consumption:
+class Consumption(metaclass=abc.ABCMeta):
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, node):
         self._cns_id = 0
@@ -86,7 +86,7 @@ class Consumption:
 
         :param int nod_id: The ID of the node to which this consumption belongs
         """
-        pass
+        raise NotImplementedError()
 
 
 # ----------------------------------------------------------------------------------------------------------------------

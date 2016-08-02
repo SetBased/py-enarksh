@@ -8,7 +8,7 @@ Licence MIT
 import abc
 
 
-class Consumption:
+class Consumption(metaclass=abc.ABCMeta):
     """
     Consumption of a node.
     """
@@ -48,7 +48,7 @@ class Consumption:
         """
         Actually acquires this consumption from the resource of this consumption.
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
@@ -56,7 +56,7 @@ class Consumption:
         """
         Returns true when there is enough resource available for this consumption. Returns false otherwise.
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
@@ -64,6 +64,6 @@ class Consumption:
         """
         Releases this consumption from the resource of this consumption.
         """
-        pass
+        raise NotImplementedError()
 
 # ----------------------------------------------------------------------------------------------------------------------

@@ -10,7 +10,7 @@ import abc
 from enarksh.Controller.StateChange import StateChange
 
 
-class Resource(StateChange):
+class Resource(StateChange, metaclass=abc.ABCMeta):
     """
     Class for objects in the controller of type 'Resource'.
     """

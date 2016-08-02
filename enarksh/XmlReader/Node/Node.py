@@ -227,7 +227,7 @@ class Node(metaclass=abc.ABCMeta):
 
         :param str resource_name: The name of the resource.
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -308,14 +308,15 @@ class Node(metaclass=abc.ABCMeta):
         self._parent_node = fake_parent
 
         errors = []
+        """:type errors: list[dict[str,str]]"""
         self._validate_helper(errors)
 
         if errors:
             message = ''
             for error in errors:
-                message += 'URI:   ' + error['uri'] + "\n"
-                message += 'Rule:  ' + error['rule'] + "\n"
-                message += 'Error: ' + error['error'] + "\n"
+                message += 'URI:   ' + error['uri'] + '\n'
+                message += 'Rule:  ' + error['rule'] + '\n'
+                message += 'Error: ' + error['error'] + '\n'
 
             return message
 
@@ -326,7 +327,7 @@ class Node(metaclass=abc.ABCMeta):
         """
         Helper function for validation this node.
 
-        :param list errors: A list of error messages.
+        :param list[dict[str,str]] errors: A list of error messages.
         """
         # Validate all input ports.
         for port in self._input_ports.values():
@@ -395,7 +396,7 @@ class Node(metaclass=abc.ABCMeta):
 
         :rtype: enarksh.XmlReader.Node.Node.Node
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     def store_dependencies(self):
@@ -418,7 +419,7 @@ class Node(metaclass=abc.ABCMeta):
 
         :param int recursion_level: The recursion level of this node.
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
@@ -430,6 +431,6 @@ class Node(metaclass=abc.ABCMeta):
         :param int uri_id: The ID of the URI of this node.
         :param int p_nod_master:
         """
-        pass
+        raise NotImplementedError()
 
 # ----------------------------------------------------------------------------------------------------------------------

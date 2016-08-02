@@ -11,7 +11,7 @@ from xml.etree.ElementTree import Element
 from enarksh.XmlReader.Dependency import Dependency
 
 
-class Port:
+class Port(metaclass=abc.ABCMeta):
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, node):
         self._dependencies = []
@@ -128,7 +128,7 @@ class Port:
 
         :param int nod_id: The ID of the node to which this node belongs
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
@@ -136,6 +136,6 @@ class Port:
         """
         Stores the dependencies of this port into the database.
         """
-        pass
+        raise NotImplementedError()
 
 # ----------------------------------------------------------------------------------------------------------------------

@@ -67,6 +67,7 @@ class Dependency:
         """
         # @todo XXX Node named $this->myNodeName must exists.
         # @todo XXX Node must have port named $this->myPortName.
+        pass
 
     # ------------------------------------------------------------------------------------------------------------------
     def store(self, port, node):

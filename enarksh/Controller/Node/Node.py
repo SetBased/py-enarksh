@@ -13,7 +13,7 @@ from enarksh.DataLayer import DataLayer
 from enarksh.Controller.StateChange import StateChange
 
 
-class Node(StateChange):
+class Node(StateChange, metaclass=abc.ABCMeta):
     """
     Abstract class for objects in the controller of type 'Node'.
     """
@@ -397,7 +397,7 @@ class Node(StateChange):
         """
         Restarts this node.
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
@@ -405,7 +405,7 @@ class Node(StateChange):
         """
         Restarts all failed simple nodes.
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
@@ -468,7 +468,7 @@ class Node(StateChange):
         """
         Returns True if this node is a simple node. Otherwise, returns False.
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_uri(self, obj_type='node'):
@@ -492,7 +492,7 @@ class Node(StateChange):
         """
         Returns True if this node is a complex node. Otherwise, returns False.
         """
-        pass
+        raise NotImplementedError()
 
 
 # ----------------------------------------------------------------------------------------------------------------------

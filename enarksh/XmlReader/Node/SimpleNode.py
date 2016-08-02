@@ -5,10 +5,12 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import abc
+
 from enarksh.XmlReader.Node.Node import Node
 
 
-class SimpleNode(Node):
+class SimpleNode(Node, metaclass=abc.ABCMeta):
     # ------------------------------------------------------------------------------------------------------------------
     def get_node_by_name(self, node_name):
         """

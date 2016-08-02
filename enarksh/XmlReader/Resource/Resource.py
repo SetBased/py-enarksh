@@ -95,7 +95,7 @@ class Resource:
         :param int hst_id:
         :param int nod_id:
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     def validate(self, errors):

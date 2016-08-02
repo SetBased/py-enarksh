@@ -129,13 +129,13 @@ class Logger:
 
             if skipped != 0:
                 # Add a newline to the end of the buffer, if required.
-                if log[-1:] != "\n":
-                    log += "\n"
+                if log[-1:] != '\n':
+                    log += '\n'
 
                     # Note: This concatenation doesn't work for multi byte character sets.
-                    log += "\n"
-                    log += "Enarksh: Skipped $skipped bytes.\n"
-                    log += "\n"
+                    log += '\n'
+                    log += "Enarksh: Skipped {0} bytes.\n".format(skipped)
+                    log += '\n'
 
                 log += buf2
 
