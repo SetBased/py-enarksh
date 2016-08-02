@@ -50,9 +50,9 @@ class ScheduleNode(ComplexNode):
         nod_id_arrest = 0
         for child_node in self._child_nodes.values():
             if child_node.is_activate_node():
-                nod_id_activate = child_node.get_nod_id()
+                nod_id_activate = child_node.nod_id
             if child_node.is_arrest_node():
-                nod_id_arrest = child_node.get_nod_id()
+                nod_id_arrest = child_node.nod_id
 
         DataLayer.enk_reader_node_store_schedule_addendum(srv_id,
                                                           nod_id_activate,

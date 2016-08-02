@@ -22,7 +22,7 @@ class CommandJobNode(SimpleNode):
     # ------------------------------------------------------------------------------------------------------------------
     def read_xml_arg(self, xml):
         """
-        :param xml.etree.ElementTree.Element xml:
+        :param xml.etree.ElementTree.Element xml: XXX
         """
         tag = xml.tag
         if tag == 'Arg':
@@ -34,7 +34,7 @@ class CommandJobNode(SimpleNode):
     # ------------------------------------------------------------------------------------------------------------------
     def read_xml_element(self, xml):
         """
-        :param xml.etree.ElementTree.Element xml:
+        :param xml.etree.ElementTree.Element xml: XXX
         """
         tag = xml.tag
         if tag == 'Path':

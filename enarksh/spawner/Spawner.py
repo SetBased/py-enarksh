@@ -32,6 +32,12 @@ class Spawner:
         self._zmq_logger = None
 
         self._job_handlers = {}
+        """
+        The job handlers. Two entries for each currently process to the same jab handler. One for stdout and on for the
+        stderr of the processes.
+
+        :type: dict[int,enarksh.spawner.JobHandler.JobHandler]
+        """
 
     # ------------------------------------------------------------------------------------------------------------------
     def _zmq_init(self):
@@ -139,8 +145,8 @@ class Spawner:
 
                     # Send message to controller that a job has finished.
                     message = {'type':        'node_stop',
-                               'sch_id':      job_handler.get_sch_id(),
-                               'rnd_id':      job_handler.get_rnd_id(),
+                               'sch_id':      job_handler.sch_id,
+                               'rnd_id':      job_handler.rnd_id,
                                'exit_status': status}
                     self._zmq_controller.send_json(message)
 
@@ -208,10 +214,10 @@ class Spawner:
             # Add the job handlers to the list of read file descriptors.
             remove = []
             for pid, job_handler in self._job_handlers.items():
-                fd_stdout = job_handler.get_stdout()
+                fd_stdout = job_handler.stdout
                 if fd_stdout >= 0:
                     read.append(fd_stdout)
-                fd_stderr = job_handler.get_stderr()
+                fd_stderr = job_handler.stderr
                 if fd_stderr >= 0:
                     read.append(fd_stderr)
 
@@ -255,10 +261,10 @@ class Spawner:
                     self._read_message()
                 else:
                     # fd of one or more job handlers are ready to receive data.
-                    for _, job_handler in self._job_handlers.items():
-                        if fd == job_handler.get_stdout():
+                    for job_handler in self._job_handlers.values():
+                        if fd == job_handler.stdout:
                             job_handler.read(fd)
-                        if fd == job_handler.get_stderr():
+                        if fd == job_handler.stderr:
                             job_handler.read(fd)
 
             if self._child_flag:

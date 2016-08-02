@@ -158,12 +158,12 @@ class Controller:
     # ------------------------------------------------------------------------------------------------------------------
     def slot_schedule_termination(self, schedule, rst_id):
         """
-        :param enarksh.controller.Schedule.Schedule schedule:
+        :param enarksh.controller.Schedule.Schedule schedule: The schedule.
         :param int rst_id:
         """
-        print("Schedule %s has terminated with status %s" % (schedule.get_sch_id(), rst_id))
+        print("Schedule %s has terminated with status %s" % (schedule.sch_id, rst_id))
 
-        self._unload_schedule(schedule.get_sch_id())
+        self._unload_schedule(schedule.sch_id)
 
     # ------------------------------------------------------------------------------------------------------------------
     def _load_schedule(self, sch_id):
@@ -250,7 +250,7 @@ class Controller:
                         # If required send a message to the spanner.
                         if span_job:
                             message = node.get_start_message()
-                            message['sch_id'] = schedule.get_sch_id()
+                            message['sch_id'] = schedule.sch_id
                             self._zmq_spanner.send_json(message)
 
                         else:

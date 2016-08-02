@@ -89,6 +89,14 @@ class Logger:
                 traceback.print_exc(file=sys.stderr)
 
     # ------------------------------------------------------------------------------------------------------------------
+    @staticmethod
+    def daemonize():
+        enarksh.daemonize(os.path.join(enarksh.HOME, 'var/lock/loggerd.pid'),
+                          '/dev/null',
+                          os.path.join(enarksh.HOME, 'var/log/loggerd.log'),
+                          os.path.join(enarksh.HOME, 'var/log/loggerd.log'))
+
+    # ------------------------------------------------------------------------------------------------------------------
     def _add_event(self, event):
         """
         Adds an event to the event queue.

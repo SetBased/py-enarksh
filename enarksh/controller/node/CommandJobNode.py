@@ -26,14 +26,14 @@ class CommandJobNode(SimpleNode):
         """
         The account under which the command must run.
 
-        :type:
+        :type: str
         """
 
         self._command = json.loads(node_data['nod_command'])
         """
         The actual command of this job.
 
-        :type:
+        :type: list[str]
         """
 
     # ------------------------------------------------------------------------------------------------------------------

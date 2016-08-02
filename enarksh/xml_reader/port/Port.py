@@ -17,14 +17,14 @@ class Port(metaclass=abc.ABCMeta):
         """
         The dependencies of this port.
 
-        :type: list
+        :type: list[enarksh.xml_reader.port.Port.Port]
         """
 
         self._node = node
         """
         The node (owner) of this port.
 
-        :type: Node
+        :type: enarksh.xml_reader.node.Node.Node
         """
 
         self._port_name = ''
@@ -57,7 +57,7 @@ class Port(metaclass=abc.ABCMeta):
         """
         Returns the node of this port.
 
-        :rtype: Node
+        :rtype: enarksh.xml_reader.node.Node.Node
         """
         return self._node
 

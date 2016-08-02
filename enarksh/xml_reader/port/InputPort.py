@@ -54,6 +54,6 @@ class InputPort(Port):
     # ------------------------------------------------------------------------------------------------------------------
     def store_dependencies(self):
         for dependency in self._dependencies:
-            dependency.store(self, self._node.get_parent_node())
+            dependency.store(self, self._node.parent_node)
 
 # ----------------------------------------------------------------------------------------------------------------------

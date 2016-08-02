@@ -8,4 +8,7 @@ sys.path.insert(0, os.path.realpath(os.path.dirname(os.path.realpath(__file__)) 
 from enarksh.application.EnarkshApplication import EnarkshApplication
 
 enarksh = EnarkshApplication()
-enarksh.run()
+ret = enarksh.run()
+
+exit(ret)
+

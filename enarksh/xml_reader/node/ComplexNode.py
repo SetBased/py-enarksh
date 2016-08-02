@@ -21,14 +21,14 @@ class ComplexNode(Node, metaclass=abc.ABCMeta):
         """
         The child nodes of this node.
 
-        :type: dict
+        :type: dict[str, enarksh.xml_reader.node.Node.Node]
         """
 
         self._resources = {}
         """
         The resources of this node.
 
-        :type: dict
+        :type: dict[str, enarksh.xml_reader.resource.Resource.Resource]
         """
 
     # ------------------------------------------------------------------------------------------------------------------

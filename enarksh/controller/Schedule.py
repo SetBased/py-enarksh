@@ -5,17 +5,17 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-from email.mime.text import MIMEText
+import functools
 import smtplib
 import sys
 import traceback
-import functools
+from email.mime.text import MIMEText
 
 import enarksh
-from enarksh.controller import resource
-from enarksh.controller import consumption
 from enarksh.DataLayer import DataLayer
-from enarksh.controller.node import create_node, Node
+from enarksh.controller import consumption
+from enarksh.controller import resource
+from enarksh.controller.node import create_node
 
 
 class Schedule:
@@ -53,7 +53,7 @@ class Schedule:
         """
         A map from rnd_id to node for all the current nodes in this schedule.
 
-        :type: dict
+        :type: dict[int,enarksh.controller.node.Node.Node]
         """
 
         self._children = {}
@@ -455,14 +455,14 @@ class Schedule:
 
         else:
             # Node rnd_id is a simple node.
-            if self._nodes[rnd_id].get_rst_id() in statuses:
+            if self._nodes[rnd_id].rst_id in statuses:
                 return True
 
             if rnd_id in self._successors:
                 for node in self._successors[rnd_id]:
                     if node.rnd_id not in seen:
                         seen.add(node.rnd_id)
-                        if node.get_rst_id() in statuses:
+                        if node.rst_id in statuses:
                             return True
 
                         if self._test_node_run_status_of_successor(node.rnd_id, statuses, seen):
@@ -491,7 +491,7 @@ class Schedule:
         message['mail_on_error'] = self._mail_on_error
 
         # Get the current run status of the node.
-        rst_id = node.get_rst_id()
+        rst_id = node.rst_id
 
         if self._schedule_node.rnd_id == rnd_id:
             # Node rnd_id is the schedule it self.
@@ -608,9 +608,9 @@ class Schedule:
 
         if not run_id:
             node = self._nodes[rnd_id]
-            node.set_rst_id(enarksh.ENK_RST_ID_QUEUED)
+            node.rst_id = enarksh.ENK_RST_ID_QUEUED
 
-        return run_id
+        return run_id  #  XXX Convert to bool
 
     # ------------------------------------------------------------------------------------------------------------------
     def _node_action_restart_failed(self, rnd_id):
@@ -875,6 +875,5 @@ class Schedule:
         :rtype: set
         """
         return sorted(self._queue, key=functools.cmp_to_key(Schedule.queue_compare))
-
 
 # ----------------------------------------------------------------------------------------------------------------------

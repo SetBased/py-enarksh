@@ -2,6 +2,7 @@
 __pycache__
 /.coverage
 /etc/config.txt
+/etc/enarksh.cfg
 /etc/routines.json
 /bin/phing
 /composer.lock

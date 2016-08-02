@@ -377,7 +377,7 @@ class Node(metaclass=abc.ABCMeta):
         :param str node_name:
         :param str port_name:
 
-        :rtype: str
+        :rtype: enarksh.xml_reader.port.Port.Port
         """
         if node_name == '.':
             return self._input_ports[port_name]

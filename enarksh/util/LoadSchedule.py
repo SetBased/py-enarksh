@@ -9,6 +9,7 @@ import argparse
 import os
 import traceback
 import sys
+from pprint import pprint
 
 import zmq
 
@@ -36,36 +37,28 @@ class LoadSchedule:
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def main(self):
+    def main(self, filenames):
         """
         The main function of load_schedule.
+
+        :param list[str] filenames: The filenames of the schedules to be loaded.
         """
-        # Parse the arguments.
-        parser = argparse.ArgumentParser(description='Description')
-        parser.add_argument(dest='file_names',
-                            metavar='filename',
-                            action='append',
-                            nargs='*',
-                            help="XML file with a schedule definition")
-
-        args = parser.parse_args()
-
         # Initialize ZMQ.
         self._zmq_init()
 
         # Send XML files to the controller.
-        exit_status = 0
-        for filename in args.file_names:
+        status = 0
+        for filename in filenames:
             try:
-                err = self._load_schedule(filename[0])
+                err = self._load_schedule(filename)
                 if err:
-                    exit_status = -1
+                    status = -1
             except Exception as exception:
                 print(exception, file=sys.stderr)
                 traceback.print_exc(file=sys.stderr)
-                exit_status = -1
+                status = -1
 
-        exit(exit_status)
+        return status
 
     # ------------------------------------------------------------------------------------------------------------------
     def _zmq_init(self):

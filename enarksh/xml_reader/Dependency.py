@@ -22,7 +22,7 @@ class Dependency:
         """
         The port (owner) of this dependency.
 
-        :type: Port
+        :type: enarksh.xml_reader.port.Port.Port
         """
 
         self._port_name = ''
@@ -40,7 +40,7 @@ class Dependency:
         if self._node_name == '.':
             return -1
         else:
-            return self._port.get_node().get_parent_node().get_node_by_name(self._node_name).get_dependency_level()
+            return self._port.node.parent_node.get_node_by_name(self._node_name).get_dependency_level()
 
     # ------------------------------------------------------------------------------------------------------------------
     def read_xml(self, xml):
@@ -72,11 +72,13 @@ class Dependency:
     # ------------------------------------------------------------------------------------------------------------------
     def store(self, port, node):
         """
-        :param Port port:
-        :param Node node:
+        Stores this dependency into the database.
+
+        :param enarksh.xml_reader.port.Port.Port port: The port of the dependency.
+        :param enarksh.xml_reader.node.Node.Node node: The node of the dependency.
         """
-        prt_id_dependant = port.get_prt_id()
-        prt_id_predecessor = node.get_port_by_name(self._node_name, self._port_name).get_prt_id()
+        prt_id_dependant = port.prt_id
+        prt_id_predecessor = node.get_port_by_name(self._node_name, self._port_name).prt_id
 
         DataLayer.enk_reader_dependency_store_dependency(prt_id_dependant, prt_id_predecessor)
 

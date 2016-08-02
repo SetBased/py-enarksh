@@ -22,9 +22,9 @@ class ControllerCommand(Command):
 
     options = [
         {
-            'name': 'daemonize',
-            'shortcut': 'd',
-            'flag': True,
+            'name':        'daemonize',
+            'shortcut':    'd',
+            'flag':        True,
             'description': 'If set, use demonize'
         }
     ]
@@ -42,6 +42,5 @@ class ControllerCommand(Command):
             controller.daemonize()
 
         controller.main()
-
 
 # ----------------------------------------------------------------------------------------------------------------------

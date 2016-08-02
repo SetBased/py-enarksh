@@ -39,7 +39,7 @@ class LoggerCommand(Command):
         logger = Logger()
 
         if self.option('daemonize'):
-            pass  # @todo do stuff
+            logger.daemonize()
 
         logger.main()
 

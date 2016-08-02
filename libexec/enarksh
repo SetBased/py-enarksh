@@ -21,17 +21,17 @@ start()
 		rm -f "$ENK_HOME/var/lock/controllerd.pid"
 
 		echo -n "Starting Enarksh logger: "
-		daemon --user enarksh "$ENK_HOME/bin/loggerd"
+		daemon --user enarksh "$ENK_HOME/bin/loggerd logger -d"
 		success $"Enarksh loggerd startup"
 		echo
 
 		echo -n "Starting Enarksh spawner: "
-		daemon "$ENK_HOME/bin/spawnerd"
+		daemon "$ENK_HOME/bin/spawnerd spawner -d"
 		success $"Enarksh spawnerd startup"
 		echo
 
 		echo -n "Starting Enarksh controller: "
-		daemon --user enarksh "$ENK_HOME/bin/controllerd"
+		daemon --user enarksh "$ENK_HOME/bin/controllerd controller -d"
 		success $"Enarksh controllerd startup" &
 		echo
 

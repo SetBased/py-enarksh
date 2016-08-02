@@ -92,8 +92,8 @@ class Resource(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def store(self, hst_id, nod_id):
         """
-        :param int hst_id:
-        :param int nod_id:
+        :param int|None hst_id: The ID of the host.
+        :param int|Node nod_id: The ID of the node.
 
         :rtype: None
         """

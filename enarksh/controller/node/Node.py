@@ -17,10 +17,10 @@ class Node(StateChange, metaclass=abc.ABCMeta):
     """
     Abstract class for objects in the controller of type 'Node'.
     """
-    _rst_id_weight = {enarksh.ENK_RST_ID_RUNNING: 5,
-                      enarksh.ENK_RST_ID_QUEUED: 4,
-                      enarksh.ENK_RST_ID_ERROR: 3,
-                      enarksh.ENK_RST_ID_WAITING: 2,
+    _rst_id_weight = {enarksh.ENK_RST_ID_RUNNING:   5,
+                      enarksh.ENK_RST_ID_QUEUED:    4,
+                      enarksh.ENK_RST_ID_ERROR:     3,
+                      enarksh.ENK_RST_ID_WAITING:   2,
                       enarksh.ENK_RST_ID_COMPLETED: 1}
 
     _weight_rst_id = {5: enarksh.ENK_RST_ID_RUNNING,
@@ -42,7 +42,7 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         """
         The ID of this (run) node.
 
-        :type:
+        :type: int
         """
 
         self._node_name = str(node_data['nod_name'], 'utf-8')  # @todo XXX DataLayer encoding issue
@@ -56,7 +56,7 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         """
         The ID of the run status of this node.
 
-        :type:
+        :type: int
         """
 
         self._rnd_datetime_start = node_data['rnd_datetime_start']
@@ -77,21 +77,21 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         """
         The exit status of the job of this node.
 
-        :type: bool
+        :type: None|bool
         """
 
         self.consumptions = []
         """
         The consumptions of this node.
 
-        :type: list
+        :type: list[enarksh.controller.consumption.Consumption.Consumption]
         """
 
         self.resources = []
         """
         The resources of this node.
 
-        :type: list
+        :type: list[enarksh.controller.resource.Resource.Resource]
         """
 
         self._scheduling_weight = 0
@@ -112,21 +112,21 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         """
         The child nodes of this node. This list is empty for simple nodes.
 
-        :type: list
+        :type: list[enarksh.controller.node.Node.Node]
         """
 
         self._predecessor_nodes = []
         """
         The direct (simple) predecessor nodes of this node. This list is empty for complex nodes.
 
-        :type: list
+        :type: list[enarksh.controller.node.Node.Node]
         """
 
         self._successor_nodes = []
         """
         The direct (simple) successor nodes of this node. This list is empty for complex nodes.
 
-        :type: list
+        :type: list[enarksh.controller.node.Node.Node]
         """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -161,6 +161,15 @@ class Node(StateChange, metaclass=abc.ABCMeta):
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
+    def _rst_id_wrapper(self, rst_id):  # XXX Hack!
+        """
+        Setter for rst_id. Sets the the run status of this node.
+
+        :param int rst_id: The ID of the run status.
+        """
+        self._rst_id = rst_id
+
+    # ------------------------------------------------------------------------------------------------------------------
     @rst_id.setter
     def rst_id(self, rst_id):
         """
@@ -168,7 +177,7 @@ class Node(StateChange, metaclass=abc.ABCMeta):
 
         :param int rst_id: The ID of the run status.
         """
-        self.rst_id = rst_id
+        self._rst_id_wrapper(rst_id)
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
@@ -243,8 +252,8 @@ class Node(StateChange, metaclass=abc.ABCMeta):
             for predecessor in self._predecessor_nodes:
                 if predecessor.rst_id != enarksh.ENK_RST_ID_COMPLETED:
                     count_not_completed += 1
-                if predecessor.rst_id != enarksh.ENK_RST_ID_COMPLETED and \
-                                predecessor.rst_id != enarksh.ENK_RST_ID_ERROR:
+                if predecessor.rst_id != enarksh.ENK_RST_ID_COMPLETED \
+                        and predecessor.rst_id != enarksh.ENK_RST_ID_ERROR:
                     count_not_finished += 1
 
             if count_not_completed == 0:
@@ -386,7 +395,7 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         """
         :rtype: dict[str,str|int]
         """
-        message = {'type': 'start_node',
+        message = {'type':   'start_node',
                    'rnd_id': self.rnd_id}
 
         return message
@@ -493,6 +502,5 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         Returns True if this node is a complex node. Otherwise, returns False.
         """
         raise NotImplementedError()
-
 
 # ----------------------------------------------------------------------------------------------------------------------
