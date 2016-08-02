@@ -8,14 +8,14 @@ Licence MIT
 import abc
 
 
-class Resource:
+class Resource(metaclass=abc.ABCMeta):
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, node):
         self._node = node
         """
         The node that owns this resource.
 
-        :type: Node
+        :type: enarksh.XmlReader.Node.Node.Node
         """
 
         self._resource_name = ''
@@ -94,6 +94,8 @@ class Resource:
         """
         :param int hst_id:
         :param int nod_id:
+
+        :rtype: None
         """
         raise NotImplementedError()
 
@@ -104,7 +106,7 @@ class Resource:
 
         :param list errors: A list of error messages.
         """
-        # Nothing to do.
+        pass
 
 
 # ----------------------------------------------------------------------------------------------------------------------

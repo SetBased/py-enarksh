@@ -7,7 +7,6 @@ Licence MIT
 """
 import subprocess
 import sys
-import traceback
 from pystratum_mysql.StaticDataLayer import StaticDataLayer
 import enarksh
 
@@ -80,8 +79,7 @@ class Bootstrap:
         sql = file.read()
         file.close()
 
-        for result in StaticDataLayer.connection.cmd_query_iter(sql):
-            pass
+        StaticDataLayer.connection.cmd_query_iter(sql)
 
     # ------------------------------------------------------------------------------------------------------------------
     def _drop_all_db_objects(self):
@@ -93,7 +91,8 @@ class Bootstrap:
         self._drop_routines()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _load_stored_routines(self):
+    @staticmethod
+    def _load_stored_routines():
         """
         Loads a stored routines and user defined functions into the database.
         """
@@ -103,55 +102,46 @@ class Bootstrap:
         sys.stdout.flush()
         sys.stderr.flush()
 
-        ret = subprocess.call(['pystratum', '-c', enarksh.HOME + '/etc/stratum.cfg'])
+        ret = subprocess.call(['pystratum', 'stratum', enarksh.HOME + '/etc/stratum.cfg'])
         if ret != 0:
-            raise IndexError('Error loading stored procedures and user defined functions.')
+            raise RuntimeError('Error loading stored procedures and user defined functions.')
 
     # ------------------------------------------------------------------------------------------------------------------
     def main(self):
         """
         Bootstrap the database for our WOB enarksh. Removes all database objects and (re)creates all databases objects.
         """
-        try:
-            # Set database configuration options.
-            DataLayer.config['host'] = enarksh.MYSQL_HOSTNAME
-            DataLayer.config['user'] = enarksh.MYSQL_USERNAME
-            DataLayer.config['password'] = enarksh.MYSQL_PASSWORD
-            DataLayer.config['database'] = enarksh.MYSQL_SCHEMA
-            DataLayer.config['port'] = enarksh.MYSQL_PORT
-            DataLayer.config['autocommit'] = False
+        # Set database configuration options.
+        DataLayer.config['host'] = enarksh.MYSQL_HOSTNAME
+        DataLayer.config['user'] = enarksh.MYSQL_USERNAME
+        DataLayer.config['password'] = enarksh.MYSQL_PASSWORD
+        DataLayer.config['database'] = enarksh.MYSQL_SCHEMA
+        DataLayer.config['port'] = enarksh.MYSQL_PORT
+        DataLayer.config['autocommit'] = False
 
-            # Connect to the MySQL.
-            DataLayer.connect()
+        # Connect to the MySQL.
+        DataLayer.connect()
 
-            # Remove all databases objects.
-            self._drop_all_db_objects()
+        # Remove all databases objects.
+        self._drop_all_db_objects()
 
-            # Create all types and tables.
-            self._execute_sql_file('lib/ddl/0100_create_tables.sql', 'utf-8')
+        # Create all types and tables.
+        self._execute_sql_file('lib/ddl/0100_create_tables.sql', 'utf-8')
 
-            # Load static data.
-            self._execute_sql_file('lib/ddl/0300_enk_consumption_type.sql')
-            self._execute_sql_file('lib/ddl/0300_enk_error.sql')
-            self._execute_sql_file('lib/ddl/0300_enk_host.sql')
-            self._execute_sql_file('lib/ddl/0300_enk_node_type.sql')
-            self._execute_sql_file('lib/ddl/0300_enk_port_type.sql')
-            self._execute_sql_file('lib/ddl/0300_enk_resource_type.sql')
-            self._execute_sql_file('lib/ddl/0300_enk_run_status.sql')
-            self._execute_sql_file('lib/ddl/0300_enk_rw_status.sql')
+        # Load static data.
+        self._execute_sql_file('lib/ddl/0300_enk_consumption_type.sql')
+        self._execute_sql_file('lib/ddl/0300_enk_error.sql')
+        self._execute_sql_file('lib/ddl/0300_enk_host.sql')
+        self._execute_sql_file('lib/ddl/0300_enk_node_type.sql')
+        self._execute_sql_file('lib/ddl/0300_enk_port_type.sql')
+        self._execute_sql_file('lib/ddl/0300_enk_resource_type.sql')
+        self._execute_sql_file('lib/ddl/0300_enk_run_status.sql')
+        self._execute_sql_file('lib/ddl/0300_enk_rw_status.sql')
 
-            # self._execute_sql_file('lib/ddl/0500_create_views.sql')
+        # self._execute_sql_file('lib/ddl/0500_create_views.sql')
 
-            # Load all stored procedure and functions.
-            DataLayer.commit()
-            self._load_stored_routines()
-
-            ret = 0
-        except Exception as error:
-            print(error, file=sys.stderr)
-            print(traceback.format_exc())
-            ret = -1
-
-        return ret
+        # Load all stored procedure and functions.
+        DataLayer.commit()
+        self._load_stored_routines()
 
 # ----------------------------------------------------------------------------------------------------------------------
