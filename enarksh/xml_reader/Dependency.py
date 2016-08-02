@@ -65,15 +65,15 @@ class Dependency:
 
         :param list errors: A list of error messages.
         """
-        # @todo XXX node named $this->myNodeName must exists.
-        # @todo XXX node must have port named $this->myPortName.
+        # @todo XXX Node named $this->myNodeName must exists.
+        # @todo XXX Node must have port named $this->myPortName.
         pass
 
     # ------------------------------------------------------------------------------------------------------------------
     def store(self, port, node):
         """
-        :param port port:
-        :param node node:
+        :param Port port:
+        :param Node node:
         """
         prt_id_dependant = port.get_prt_id()
         prt_id_predecessor = node.get_port_by_name(self._node_name, self._port_name).get_prt_id()

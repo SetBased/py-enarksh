@@ -7,9 +7,9 @@ from enarksh.controller.consumption.ReadWriteLockConsumption import ReadWriteLoc
 # ----------------------------------------------------------------------------------------------------------------------
 def create_consumption(data, host_resources, schedule_resources):
     """
-    A factory for creating a consumption.
+    A factory for creating a Сonsumption.
 
-    :param dict data: The parameters required for creating the consumption.
+    :param dict data: The parameters required for creating the Сonsumption.
     :param dict host_resources:
     :param dict schedule_resources:
 

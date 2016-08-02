@@ -192,11 +192,11 @@ class Schedule:
         resources = {}
         for node_resource_data in resources_data.values():
             for resource_data in node_resource_data:
-                resource = resource.create_resource(resource_data)
-                resources[resource_data['rsc_id']] = resource
+                rsc = resource.create_resource(resource_data)
+                resources[resource_data['rsc_id']] = rsc
 
                 # Observe resource for state changes.
-                resource.register_observer(Schedule.slot_resource_state_change)
+                rsc.register_observer(Schedule.slot_resource_state_change)
 
         # Create all consumptions.
         consumptions = {}
@@ -363,6 +363,7 @@ class Schedule:
     def _create_predecessor_lookup_table1(direct_successors):
         """
         :param dict direct_successors:
+
         :rtype: dict
         """
         predecessors = {}
@@ -391,7 +392,7 @@ class Schedule:
 
         :param int rnd_id: int The ID of the requested node.
 
-        :rtype: enarksh.controller.node.Node
+        :rtype: enarksh.controller.node.Node.Node
         """
         return self._nodes[rnd_id]
 
@@ -418,7 +419,7 @@ class Schedule:
         Notifies all observers that a new node has been created.
 
         :param schedule:
-        :param enarksh.controller.node.Node node:
+        :param enarksh.controller.node.Node.Node node:
         """
         for method in Schedule._observers_new_node:
             method(schedule, node)
@@ -651,7 +652,7 @@ class Schedule:
         """
         Sends an email to the administrator that a simple node has failed.
 
-        :param enarksh.controller.node.Node node: The node that has failed.
+        :param enarksh.controller.node.Node.Node node: The node that has failed.
         """
         try:
             user = DataLayer.enk_back_get_user_info(self._usr_login)
@@ -715,7 +716,7 @@ class Schedule:
     # ------------------------------------------------------------------------------------------------------------------
     def slot_node_state_change(self, node, old, new):
         """
-        :param enarksh.controller.node.Node node:
+        :param enarksh.controller.node.Node.Node node:
         :param dict old:
         :param dict new:
         """

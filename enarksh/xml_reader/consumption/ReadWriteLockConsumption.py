@@ -25,7 +25,7 @@ class ReadWriteLockConsumption(Consumption):
     # ------------------------------------------------------------------------------------------------------------------
     def read_xml_element(self, xml):
         """
-        :param xml.etree.ElementTree.Element xml:
+        :param lxml.etree.Element xml:
         """
         tag = xml.tag
         if tag == 'Mode':

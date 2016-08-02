@@ -94,7 +94,7 @@ class DynamicJobNode(Node):
     # ------------------------------------------------------------------------------------------------------------------
     def _read_xml_generator(self, xml):
         """
-        :param xml.etree.ElementTree.Element xml:
+        :param lxml.etree.Element xml:
         """
         module = locate('enarksh.xml_reader.node')
         node = module.create_node('CommandJob', self)
@@ -106,7 +106,7 @@ class DynamicJobNode(Node):
     # ------------------------------------------------------------------------------------------------------------------
     def _read_xml_worker(self, xml):
         """
-        :param xml.etree.ElementTree.Element xml:
+        :param lxml.etree.Element xml:
         """
         module = locate('enarksh.xml_reader.node')
         node = module.create_node('DynamicOuterWorker', self)
@@ -118,7 +118,7 @@ class DynamicJobNode(Node):
     # ------------------------------------------------------------------------------------------------------------------
     def read_xml_element(self, xml):
         """
-        :param xml.etree.ElementTree.Element xml:
+        :param lxml.etree.Element xml:
         """
         tag = xml.tag
         if tag == 'Generator':

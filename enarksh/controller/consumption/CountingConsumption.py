@@ -25,7 +25,7 @@ class CountingConsumption(Consumption):
 
         self.amount_consumption = data['cns_amount']
         """
-        The amount consumpted by this consumption.
+        The amount consumpted by this Сonsumption.
 
         :type: int
         """
