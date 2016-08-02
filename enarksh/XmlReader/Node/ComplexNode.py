@@ -12,7 +12,7 @@ from enarksh.XmlReader.Node.Node import Node
 from enarksh.XmlReader.Resource import CountingResource, ReadWriteLockResource
 
 
-class ComplexNode(metaclass=abc.ABCMeta, Node):
+class ComplexNode(Node, metaclass=abc.ABCMeta):
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, parent_node=None):
         Node.__init__(self, parent_node)
@@ -102,7 +102,7 @@ class ComplexNode(metaclass=abc.ABCMeta, Node):
         for node in self._child_nodes.values():
             node._validate_helper(errors)
 
-        # @todo Validate no circular references exists.
+            # @todo Validate no circular references exists.
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_resource_by_name(self, resource_name):
@@ -177,6 +177,5 @@ class ComplexNode(metaclass=abc.ABCMeta, Node):
 
         else:
             Node.read_xml_element(self, xml)
-
 
 # ----------------------------------------------------------------------------------------------------------------------

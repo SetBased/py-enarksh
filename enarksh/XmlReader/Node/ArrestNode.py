@@ -10,7 +10,7 @@ import abc
 from enarksh.XmlReader.Node.SimpleNode import SimpleNode
 
 
-class ArrestNode(metaclass=abc.ABCMeta, SimpleNode):
+class ArrestNode(SimpleNode, metaclass=abc.ABCMeta):
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def is_arrest_node():
