@@ -8,7 +8,7 @@ Licence MIT
 import abc
 
 
-class StateChange:
+class StateChange(metaclass=abc.ABCMeta):
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self):
         self._observers = []
@@ -21,7 +21,7 @@ class StateChange:
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
     def get_state_attributes(self):
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     def register_observer(self, method, **args):
@@ -29,7 +29,7 @@ class StateChange:
         Registers an object as an observer of the state of this object.
 
         :param method:
-        :param dict **args:
+        :param dict args:
         """
         self._observers.append((method, args))
 

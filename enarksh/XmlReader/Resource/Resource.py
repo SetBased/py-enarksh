@@ -1,15 +1,21 @@
+"""
+Enarksh
+
+Copyright 2013-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 import abc
-from xml.etree.ElementTree import Element
 
 
-class Resource:
+class Resource(metaclass=abc.ABCMeta):
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, node):
         self._node = node
         """
         The node that owns this resource.
 
-        :type: Node
+        :type: enarksh.XmlReader.Node.Node.Node
         """
 
         self._resource_name = ''
@@ -25,6 +31,26 @@ class Resource:
 
         :type: int
         """
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def name(self):
+        """
+        Returns the name of this resource.
+
+        :rtype: str
+        """
+        return self._resource_name
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def rsc_id(self):
+        """
+        Returns the ID of this resource.
+
+        :rtype: str
+        """
+        return self._rsc_id
 
     # ------------------------------------------------------------------------------------------------------------------
     def read_xml(self, xml):
@@ -45,24 +71,6 @@ class Resource:
 
         else:
             Resource.read_xml_element(self, xml)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_rsc_id(self):
-        """
-        Returns the ID of this resource.
-
-        :rtype: str
-        """
-        return self._rsc_id
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_name(self):
-        """
-        Returns the name of this resource.
-
-        :rtype: str
-        """
-        return self._resource_name
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_uri(self, obj_type='resource'):
@@ -86,8 +94,10 @@ class Resource:
         """
         :param int hst_id:
         :param int nod_id:
+
+        :rtype: None
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     def validate(self, errors):
@@ -96,7 +106,7 @@ class Resource:
 
         :param list errors: A list of error messages.
         """
-        # Nothing to do.
+        pass
 
 
 # ----------------------------------------------------------------------------------------------------------------------

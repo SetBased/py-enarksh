@@ -1,7 +1,17 @@
+"""
+Enarksh
+
+Copyright 2013-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 import enarksh
 
 
 class ChunkLogger:
+    """
+    A class for logging the first and lats chunk of a stream.
+    """
     _file_count = 0
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -11,6 +21,26 @@ class ChunkLogger:
         self._buffer = bytearray(b' ' * enarksh.CHUNK_SIZE)
         self._filename1 = ''
         self._filename2 = ''
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def filename1(self):
+        """
+        Getter for filename1.
+
+        :rtype: str
+        """
+        return self._filename1
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def filename2(self):
+        """
+        Getter for filename2.
+
+        :rtype: str
+        """
+        return self._filename2
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -48,14 +78,6 @@ class ChunkLogger:
     # ------------------------------------------------------------------------------------------------------------------
     def get_total_log_size(self):
         return self._chunk_count * enarksh.CHUNK_SIZE + self._position
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_filename1(self):
-        return self._filename1
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_filename2(self):
-        return self._filename2
 
     # ------------------------------------------------------------------------------------------------------------------
     def close(self):

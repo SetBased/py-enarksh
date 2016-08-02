@@ -6,7 +6,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import abc
-from xml.etree.ElementTree import Element
 
 from enarksh.DataLayer import DataLayer
 
@@ -16,7 +15,7 @@ from enarksh.XmlReader.Port.InputPort import InputPort
 from enarksh.XmlReader.Port.OutputPort import OutputPort
 
 
-class Node:
+class Node(metaclass=abc.ABCMeta):
     # ------------------------------------------------------------------------------------------------------------------
     """
     Abstract class for parsing XML definition of nodes.
@@ -93,6 +92,36 @@ class Node:
         """
 
     # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def name(self):
+        """
+        Returns the name of this node.
+
+        :rtype: str
+        """
+        return self._node_name
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def nod_id(self):
+        """
+        Returns the ID of this node.
+
+        :rtype: int
+        """
+        return self._nod_id
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def parent_node(self):
+        """
+        Returns the parent node of this node.
+
+        :rtype: Node
+        """
+        return self._parent_node
+
+    # ------------------------------------------------------------------------------------------------------------------
     def read_xml(self, xml):
         """
         :param xml.etree.ElementTree.Element xml:
@@ -159,7 +188,7 @@ class Node:
                 port = InputPort(self)
                 port.read_xml(element)
 
-                name = port.get_name()
+                name = port.name
                 # Check for ports with duplicate names.
                 if name in self._input_ports:
                     raise Exception("Duplicate input port '{0!s}'.".format(name))
@@ -180,7 +209,7 @@ class Node:
                 port = OutputPort(self)
                 port.read_xml(element)
 
-                name = port.get_name()
+                name = port.name
                 # Check for ports with duplicate names.
                 if name in self._output_ports:
                     raise Exception("Duplicate output port '{0!s}'.".format(name))
@@ -198,7 +227,7 @@ class Node:
 
         :param str resource_name: The name of the resource.
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -272,21 +301,22 @@ class Node:
         """
         Validates this node against rules which are not imposed by XSD.
 
-        :param fake_partnt:
+        :param fake_parent:
 
         :rtype: str
         """
         self._parent_node = fake_parent
 
         errors = []
+        """:type errors: list[dict[str,str]]"""
         self._validate_helper(errors)
 
         if errors:
             message = ''
             for error in errors:
-                message += 'URI:   ' + error['uri'] + "\n"
-                message += 'Rule:  ' + error['rule'] + "\n"
-                message += 'Error: ' + error['error'] + "\n"
+                message += 'URI:   ' + error['uri'] + '\n'
+                message += 'Rule:  ' + error['rule'] + '\n'
+                message += 'Error: ' + error['error'] + '\n'
 
             return message
 
@@ -297,7 +327,7 @@ class Node:
         """
         Helper function for validation this node.
 
-        :param list errors: A list of error messages.
+        :param list[dict[str,str]] errors: A list of error messages.
         """
         # Validate all input ports.
         for port in self._input_ports.values():
@@ -312,33 +342,6 @@ class Node:
         # Validate all output ports.
         for port in self._output_ports.values():
             port.validate(errors)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_nod_id(self):
-        """
-        Returns the ID of this node.
-
-        :rtype: int
-        """
-        return self._nod_id
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_name(self):
-        """
-        Returns the name of this node.
-
-        :rtype: str
-        """
-        return self._node_name
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_parent_node(self):
-        """
-        Returns the parent node of this node.
-
-        :rtype: Node
-        """
-        return self._parent_node
 
     # ------------------------------------------------------------------------------------------------------------------
     def store(self, srv_id, p_nod_master):
@@ -389,9 +392,11 @@ class Node:
         """
         Returns a child node of this node by name.
 
-        :param str node_name:
+        :param str node_name: The name of the searched child node.
+
+        :rtype: enarksh.XmlReader.Node.Node.Node
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     def store_dependencies(self):
@@ -414,7 +419,7 @@ class Node:
 
         :param int recursion_level: The recursion level of this node.
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
@@ -426,6 +431,6 @@ class Node:
         :param int uri_id: The ID of the URI of this node.
         :param int p_nod_master:
         """
-        pass
+        raise NotImplementedError()
 
 # ----------------------------------------------------------------------------------------------------------------------

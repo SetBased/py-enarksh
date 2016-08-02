@@ -1,3 +1,10 @@
+"""
+Enarksh
+
+Copyright 2013-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 from enarksh.event.Event import Event
 
 

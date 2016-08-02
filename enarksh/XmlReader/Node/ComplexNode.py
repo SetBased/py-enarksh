@@ -1,13 +1,18 @@
+"""
+Enarksh
 
+Copyright 2013-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
+import abc
 from pydoc import locate
-
-from lxml.etree import Element
 
 from enarksh.XmlReader.Node.Node import Node
 from enarksh.XmlReader.Resource import CountingResource, ReadWriteLockResource
 
 
-class ComplexNode(Node):
+class ComplexNode(Node, metaclass=abc.ABCMeta):
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, parent_node=None):
         Node.__init__(self, parent_node)
@@ -97,7 +102,7 @@ class ComplexNode(Node):
         for node in self._child_nodes.values():
             node._validate_helper(errors)
 
-        # @todo Validate no circular references exists.
+            # @todo Validate no circular references exists.
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_resource_by_name(self, resource_name):
@@ -125,7 +130,7 @@ class ComplexNode(Node):
             module = locate('enarksh.XmlReader.Node')
             node = module.create_node(element.tag, self)
             node.read_xml(element)
-            name = node._node_name
+            name = node.name
 
             # Check for child nodes with duplicate names.
             if name in self._child_nodes:
@@ -151,7 +156,7 @@ class ComplexNode(Node):
                 raise Exception("Unexpected tag '{0!s}'.".format(tag))
 
             resource.read_xml(element)
-            name = resource.get_name()
+            name = resource.name
             # Check for resources with duplicate names.
             if name in self._resources:
                 raise Exception("Duplicate resource '{0!s}'.".format(name))
@@ -172,6 +177,5 @@ class ComplexNode(Node):
 
         else:
             Node.read_xml_element(self, xml)
-
 
 # ----------------------------------------------------------------------------------------------------------------------

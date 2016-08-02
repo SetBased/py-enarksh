@@ -11,7 +11,7 @@ from xml.etree.ElementTree import Element
 from enarksh.XmlReader.Dependency import Dependency
 
 
-class Port:
+class Port(metaclass=abc.ABCMeta):
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, node):
         self._dependencies = []
@@ -43,16 +43,8 @@ class Port:
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_prt_id(self):
-        """
-        Returns the ID of this port.
-
-        :rtype: int
-        """
-        return self._prt_id
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_name(self):
+    @property
+    def name(self):
         """
         Returns the name of this port.
 
@@ -61,13 +53,24 @@ class Port:
         return self._port_name
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_node(self):
+    @property
+    def node(self):
         """
         Returns the node of this port.
 
         :rtype: Node
         """
         return self._node
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def prt_id(self):
+        """
+        Returns the ID of this port.
+
+        :rtype: int
+        """
+        return self._prt_id
 
     # ------------------------------------------------------------------------------------------------------------------
     def read_xml(self, xml):
@@ -125,7 +128,7 @@ class Port:
 
         :param int nod_id: The ID of the node to which this node belongs
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
@@ -133,6 +136,6 @@ class Port:
         """
         Stores the dependencies of this port into the database.
         """
-        pass
+        raise NotImplementedError()
 
 # ----------------------------------------------------------------------------------------------------------------------

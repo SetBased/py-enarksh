@@ -5,10 +5,21 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import abc
+
 from enarksh.XmlReader.Node.Node import Node
 
 
-class SimpleNode(Node):
+class SimpleNode(Node, metaclass=abc.ABCMeta):
+    # ------------------------------------------------------------------------------------------------------------------
+    def get_node_by_name(self, node_name):
+        """
+        Raise an exception. A simple node does not have child nodes.
+
+        :param str node_name: The name of the child node.
+        """
+        raise ValueError("Can not find child node '{}'".format(node_name))
+
     # ------------------------------------------------------------------------------------------------------------------
     def get_resource_by_name(self, resource_name):
         """

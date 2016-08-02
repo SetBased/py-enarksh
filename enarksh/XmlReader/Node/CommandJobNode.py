@@ -1,5 +1,11 @@
+"""
+Enarksh
+
+Copyright 2013-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 import json
-from xml.etree.ElementTree import Element
 
 from enarksh.DataLayer import DataLayer
 

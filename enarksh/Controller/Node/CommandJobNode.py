@@ -1,3 +1,10 @@
+"""
+Enarksh
+
+Copyright 2013-2016 Set Based IT Consultancy
+
+Licence MIT
+"""
 import json
 from enarksh.Controller.Node.SimpleNode import SimpleNode
 

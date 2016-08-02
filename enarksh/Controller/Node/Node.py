@@ -13,7 +13,7 @@ from enarksh.DataLayer import DataLayer
 from enarksh.Controller.StateChange import StateChange
 
 
-class Node(StateChange):
+class Node(StateChange, metaclass=abc.ABCMeta):
     """
     Abstract class for objects in the controller of type 'Node'.
     """
@@ -38,7 +38,7 @@ class Node(StateChange):
         """
         StateChange.__init__(self)
 
-        self.rnd_id = node_data['rnd_id']
+        self._rnd_id = node_data['rnd_id']
         """
         The ID of this (run) node.
 
@@ -52,7 +52,7 @@ class Node(StateChange):
         :type: str
         """
 
-        self.rst_id = node_data['rst_id']
+        self._rst_id = node_data['rst_id']
         """
         The ID of the run status of this node.
 
@@ -94,7 +94,7 @@ class Node(StateChange):
         :type: list
         """
 
-        self.scheduling_weight = 0
+        self._scheduling_weight = 0
         """
         The weight of this node to be taken into account when sorting queued nodes.
 
@@ -128,6 +128,57 @@ class Node(StateChange):
 
         :type: list
         """
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def name(self):
+        """
+        Getter for name. Returns the name of this node.
+
+        :rtype: str
+        """
+        return self._node_name
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def rnd_id(self):
+        """
+        Getter for rnd_id. Returns the ID of this node.
+
+        :rtype: int
+        """
+        return self._rnd_id
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def rst_id(self):
+        """
+        Getter for rst_id. Returns the ID of the run status of this node.
+
+        :rtype: int
+        """
+        return self._rst_id
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @StateChange.wrapper
+    @rst_id.setter
+    def rst_id(self, rst_id):
+        """
+        Setter for rst_id. Sets the the run status of this node.
+
+        :param int rst_id: The ID of the run status.
+        """
+        self.rst_id = rst_id
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def schedule_wait(self):
+        """
+        Return the scheduling wait (i.e. the number (direct and indirect) of simple successors).
+
+        :rtype: int
+        """
+        return self._scheduling_weight
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_state_attributes(self):
@@ -214,7 +265,7 @@ class Node(StateChange):
         :param int rst_id: The new run status for this node.
         """
         old_rst_id = self.rst_id
-        self.rst_id = rst_id
+        self._rst_id = rst_id
 
         # Update the start datetime of this node.
         if rst_id == enarksh.ENK_RST_ID_RUNNING:
@@ -259,57 +310,11 @@ class Node(StateChange):
         If required renews this node, i.e. creates a new row in ENK_RUN_NODE.
         """
         if self.rst_id in (enarksh.ENK_RST_ID_ERROR, enarksh.ENK_RST_ID_COMPLETED):
-            self.rnd_id = DataLayer.enk_back_run_node_renew(self.rnd_id)
-            self.rst_id = enarksh.ENK_RST_ID_WAITING
+            self._rnd_id = DataLayer.enk_back_run_node_renew(self.rnd_id)
+            self._rst_id = enarksh.ENK_RST_ID_WAITING
             self._rnd_datetime_start = None
             self._rnd_datetime_stop = None
             self._exit_status = None
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_rnd_id(self):
-        """
-        Returns the ID of this node.
-
-        :rtype: int
-        """
-        return self.rnd_id
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_rst_id(self):
-        """
-        Returns the ID of the run status of this node.
-
-        :rtype: int
-        """
-        return self.rst_id
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_name(self):
-        """
-        Returns the name of this node.
-
-        :rtype: str
-        """
-        return self._node_name
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_schedule_wait(self):
-        """
-        Return the scheduling wait (i.e. the number (direct and indirect) of simple successors).
-
-        :rtype: int
-        """
-        return self.scheduling_weight
-
-    # ------------------------------------------------------------------------------------------------------------------
-    @StateChange.wrapper
-    def set_rst_id(self, rst_id):
-        """
-        Sets the the run status of this node.
-
-        :param int rst_id: The ID of the run status.
-        """
-        self.rst_id = rst_id
 
     # ------------------------------------------------------------------------------------------------------------------
     def initialize(self,
@@ -374,7 +379,7 @@ class Node(StateChange):
 
         # Set scheduling weight, i.e. the number of (direct and indirect) successors.
         if self.rnd_id in successors:
-            self.scheduling_weight = len(successors[self.rnd_id])
+            self._scheduling_weight = len(successors[self.rnd_id])
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_start_message(self):
@@ -392,7 +397,7 @@ class Node(StateChange):
         """
         Restarts this node.
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
@@ -400,7 +405,7 @@ class Node(StateChange):
         """
         Restarts all failed simple nodes.
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
@@ -463,7 +468,7 @@ class Node(StateChange):
         """
         Returns True if this node is a simple node. Otherwise, returns False.
         """
-        pass
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_uri(self, obj_type='node'):
@@ -487,7 +492,7 @@ class Node(StateChange):
         """
         Returns True if this node is a complex node. Otherwise, returns False.
         """
-        pass
+        raise NotImplementedError()
 
 
 # ----------------------------------------------------------------------------------------------------------------------

@@ -5,8 +5,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-from xml.etree.ElementTree import Element
-
 from enarksh.DataLayer import DataLayer
 
 
@@ -58,7 +56,7 @@ class Dependency:
                 self._port_name = element.text
 
             else:
-                raise Exception("Unexpected tag '{0!s}'.".format(tag))
+                raise RuntimeError("Unexpected tag '{0!s}'.".format(tag))
 
     # ------------------------------------------------------------------------------------------------------------------
     def validate(self, errors):
@@ -69,6 +67,7 @@ class Dependency:
         """
         # @todo XXX Node named $this->myNodeName must exists.
         # @todo XXX Node must have port named $this->myPortName.
+        pass
 
     # ------------------------------------------------------------------------------------------------------------------
     def store(self, port, node):
