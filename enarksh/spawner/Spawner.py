@@ -6,11 +6,13 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import os
+import pwd
+import select
 import signal
 import sys
-import select
-import pwd
+
 import zmq
+
 import enarksh
 from enarksh import SPAWNER_PULL_END_POINT, CONTROLLER_PULL_END_POINT, LOGGER_PULL_END_POINT
 from enarksh.spawner.JobHandler import JobHandler
@@ -50,10 +52,10 @@ class Spawner:
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def daemonize():
-        enarksh.daemonize(enarksh.HOME + '/var/lock/spawnerd.pid',
+        enarksh.daemonize(os.path.join(enarksh.HOME, 'var/lock/spawnerd.pid'),
                           '/dev/null',
-                          enarksh.HOME + '/var/log/spawnerd.log',
-                          enarksh.HOME + '/var/log/spawnerd.log')
+                          os.path.join(enarksh.HOME, 'var/log/spawnerd.log'),
+                          os.path.join(enarksh.HOME, 'var/log/spawnerd.log'))
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -72,10 +74,10 @@ class Spawner:
         sys.stdout.flush()
         sys.stderr.flush()
 
-        with open(enarksh.HOME + '/var/log/spawnerd.log', 'wb', 0) as f:
+        with open(os.path.join(enarksh.HOME, 'var/log/spawnerd.log'), 'wb', 0) as f:
             os.dup2(f.fileno(), sys.stdout.fileno())
 
-        with open(enarksh.HOME + '/var/log/spawnerd.log', 'wb', 0) as f:
+        with open(os.path.join(enarksh.HOME, 'var/log/spawnerd.log'), 'wb', 0) as f:
             os.dup2(f.fileno(), sys.stderr.fileno())
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -136,9 +138,9 @@ class Spawner:
                     job_handler = self._job_handlers[pid]
 
                     # Send message to controller that a job has finished.
-                    message = {'type': 'node_stop',
-                               'sch_id': job_handler.get_sch_id(),
-                               'rnd_id': job_handler.get_rnd_id(),
+                    message = {'type':        'node_stop',
+                               'sch_id':      job_handler.get_sch_id(),
+                               'rnd_id':      job_handler.get_rnd_id(),
                                'exit_status': status}
                     self._zmq_controller.send_json(message)
 
@@ -262,6 +264,5 @@ class Spawner:
             if self._child_flag:
                 # Process one or more exited child processes.
                 self._handle_child_exits()
-
 
 # ----------------------------------------------------------------------------------------------------------------------

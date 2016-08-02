@@ -5,6 +5,8 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import os
+
 from lxml import etree
 
 import enarksh
@@ -24,7 +26,7 @@ class XmlReader:
 
         :rtype: enarksh.xml_reader.node.ScheduleNode
         """
-        with open(enarksh.HOME + '/etc/enarksh.xsd', 'rb') as f:
+        with open(os.path.join(enarksh.HOME, 'etc/enarksh.xsd'), 'rb') as f:
             xsd = f.read()
 
         etree.clear_error_log()
@@ -63,7 +65,7 @@ class XmlReader:
 
         :rtype: enarksh.xml_reader.node.CompoundJobNode
         """
-        with open(enarksh.HOME + '/etc/enarksh.xsd', 'rb') as f:
+        with open(os.path.join(enarksh.HOME, 'etc/enarksh.xsd'), 'rb') as f:
             xsd = f.read()
 
         schema_root = etree.XML(xsd)
@@ -99,7 +101,7 @@ class XmlReader:
         with open(filename, 'rt', encoding='utf-8') as f:
             xml = f.read()
 
-        with open(enarksh.HOME + '/etc/enarksh.xsd', 'rb') as f:
+        with open(os.path.join(enarksh.HOME, 'etc/enarksh.xsd'), 'rb') as f:
             xsd = f.read()
 
         schema_root = etree.XML(xsd)

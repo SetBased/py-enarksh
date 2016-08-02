@@ -5,6 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import os
 import subprocess
 import sys
 from pystratum_mysql.StaticDataLayer import StaticDataLayer
@@ -75,7 +76,7 @@ class Bootstrap:
         """
         print("Executing script '%s'." % filename)
 
-        file = open(enarksh.HOME + '/' + filename, 'r', encoding=encoding)
+        file = open(os.path.join(enarksh.HOME, filename), 'rt', encoding=encoding)
         sql = file.read()
         file.close()
 
@@ -102,7 +103,7 @@ class Bootstrap:
         sys.stdout.flush()
         sys.stderr.flush()
 
-        ret = subprocess.call(['pystratum', 'stratum', enarksh.HOME + '/etc/stratum.cfg'])
+        ret = subprocess.call(['pystratum', 'stratum', os.path.join(enarksh.HOME, 'etc/stratum.cfg')])
         if ret != 0:
             raise RuntimeError('Error loading stored procedures and user defined functions.')
 

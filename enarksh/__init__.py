@@ -1,9 +1,8 @@
 import os
 import sys
 
-
 # ----------------------------------------------------------------------------------------------------------------------
-HOME = os.path.realpath(os.path.dirname(os.path.realpath(__file__)) + '/../..')
+HOME = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 
 CONTROLLER_PULL_END_POINT = 'tcp://127.0.0.1:7771'
 CONTROLLER_LOCKSTEP_END_POINT = 'tcp://127.0.0.1:7772'
@@ -50,11 +49,11 @@ ENK_NTP_DYNAMIC_JOB = 6
 ENK_NTP_DYNAMIC_OUTER_WORKER = 7
 ENK_NTP_DYNAMIC_INNER_WORKER = 8
 
-ENK_MESSAGE_ADMIN_DIR = HOME + '/var/lib/message/admin'
-ENK_MESSAGE_CONTROLLER_DIR = HOME + '/var/lib/message/controller'
-ENK_MESSAGE_LOGGER_DIR = HOME + '/var/lib/message/logger'
-ENK_MESSAGE_SPAWNER_DIR = HOME + '/var/lib/message/spawner'
-ENK_LOCK_DIR = HOME + '/var/lock'
+ENK_MESSAGE_ADMIN_DIR = os.path.join(HOME, 'var/lib/message/admin')
+ENK_MESSAGE_CONTROLLER_DIR = os.path.join(HOME, 'var/lib/message/controller')
+ENK_MESSAGE_LOGGER_DIR = os.path.join(HOME, 'var/lib/message/logger')
+ENK_MESSAGE_SPAWNER_DIR = os.path.join(HOME, 'var/lib/message/spawner')
+ENK_LOCK_DIR = os.path.join(HOME, 'var/lock')
 
 
 # ----------------------------------------------------------------------------------------------------------------------

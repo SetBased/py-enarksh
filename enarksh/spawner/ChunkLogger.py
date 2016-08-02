@@ -5,6 +5,8 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import os
+
 import enarksh
 
 
@@ -47,7 +49,7 @@ class ChunkLogger:
     def _get_filename():
         ChunkLogger._file_count += 1
 
-        return '{0!s}/{1!s}/{2:010d}.log'.format(enarksh.HOME, 'var/lib/logger', ChunkLogger._file_count)
+        return os.path.join(enarksh.HOME, 'var/lib/logger', '{0:010d}.log'.format(ChunkLogger._file_count))
 
     # ------------------------------------------------------------------------------------------------------------------
     def write(self, buffer):
@@ -96,6 +98,5 @@ class ChunkLogger:
                         file.write(self._buffer[self._position:enarksh.CHUNK_SIZE])
                     file.write(self._buffer[:self._position])
                     file.close()
-
 
 # ----------------------------------------------------------------------------------------------------------------------

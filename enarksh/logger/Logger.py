@@ -182,8 +182,8 @@ class Logger:
         """
         Creates a PID file and writes the PID of the logger to this file.
         """
-        filename = enarksh.ENK_LOCK_DIR + 'logger.pid'
-        with open(filename, 'w') as f:
+        filename = os.path.join(enarksh.ENK_LOCK_DIR, 'logger.pid')
+        with open(filename, 'wt') as f:
             f.write(str(os.getpid()))
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -192,7 +192,7 @@ class Logger:
         """
         Removes the PID file.
         """
-        filename = enarksh.ENK_LOCK_DIR + 'logger.pid'
+        filename = os.path.join(enarksh.ENK_LOCK_DIR, 'logger.pid')
         os.unlink(filename)
 
     # ------------------------------------------------------------------------------------------------------------------

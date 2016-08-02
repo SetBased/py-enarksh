@@ -5,21 +5,21 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import functools
+import gc
 import os
 import pwd
 import sys
 import traceback
-import functools
-import gc
 
 import zmq
 
 import enarksh
-from enarksh.controller import resource
 from enarksh.DataLayer import DataLayer
+from enarksh.controller import resource
 from enarksh.controller.Schedule import Schedule
-from enarksh.xml_reader.node.FakeParent import FakeParent
 from enarksh.xml_reader.XmlReader import XmlReader
+from enarksh.xml_reader.node.FakeParent import FakeParent
 
 
 class Controller:
@@ -91,10 +91,10 @@ class Controller:
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def daemonize():
-        enarksh.daemonize(enarksh.HOME + '/var/lock/controllerd.pid',
+        enarksh.daemonize(os.path.join(enarksh.HOME, 'var/lock/controllerd.pid'),
                           '/dev/null',
-                          enarksh.HOME + '/var/log/controllerd.log',
-                          enarksh.HOME + '/var/log/controllerd.log')
+                          os.path.join(enarksh.HOME, 'var/log/controllerd.log'),
+                          os.path.join(enarksh.HOME, 'var/log/controllerd.log'))
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -293,17 +293,18 @@ class Controller:
 
         :rtype dict[str, bool|dict[int, dict[str, mixed]]]: Dictionary with possible node actions.
         """
-        message = {'actions': {enarksh.ENK_ACT_ID_TRIGGER: {'act_id': enarksh.ENK_ACT_ID_TRIGGER,
-                                                            'act_title': 'Trigger',
-                                                            'act_enabled': False},
-                               enarksh.ENK_ACT_ID_RESTART: {'act_id': enarksh.ENK_ACT_ID_RESTART,
-                                                            'act_title': 'Restart',
-                                                            'act_enabled': False},
-                               enarksh.ENK_ACT_ID_RESTART_FAILED: {'act_id': enarksh.ENK_ACT_ID_RESTART_FAILED,
-                                                                   'act_title': 'Restart Failed',
-                                                                   'act_enabled': False}},
+        message = {'actions':            {enarksh.ENK_ACT_ID_TRIGGER:        {'act_id':      enarksh.ENK_ACT_ID_TRIGGER,
+                                                                              'act_title':   'Trigger',
+                                                                              'act_enabled': False},
+                                          enarksh.ENK_ACT_ID_RESTART:        {'act_id':      enarksh.ENK_ACT_ID_RESTART,
+                                                                              'act_title':   'Restart',
+                                                                              'act_enabled': False},
+                                          enarksh.ENK_ACT_ID_RESTART_FAILED: {
+                                              'act_id':      enarksh.ENK_ACT_ID_RESTART_FAILED,
+                                              'act_title':   'Restart Failed',
+                                              'act_enabled': False}},
                    'mail_on_completion': False,
-                   'mail_on_error': False}
+                   'mail_on_error':      False}
 
         # Find the schedule of the node.
         schedule = self._get_schedule_by_sch_id(sch_id)
@@ -355,11 +356,11 @@ class Controller:
             schedule.store(srv_id, 1)
             DataLayer.enk_back_schedule_revision_create_run(srv_id)
 
-            response = {'ret': 0,
+            response = {'ret':     0,
                         'message': "Schedule '%s' successfully loaded." % name}
         except Exception as exception:
             print(exception, file=sys.stderr)
-            response = {'ret': -1,
+            response = {'ret':     -1,
                         'message': str(exception)}
             traceback.print_exc(file=sys.stderr)
 
@@ -393,7 +394,7 @@ class Controller:
             name = inner_worker.name
 
             # Note: Dynamic node is the parent of the worker node which is the parent of the inner worker node.
-            inner_worker.set_levels(info['nod_recursion_level']+2)
+            inner_worker.set_levels(info['nod_recursion_level'] + 2)
 
             # Store the dynamically defined inner worker node.
             inner_worker.store(info['srv_id'], 0)
@@ -406,12 +407,12 @@ class Controller:
             # Unload the schedule to force a reload of the schedule with new nodes added.
             self._unload_schedule(sch_id)
 
-            response = {'ret': 0,
+            response = {'ret':     0,
                         'message': "Worker '%s' successfully loaded." % name}
 
         except Exception as exception:
             print(exception, file=sys.stderr)
-            response = {'ret': -1,
+            response = {'ret':     -1,
                         'message': str(exception)}
             traceback.print_exc(file=sys.stderr)
 
@@ -425,7 +426,7 @@ class Controller:
         :param dict message: dict The message of the request.
         """
         # Compose a response message for the web interface.
-        response = {'ret': 0,
+        response = {'ret':     0,
                     'new_run': 0,
                     'message': 'OK'}
 
@@ -451,10 +452,10 @@ class Controller:
                     # A reload is only required when the schedule is been triggered. However, this trigger is lost by
                     # reloading the schedule. So, resend the trigger.
                     schedule.request_node_action(schedule.get_activate_node().get_rnd_id(),
-                        act_id,
-                        message['usr_login'],
-                        (message['mail_on_completion']),
-                        (message['mail_on_error']))
+                                                 act_id,
+                                                 message['usr_login'],
+                                                 (message['mail_on_completion']),
+                                                 (message['mail_on_error']))
 
                     if act_id == enarksh.ENK_ACT_ID_TRIGGER:
                         response['new_run'] = 1
@@ -548,6 +549,5 @@ class Controller:
                     traceback.print_exc(file=sys.stderr)
                 print(exception1, file=sys.stderr)
                 traceback.print_exc(file=sys.stderr)
-
 
 # ----------------------------------------------------------------------------------------------------------------------

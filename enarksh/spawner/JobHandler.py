@@ -176,7 +176,7 @@ class JobHandler:
         Reads the user names under which enarksh is allowed to start processes.
         """
         config = ConfigParser()
-        config.read(enarksh.HOME + '/etc/enarksh.cfg')
+        config.read(os.path.join(enarksh.HOME, 'etc/enarksh.cfg'))
 
         JobHandler._allowed_users = config.get('spawner', 'users').split()
 
