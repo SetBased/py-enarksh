@@ -8,7 +8,7 @@ Licence MIT
 # ----------------------------------------------------------------------------------------------------------------------
 from cleo import Command
 
-from enarksh.Util.LoadHost import LoadHost
+from enarksh.util.LoadHost import LoadHost
 from enarksh.style.EnarkshStyle import EnarkshStyle
 
 

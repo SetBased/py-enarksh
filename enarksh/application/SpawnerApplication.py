@@ -16,6 +16,13 @@ class SpawnerApplication(Application):
     """
 
     # ------------------------------------------------------------------------------------------------------------------
+    def __init__(self):
+        """
+        Object constructor
+        """
+        Application.__init__(self, 'Enarksh-Spawner', '0.0.0')
+
+    # ------------------------------------------------------------------------------------------------------------------
     def get_default_commands(self):
         """
         Returns the default commands of this application.

@@ -8,7 +8,7 @@ Licence MIT
 # ----------------------------------------------------------------------------------------------------------------------
 from cleo import Command
 
-from enarksh.Spawner.Spawner import Spawner
+from enarksh.spawner.Spawner import Spawner
 from enarksh.style.EnarkshStyle import EnarkshStyle
 
 
