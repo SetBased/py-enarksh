@@ -25,12 +25,14 @@ begin
   if (l_run_datetime_start is not null) then
     -- Cleanup previous run.
     -- Mark run nodes that were queued as not queued.
+   /*
+     XXX Fix logic
     update ENK_NODE
     set rst_id = @ENK_RST_ID_WAITING@
     where run_id = l_run_id
     and   rst_id = @ENK_RST_ID_QUEUED@
     ;
-
+   */
     -- Mark old run as stopped.
     update ENK_RUN
     set run_current       = 0

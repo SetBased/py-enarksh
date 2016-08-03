@@ -5,11 +5,9 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-import argparse
 import os
 import traceback
 import sys
-from pprint import pprint
 
 import zmq
 

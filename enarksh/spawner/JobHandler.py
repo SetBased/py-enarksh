@@ -5,12 +5,14 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-from configparser import ConfigParser, Error
 import os
-import sys
 import pwd
+import sys
 import traceback
+from configparser import ConfigParser, Error
+
 import enarksh
+from enarksh.logger.message.LogFileMessage import LogFileMessage
 from enarksh.spawner.ChunkLogger import ChunkLogger
 
 
@@ -117,7 +119,7 @@ class JobHandler:
 
         :param str std: log for stdout, err for stderr
 
-        :rtype dict[str,mixed]: The log message.
+        :rtype: enarksh.message.logger.LogFileMessage.LogFileMessage
         """
         if std == 'out':
             chunk_logger = self.stdout_logger
@@ -126,12 +128,11 @@ class JobHandler:
         else:
             raise Exception("Unknown output '%s'." % std)
 
-        return {'type': 'log_file',
-                'rnd_id': self._rnd_id,
-                'name': std,
-                'total_size': chunk_logger.get_total_log_size(),
-                'filename1': chunk_logger.filename1,
-                'filename2': chunk_logger.filename2}
+        return LogFileMessage(self._rnd_id,
+                              std,
+                              chunk_logger.get_total_log_size(),
+                              chunk_logger.filename1,
+                              chunk_logger.filename2)
 
     # ------------------------------------------------------------------------------------------------------------------
     def read(self, fd):

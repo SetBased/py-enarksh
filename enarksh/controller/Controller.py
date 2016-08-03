@@ -451,7 +451,7 @@ class Controller:
                     schedule = self._reload_schedule(schedule.sch_id)
                     # A reload is only required when the schedule is been triggered. However, this trigger is lost by
                     # reloading the schedule. So, resend the trigger.
-                    schedule.request_node_action(schedule.get_activate_node().get_rnd_id(),
+                    schedule.request_node_action(schedule.get_activate_node().rnd_id,
                                                  act_id,
                                                  message['usr_login'],
                                                  (message['mail_on_completion']),

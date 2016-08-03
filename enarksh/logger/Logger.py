@@ -6,87 +6,70 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import os
-import traceback
-import sys
 
 import zmq
 
 import enarksh
 from enarksh.DataLayer import DataLayer
+from enarksh.event.EventController import EventController
+from enarksh.logger.event_handler.ExitMessageEventHandler import ExitMessageEventHandler
+from enarksh.logger.event_handler.LogFileMessageEventHandler import LogFileMessageEventHandler
+from enarksh.logger.message.LogFileMessage import LogFileMessage
+from enarksh.message.ExitMessage import ExitMessage
+from enarksh.message.MessageController import MessageController
 
 
 class Logger:
-    _instance = None
+    """
+    The logger.
+    """
 
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self):
-        Logger._instance = self
-
-        self._events = []
         """
-        A list of events that needs be be processed.
-
-        :type: list
+        Object constructor.
         """
-
-        self._exit_flag = False
+        self._event_controller = EventController()
         """
-        If set the logger must terminate.
+        The event controller.
 
-        :type: bool
+        :type: enarksh.event.EventController.EventController
         """
 
-        self._zmq_context = None
+        self._message_controller = MessageController()
         """
-        The ZMQ context.
+        The message controller.
 
-        :type:
-        """
-
-        self._zmq_pull_socket = None
-        """
-        ZMQ socket for asynchronous incoming messages.
-
-        :type:
+        :type: enarksh.message.MessageController.MessageController
         """
 
     # ------------------------------------------------------------------------------------------------------------------
     def main(self):
+        """
+        The main of the logger.
+        """
+        # Startup logger.
         self._startup()
 
-        while not self._exit_flag or self._events:
-            try:
-                self._read_messages()
+        # Register our socket for asynchronous incoming messages.
+        self._message_controller.register_end_point('pull', zmq.PULL, enarksh.LOGGER_PULL_END_POINT)
 
-                # Connect to the database and start a transaction.
-                DataLayer.connect()
-                DataLayer.start_transaction()
+        # Register supported message types
+        self._message_controller.register_message_type(ExitMessage.MESSAGE_TYPE)
+        self._message_controller.register_message_type(LogFileMessage.MESSAGE_TYPE)
 
-                while self._events:
-                    event = self._events.pop()
+        # Register message received event handlers.
+        self._message_controller.register_listener(ExitMessage.MESSAGE_TYPE, ExitMessageEventHandler.handle)
+        self._message_controller.register_listener(LogFileMessage.MESSAGE_TYPE, LogFileMessageEventHandler.handle)
 
-                    if event['type'] == 'logfile':
-                        self._event_handler_log_file(event['message'])
+        # Register other event handlers.
+        self._event_controller.event_queue_empty.register_listener(self._message_controller.receive_message)
 
-                    elif event['type'] == 'exit':
-                        self._event_handler_exit()
+        # Run the event loop.
+        self._event_controller.loop()
 
-                    else:
-                        raise Exception("Unknown event type '%s'." % event['type'])
-
-                # Commit the transaction and disconnect form the database.
-                DataLayer.commit()
-                DataLayer.disconnect()
-
-            except Exception as exception1:
-                try:
-                    DataLayer.rollback()
-                    DataLayer.disconnect()
-                except Exception as exception2:
-                    print(exception2, file=sys.stderr)
-                    traceback.print_exc(file=sys.stderr)
-                print(exception1, file=sys.stderr)
-                traceback.print_exc(file=sys.stderr)
+        # Shutdown logger.
+        self._shutdown()
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -95,94 +78,6 @@ class Logger:
                           '/dev/null',
                           os.path.join(enarksh.HOME, 'var/log/loggerd.log'),
                           os.path.join(enarksh.HOME, 'var/log/loggerd.log'))
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def _add_event(self, event):
-        """
-        Adds an event to the event queue.
-
-        :param dict event:
-        """
-        self._events.append(event)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def _event_handler_exit(self):
-        """
-        Handles an exit message from the controller.
-        """
-        self._exit_flag = True
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def _event_handler_log_file(self, message):
-        """
-        Handles a new log file available message from the spawner.
-
-        :param dict message:
-        """
-        print("%s %s %s" % (message['rnd_id'], message['name'], message['total_size']))
-
-        if message['total_size'] > 0:
-            # Read the log file or log files and concatenate if necessary.
-            with open(message['filename1'], 'rb') as f:
-                log = f.read()
-
-            if message['filename2']:
-                with open(message['filename2'], 'rb') as f:
-                    buf2 = f.read()
-            else:
-                buf2 = ''
-
-            # Compute the number of skipped bytes.
-            skipped = message['total_size'] - len(log) - len(buf2)
-
-            if skipped != 0:
-                # Add a newline to the end of the buffer, if required.
-                if log[-1:] != '\n':
-                    log += '\n'
-
-                    # Note: This concatenation doesn't work for multi byte character sets.
-                    log += '\n'
-                    log += "Enarksh: Skipped {0} bytes.\n".format(skipped)
-                    log += '\n'
-
-                log += buf2
-
-            blb_id = DataLayer.enk_blob_insert_blob(message['name'], 'text/plain', log)
-
-        else:
-            blb_id = None
-
-        if message['name'] == 'out':
-            DataLayer.enk_back_run_node_update_log(message['rnd_id'], blb_id, message['total_size'])
-        elif message['name'] == 'err':
-            DataLayer.enk_back_run_node_update_err(message['rnd_id'], blb_id, message['total_size'])
-        else:
-            raise Exception("Unknown output name '%s'." % message['name'])
-
-        # Remove the (temporary) log files.
-        if message['filename1']:
-            os.unlink(message['filename1'])
-        if message['filename2']:
-            os.unlink(message['filename2'])
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def _read_messages(self):
-        """
-        Reads messages from other processes (i.e. spawner and controller).
-        """
-        message = self._zmq_pull_socket.recv_json()
-
-        if message['type'] == 'log_file':
-            event = {'type': 'logfile',
-                     'message': message}
-            self._add_event(event)
-
-        elif message['type'] == 'exit':
-            event = {'type': 'exit'}
-            self._add_event(event)
-
-        else:
-            raise Exception("Unknown event type '%s'." % message['type'])
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -208,10 +103,6 @@ class Logger:
         """
         Performs the necessary actions for stopping the logger.
         """
-        # Commit the last transaction and close the connection to the database.
-        DataLayer.commit()
-        DataLayer.disconnect()
-
         # Remove the PID file.
         self._remove_pid_file()
 
@@ -226,29 +117,14 @@ class Logger:
         # Log the start of the logger.
         print('Start logger')
 
+        # Create our PID file.
+        self._create_pid_file()
+
         # Set database configuration options.
         DataLayer.config['host'] = enarksh.MYSQL_HOSTNAME
         DataLayer.config['user'] = enarksh.MYSQL_USERNAME
         DataLayer.config['password'] = enarksh.MYSQL_PASSWORD
         DataLayer.config['database'] = enarksh.MYSQL_SCHEMA
         DataLayer.config['port'] = enarksh.MYSQL_PORT
-
-        # Setup ZMQ.
-        self._zmq_init()
-
-        # Create our PID file.
-        self._create_pid_file()
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def _zmq_init(self):
-        """
-        Initializes the ZMQ socket.
-        """
-        self._zmq_context = zmq.Context()
-
-        # Create socket for asynchronous incoming messages.
-        self._zmq_pull_socket = self._zmq_context.socket(zmq.PULL)
-        self._zmq_pull_socket.bind(enarksh.LOGGER_PULL_END_POINT)
-
 
 # ----------------------------------------------------------------------------------------------------------------------

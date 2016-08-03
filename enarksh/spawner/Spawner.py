@@ -33,8 +33,8 @@ class Spawner:
 
         self._job_handlers = {}
         """
-        The job handlers. Two entries for each currently process to the same jab handler. One for stdout and on for the
-        stderr of the processes.
+        The job handlers. A dictionary from file descriptor (one for stdout and one for stderr) to the same job handler
+        for each currently running process.
 
         :type: dict[int,enarksh.spawner.JobHandler.JobHandler]
         """
@@ -221,7 +221,7 @@ class Spawner:
                 if fd_stderr >= 0:
                     read.append(fd_stderr)
 
-                if fd_stdout == -1 and fd_stderr == -1 and job_handler.get_pid() == -1:
+                if fd_stdout == -1 and fd_stderr == -1 and job_handler.pid == -1:
                     # The job handler has read all data from stdout and stderr from job and the child process has
                     # exited.
                     remove.append(pid)
@@ -235,8 +235,8 @@ class Spawner:
 
                 # Send messages to logger daemon that the stdout and stderr of the job can be loaded into
                 # the database.
-                self._zmq_logger.send_json(job_handler.get_logger_message('out'))
-                self._zmq_logger.send_json(job_handler.get_logger_message('err'))
+                self._zmq_logger.send_pyobj(job_handler.get_logger_message('out'))
+                self._zmq_logger.send_pyobj(job_handler.get_logger_message('err'))
 
                 # Remove the job from the dictionary with jobs.
                 del self._job_handlers[pid]

@@ -65,7 +65,7 @@ class EventController(EventActor):
         :type: enarksh.event.Event.Event
         """
 
-        self._exit = False
+        self.exit = False
         """
         If True the event loop terminates as soon as the event queue is emtpy. No event_queue_empty event will be fired.
 
@@ -121,7 +121,7 @@ class EventController(EventActor):
         """
         self._dispatch_event(self._event_loop_start, None)
 
-        if not self._exit and not self._queue:
+        if not self.exit and not self._queue:
             self._dispatch_event(self._event_queue_empty, None)
 
         while self._queue:
@@ -129,10 +129,10 @@ class EventController(EventActor):
 
             self._dispatch_event(event, event_data)
 
-            if not self._queue and not self._exit:
+            if not self._queue and not self.exit:
                 self._dispatch_event(self._event_queue_empty, None)
                 if not self._queue:
-                    self._exit = True
+                    self.exit = True
 
         self._dispatch_event(self._event_loop_end, None)
 

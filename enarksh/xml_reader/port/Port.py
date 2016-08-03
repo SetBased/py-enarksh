@@ -17,7 +17,7 @@ class Port(metaclass=abc.ABCMeta):
         """
         The dependencies of this port.
 
-        :type: list[enarksh.xml_reader.port.Port.Port]
+        :type: list[enarksh.xml_reader.Dependency.Dependency]
         """
 
         self._node = node
