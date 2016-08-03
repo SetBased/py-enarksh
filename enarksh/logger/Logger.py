@@ -5,8 +5,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-import os
-
 import zmq
 
 import enarksh
@@ -73,52 +71,21 @@ class Logger:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def daemonize():
-        enarksh.daemonize(os.path.join(enarksh.HOME, 'var/lock/loggerd.pid'),
-                          '/dev/null',
-                          os.path.join(enarksh.HOME, 'var/log/loggerd.log'),
-                          os.path.join(enarksh.HOME, 'var/log/loggerd.log'))
-
-    # ------------------------------------------------------------------------------------------------------------------
-    @staticmethod
-    def _create_pid_file():
-        """
-        Creates a PID file and writes the PID of the logger to this file.
-        """
-        filename = os.path.join(enarksh.ENK_LOCK_DIR, 'logger.pid')
-        with open(filename, 'wt') as f:
-            f.write(str(os.getpid()))
-
-    # ------------------------------------------------------------------------------------------------------------------
-    @staticmethod
-    def _remove_pid_file():
-        """
-        Removes the PID file.
-        """
-        filename = os.path.join(enarksh.ENK_LOCK_DIR, 'logger.pid')
-        os.unlink(filename)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def _shutdown(self):
+    def _shutdown():
         """
         Performs the necessary actions for stopping the logger.
         """
-        # Remove the PID file.
-        self._remove_pid_file()
-
         # Log stop of the logger.
         print('Stop logger')
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _startup(self):
+    @staticmethod
+    def _startup():
         """
         Performs the necessary actions for starting up the logger.
         """
         # Log the start of the logger.
         print('Start logger')
-
-        # Create our PID file.
-        self._create_pid_file()
 
         # Set database configuration options.
         DataLayer.config['host'] = enarksh.MYSQL_HOSTNAME
