@@ -10,7 +10,7 @@ from enarksh.message.Message import Message
 
 class LogFileMessage(Message):
     """
-    Message type for instructing the logger that a log file is available for storing into the database.
+    Message type for notifying the logger that a log file is available for storing into the database.
     """
     MESSAGE_TYPE = 'logger:LogFileMessage'
     """
