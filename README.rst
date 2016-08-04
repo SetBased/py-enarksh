@@ -1,0 +1,13 @@
+Enarksh
+=======
+A lightweight and powerful job scheduler.
+
++-----------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------+
+| Social                                                                                                                      | Release                                                                                            | Code                                                                                                   |
++=============================================================================================================================+====================================================================================================+========================================================================================================+
+| .. image:: https://badges.gitter.im/SetBased/py-enarksh.svg                                                                 | .. image:: https://badge.fury.io/py/enarksh.svg                                                    | .. image:: https://scrutinizer-ci.com/g/SetBased/py-enarksh/badges/quality-score.png?b=master          |
+|   :target: https://gitter.im/SetBased/py-enarksh?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge  |   :target: https://badge.fury.io/py/enarksh                                                        |   :target: https://scrutinizer-ci.com/g/SetBased/py-enarksh/?branch=master                             |
+|                                                                                                                             | .. image:: https://www.versioneye.com/user/projects/56e2eb13df573d00431139d8/badge.svg?style=flat  | .. image:: https://www.quantifiedcode.com/api/v1/project/64ff187503f94a828bcc0dbfc9ea7237/badge.svg    |
+|                                                                                                                             |   :target: https://www.versioneye.com/user/projects/56e2eb13df573d00431139d8                       |   :target: https://www.quantifiedcode.com/app/project/64ff187503f94a828bcc0dbfc9ea7237                 |
++-----------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------+
+
