@@ -9,6 +9,9 @@ import abc
 
 
 class Consumption(metaclass=abc.ABCMeta):
+    """
+    Abstract parent class for consumptions.
+    """
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, node):
         self._cns_id = 0
@@ -22,7 +25,7 @@ class Consumption(metaclass=abc.ABCMeta):
         """
         The node that owns this consumption.
 
-        :type:
+        :type: enarksh.xml_reader.node.Node.Node
         """
 
         self._resource_name = ''

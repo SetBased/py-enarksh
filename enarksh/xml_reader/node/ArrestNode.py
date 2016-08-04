@@ -11,6 +11,9 @@ from enarksh.xml_reader.node.SimpleNode import SimpleNode
 
 
 class ArrestNode(SimpleNode, metaclass=abc.ABCMeta):
+    """
+    Class for reading arrest nodes.
+    """
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def is_arrest_node():

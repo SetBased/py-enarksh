@@ -56,14 +56,14 @@ class ChunkLogger:
         """
         :param bytes buffer:
         """
-        size = len(buffer)
+        bytes_remaining = len(buffer)
         pos = 0
 
-        while size > 0:
-            n = min(size, enarksh.CHUNK_SIZE - self._position)
-            self._buffer[self._position:self._position + n] = buffer[pos:pos + n]
+        while bytes_remaining > 0:
+            bytes = min(bytes_remaining, enarksh.CHUNK_SIZE - self._position)
+            self._buffer[self._position:self._position + bytes] = buffer[pos:pos + bytes]
 
-            if n < size:
+            if bytes < bytes_remaining:
                 if self._chunk_count == 0:
                     self._filename1 = self._get_filename()
                     with open(self._filename1, "wb") as file:
@@ -72,10 +72,10 @@ class ChunkLogger:
                 self._position = 0
                 self._chunk_count += 1
             else:
-                self._position += n
+                self._position += bytes
 
-            size -= n
-            pos += n
+            bytes_remaining -= bytes
+            pos += bytes
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_total_log_size(self):

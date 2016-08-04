@@ -12,16 +12,31 @@ from enarksh.xml_reader.node.SimpleNode import SimpleNode
 
 
 class CommandJobNode(SimpleNode):
+    """
+    Class for reading command job nodes.
+    """
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, parent_node):
+        """
+        Object constructor.
+
+        :param enarksh.xml_reader.node.Node.Node parent_node: The parent node of this node.
+        """
         SimpleNode.__init__(self, parent_node)
 
         self._args = []
+        """
+        The arguments of the command.
+
+        :type: list[str]
+        """
 
     # ------------------------------------------------------------------------------------------------------------------
     def read_xml_arg(self, xml):
         """
-        :param xml.etree.ElementTree.Element xml: XXX
+        Read the arguments of the job from a XML element.
+
+        :param lxml.etree.Element xml: The XMl element.
         """
         tag = xml.tag
         if tag == 'Arg':
@@ -33,7 +48,9 @@ class CommandJobNode(SimpleNode):
     # ------------------------------------------------------------------------------------------------------------------
     def read_xml_element(self, xml):
         """
-        :param xml.etree.ElementTree.Element xml: XXX
+        Read the properties of this node from a XML element.
+
+        :param lxml.etree.Element xml: The XMl element.
         """
         tag = xml.tag
         if tag == 'Path':
@@ -49,7 +66,9 @@ class CommandJobNode(SimpleNode):
     # ------------------------------------------------------------------------------------------------------------------
     def _validate_helper(self, errors):
         """
-        :param list errors:
+        Validates this consumption against rules which are not imposed by XSD.
+
+        :param list errors: A list of error messages.
         """
         SimpleNode._validate_helper(self, errors)
 

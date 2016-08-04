@@ -20,7 +20,7 @@ class LogFileMessageEventHandler:
     def handle(_event, message, _listener_data):
         """
         Handles a LogFileMessage received event.
-        
+
         :param * _event: Not used.
         :param enarksh.message.logger.LogFileMessage.LogFileMessage message: The message.
         :param * _listener_data: Not used.

@@ -11,8 +11,16 @@ from enarksh.xml_reader.consumption.Consumption import Consumption
 
 
 class CountingConsumption(Consumption):
+    """
+    Class reading counting consumptions.
+    """
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, node):
+        """
+        Object constructor.
+
+        :param enarksh.xml_reader.node.Node.Node node: The node to which this consumption belongs.
+        """
         Consumption.__init__(self, node)
 
         self._amount = 0
@@ -25,7 +33,9 @@ class CountingConsumption(Consumption):
     # ------------------------------------------------------------------------------------------------------------------
     def read_xml_element(self, xml):
         """
-        :param xml.etree.ElementTree.Element xml:
+        Read the properties of this consumption from a XML element.
+
+        :param lxml.etree.Element xml: The XMl element.
         """
         tag = xml.tag
         if tag == 'Amount':
