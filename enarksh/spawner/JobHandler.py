@@ -19,7 +19,15 @@ from enarksh.spawner.ChunkLogger import ChunkLogger
 
 
 class JobHandler(EventActor):
+    """
+    Class for reading the sdtout and stderr and monitoring the processes of a job.
+    """
     _allowed_users = []
+    """
+    The list of user names under which a process can be started.
+
+    :type: list[str]
+    """
 
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, sch_id, rnd_id, user_name, args):

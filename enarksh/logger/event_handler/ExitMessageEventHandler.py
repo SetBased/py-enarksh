@@ -16,8 +16,8 @@ class ExitMessageEventHandler:
     @staticmethod
     def handle(event, _event_data, _listener_data):
         """
-        Handles a LogFileMessage received event.
-        
+        Handles a ExitMessage received event.
+
         :param enarksh.event.Event.Event event: The event.
         :param * _event_data: Not used.
         :param * _listener_data: Not used.

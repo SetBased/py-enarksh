@@ -19,7 +19,7 @@ class SpawnJobMessageEventHandler:
     def handle(_event, message, spawner):
         """
         Handles a SpawnJobMessage received event.
-        
+
         :param * _event: Not used.
         :param enarksh.spawner.message.SpawnJobMessage.SpawnJobMessage message: The message.
         :param enarksh.spawner.Spawner.Spawner spawner: The spawner.

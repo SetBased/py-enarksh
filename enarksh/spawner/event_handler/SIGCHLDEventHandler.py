@@ -20,7 +20,7 @@ class SIGCHLDEventHandler:
     def handle(_event, _event_data, spawner):
         """
         Handles an exit of a child and ends a job handler.
-        
+
         :param * _event: Not used.
         :param * _event_data: Not used.
         :param enarksh.spawner.Spawner.Spawner spawner: The spawner.

@@ -30,6 +30,9 @@ class EventQueueEmptyEventHandler:
     # ------------------------------------------------------------------------------------------------------------------
     @classmethod
     def init(cls):
+        """
+        Creates a pipe for waking up a select call when a signal has been received.
+        """
         cls._wake_up_pipe = os.pipe()
         fcntl.fcntl(cls._wake_up_pipe[0], fcntl.F_SETFL, os.O_NONBLOCK)
 
@@ -40,7 +43,7 @@ class EventQueueEmptyEventHandler:
     def handle(_event, _event_data, spawner):
         """
         Handles an empty event queue event.
-        
+
         :param  _event: The event.
         :param * _event_data: Not used.
         :param enarksh.spawner.Spawner.Spawner spawner: The spawner.
@@ -60,7 +63,7 @@ class EventQueueEmptyEventHandler:
                 zmq_fds.add(zmq_fd)
 
         # Add the job handlers to the list of read file descriptors.
-        for pid, job_handler in spawner.job_handlers.items():
+        for job_handler in spawner.job_handlers.values():
             fd_stdout = job_handler.stdout
             if fd_stdout >= 0:
                 read.append(fd_stdout)

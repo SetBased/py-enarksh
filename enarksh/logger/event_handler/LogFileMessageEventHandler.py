@@ -33,12 +33,12 @@ class LogFileMessageEventHandler:
 
         if message.total_size > 0:
             # Read the log file or log files and concatenate if necessary.
-            with open(message.filename1, 'rb') as f:
-                log = f.read()
+            with open(message.filename1, 'rb') as file1:
+                log = file1.read()
 
             if message.filename2:
-                with open(message.filename2, 'rb') as f:
-                    buf2 = f.read()
+                with open(message.filename2, 'rb') as file2:
+                    buf2 = file2.read()
             else:
                 buf2 = ''
 

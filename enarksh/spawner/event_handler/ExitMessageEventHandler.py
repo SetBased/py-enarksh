@@ -17,7 +17,7 @@ class ExitMessageEventHandler:
     def handle(event, _event_data, _listener_data):
         """
         Handles a LogFileMessage received event.
-        
+
         :param enarksh.event.Event.Event event: The event.
         :param * _event_data: Not used.
         :param * _listener_data: Not used.
