@@ -3,6 +3,54 @@
     <property name="BUILD_DIR" value="./build"/>
     <property name="VERSION" value="0.0.0"/>
 
+    <!-- Creates a new version/release. -->
+    <!-- @todo replace semantic version with pep-396 -->
+    <target name="version">
+        <readSemanticVersion file=".version"
+                             versionProperty="VERSION"
+                             haltOnError="true"/>
+
+        <reflexive>
+            <fileset dir=".">
+                <include name="setup.py"/>
+            </fileset>
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="version=.*" replace="version='${VERSION}',"/>
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+        <reflexive>
+            <fileset dir=".">
+                <include name="enarksh/application/PyStratumApplication.py"/>
+            </fileset>
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="Application.__init__\(self, '([A-Za-z0-9\-])', .*"
+                            replace="Application.__init__(self, '$0', '${VERSION}')"/>
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+        <gitcommit repository="." message="Release: ${VERSION}" allFiles="true"/>
+        <gitpush repository="."/>
+        <gittag repository="." name="${VERSION}"/>
+        <gitpush repository="." refspec="${VERSION}" quiet="false"/>
+    </target>
+
+    <!-- Creates a new distribution using setup.py -->
+    <target name="dist">
+        <exec command="python3 setup.py sdist" passthru="true" checkreturn="true"/>
+    </target>
+
+    <!-- Uploads a distribution to PyPI -->
+    <target name="upload">
+        <loadfile property="VERSION" file=".version"/>
+        <exec command="twine upload dist/Enarksh-${VERSION}.tar.gz" passthru="true" checkreturn="true"/>
+    </target>
+
+    <!-- All steps for releasing a new version -->
+    <target name="new-version" depends="version,dist,upload"/>
+
     <!-- Runs all unit tests-->
     <target name="unit">
         <exec command="coverage3 run -m unittest discover -s test -p *Test.py" passthru="true" checkreturn="true"/>
