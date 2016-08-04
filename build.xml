@@ -22,12 +22,12 @@
         </reflexive>
         <reflexive>
             <fileset dir=".">
-                <include name="enarksh/application/PyStratumApplication.py"/>
+                <include name="enarksh/application/*.py"/>
             </fileset>
             <filterchain>
                 <replaceregexp>
-                    <regexp pattern="Application.__init__\(self, '([A-Za-z0-9\-])', .*"
-                            replace="Application.__init__(self, '$0', '${VERSION}')"/>
+                    <regexp pattern="Application.__init__\(self, '([A-Za-z0-9\-]*)', .*"
+                            replace="Application.__init__(self, '$1', '${VERSION}')"/>
                 </replaceregexp>
             </filterchain>
         </reflexive>

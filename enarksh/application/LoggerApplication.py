@@ -20,7 +20,7 @@ class LoggerApplication(Application):
         """
         Object constructor
         """
-        Application.__init__(self, 'Enarksh-Logger', '0.0.0')
+        Application.__init__(self, 'Enarksh-Logger', '0.1.0')
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_default_commands(self):
