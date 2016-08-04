@@ -35,7 +35,7 @@ class Message(metaclass=abc.ABCMeta):
 
         self.message_source = None
         """
-        For incoming messages will be set by the message controller. The name of the source of the message.
+        For incoming messages the name of the source of the message. This field will be set by the message controller.
 
         :type: str
         """
