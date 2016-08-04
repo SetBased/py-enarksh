@@ -21,5 +21,4 @@ def create_resource(data):
 
     raise Exception("Unexpected resource type ID '%s'.", data['rtp_id'])
 
-
 # ----------------------------------------------------------------------------------------------------------------------

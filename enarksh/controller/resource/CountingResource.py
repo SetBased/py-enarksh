@@ -5,18 +5,16 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-from enarksh.controller.resource.Resource import Resource
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-from enarksh.controller.StateChange import StateChange
 from enarksh.DataLayer import DataLayer
+from enarksh.controller.StateChange import StateChange
+from enarksh.controller.resource.Resource import Resource
 
 
 class CountingResource(Resource):
     """
     Class for objects in the controller of type 'CountingResource'.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, data):
         """
@@ -88,6 +86,5 @@ class CountingResource(Resource):
         :rtype: str
         """
         return 'CountingResource'
-
 
 # ----------------------------------------------------------------------------------------------------------------------

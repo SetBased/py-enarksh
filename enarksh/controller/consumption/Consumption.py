@@ -12,6 +12,7 @@ class Consumption(metaclass=abc.ABCMeta):
     """
     Consumption of a node.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, data, host_resources, schedule_resources):
         """

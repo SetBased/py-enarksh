@@ -14,6 +14,7 @@ class SimpleNode(Node):
     """
     Class for objects in the controller of type 'SimpleJob'.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def is_simple_node(self):
         """

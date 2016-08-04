@@ -12,6 +12,7 @@ class ReadWriteLockConsumption(Consumption):
     """
     Class for objects in the controller of type 'ReadWriteLockConsumption'.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, data, host_resources, schedule_resources):
         """

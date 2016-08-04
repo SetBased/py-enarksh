@@ -391,14 +391,9 @@ class Node(StateChange, metaclass=abc.ABCMeta):
             self._scheduling_weight = len(successors[self.rnd_id])
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_start_message(self):
-        """
-        :rtype: dict[str,str|int]
-        """
-        message = {'type':   'start_node',
-                   'rnd_id': self.rnd_id}
-
-        return message
+    # @abc.abstractmethod
+    def get_start_message(self, sch_id):
+        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod

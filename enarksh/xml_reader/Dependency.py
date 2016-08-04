@@ -82,5 +82,4 @@ class Dependency:
 
         DataLayer.enk_reader_dependency_store_dependency(prt_id_dependant, prt_id_predecessor)
 
-
 # ----------------------------------------------------------------------------------------------------------------------

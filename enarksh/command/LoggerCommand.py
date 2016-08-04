@@ -5,7 +5,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-# ----------------------------------------------------------------------------------------------------------------------
 import os
 
 from cleo import Command
@@ -17,7 +16,6 @@ from enarksh.logger.Logger import Logger
 from enarksh.style.EnarkshStyle import EnarkshStyle
 
 
-# ----------------------------------------------------------------------------------------------------------------------
 class LoggerCommand(Command):
     """
     Starts the logger.
@@ -30,7 +28,7 @@ class LoggerCommand(Command):
             'name':        'daemonize',
             'shortcut':    'd',
             'flag':        True,
-            'description': 'If set, use demonize'
+            'description': 'Become a daemon'
         }
     ]
 

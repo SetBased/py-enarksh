@@ -6,8 +6,8 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import os
-import traceback
 import sys
+import traceback
 
 import zmq
 
@@ -18,6 +18,7 @@ class LoadSchedule:
     """
     A client to communicates with the controller for loading a new schedule.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self):
         self._zmq_context = None
@@ -79,9 +80,9 @@ class LoadSchedule:
             xml = f.read()
 
         # Compose the message for the controller.
-        message = {'type': 'schedule_definition',
+        message = {'type':     'schedule_definition',
                    'filename': os.path.realpath(filename),
-                   'xml': xml}
+                   'xml':      xml}
 
         # Send the message tot the controller.
         self._zmq_controller.send_json(message)

@@ -23,5 +23,4 @@ def create_consumption(data, host_resources, schedule_resources):
 
     raise Exception("Unexpected consumption type ID '%s'.", data['ctp_id'])
 
-
 # ----------------------------------------------------------------------------------------------------------------------

@@ -9,14 +9,16 @@ import os
 import pwd
 import sys
 import traceback
-from configparser import ConfigParser, Error
+from configparser import ConfigParser
 
 import enarksh
+from enarksh.event.Event import Event
+from enarksh.event.EventActor import EventActor
 from enarksh.logger.message.LogFileMessage import LogFileMessage
 from enarksh.spawner.ChunkLogger import ChunkLogger
 
 
-class JobHandler:
+class JobHandler(EventActor):
     _allowed_users = []
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -29,17 +31,77 @@ class JobHandler:
         :param str user_name: The user under which the job must run.
         :param args: The arguments for the job.
         """
+        EventActor.__init__(self)
+
         self._sch_id = sch_id
+        """
+        The ID of the schedule of the job.
+
+        :type: int
+        """
+
         self._rnd_id = rnd_id
+        """
+        The ID of the job.
+
+        :type: int
+        """
+
         self._user_name = user_name
+        """
+        The user under which the job must run.
+
+        :type: str
+        """
+
         self._args = args
+        """
+        The arguments for the job.
+
+        :type: list[str]
+        """
 
         self.stdout_logger = ChunkLogger()
+        """
+        The chunk logger for STDOUT of the job.
+
+        :type: enarksh.spawner.ChunkLogger.ChunkLogger
+        """
+
         self.stderr_logger = ChunkLogger()
+        """
+        The chunk logger for STDERR of the job.
+
+        :type: enarksh.spawner.ChunkLogger.ChunkLogger
+        """
 
         self._child_pid = -1
+        """
+        The PID of the child process.
+
+        :type: int
+        """
+
         self._stdout = -1
+        """
+        The fd for reading the STDOUT of the child process.
+
+        :type: int
+        """
+
         self._stderr = -1
+        """
+        The fd for reading the STDERR of the child process.
+
+        :type: int
+        """
+
+        self.final_event = Event(self)
+        """
+        The event that will be fired when the job has been finally done.
+
+        :type: enarksh.event.Event.Event
+        """
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
@@ -106,11 +168,31 @@ class JobHandler:
         print("End   rnd_id: %10d, %8s, %s" % (self._rnd_id, self._user_name, str(self._args)))
 
     # ------------------------------------------------------------------------------------------------------------------
+    def _final(self):
+        """
+        When the job is finally done fires a done event.
+        """
+        if self._child_pid == -1 and self._stdout == -1 and self._stderr == -1:
+            self._log_job_stop()
+
+            # Close the files of the chunk loggers.
+            self.stdout_logger.close()
+            self.stderr_logger.close()
+
+            # Send messages to logger daemon that the stdout and stderr of the job can be loaded into the database.
+            self.get_logger_message('out').send_message('logger')
+            self.get_logger_message('err').send_message('logger')
+
+            # Fire the event that this job has been done completely.
+            self.final_event.fire()
+
+    # ------------------------------------------------------------------------------------------------------------------
     def set_job_has_finished(self):
         """
         Marks that the job has finished.
         """
         self._child_pid = -1
+        self._final()
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_logger_message(self, std):
@@ -147,6 +229,7 @@ class JobHandler:
                 # The pipe has been closed by the child process.
                 os.close(self._stdout)
                 self._stdout = -1
+                self._final()
             else:
                 self.stdout_logger.write(data)
 
@@ -156,19 +239,13 @@ class JobHandler:
                 # The pipe has been closed by the child process.
                 os.close(self._stderr)
                 self._stderr = -1
+                self._final()
             else:
                 self.stdout_logger.write(data)
                 self.stderr_logger.write(data)
 
         else:
-            raise Error('Unknown file descriptor %d.' % fd)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def end_job(self):
-        self._log_job_stop()
-
-        self.stdout_logger.close()
-        self.stderr_logger.close()
+            raise ValueError('Unknown file descriptor %d.' % fd)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -238,6 +315,5 @@ class JobHandler:
             # Make reading from the pipes non-blocking.
             # fcntl.fcntl(self._stdout, 0)
             # fcntl.fcntl(self._stderr, 0)
-
 
 # ----------------------------------------------------------------------------------------------------------------------

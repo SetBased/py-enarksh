@@ -2,8 +2,8 @@
 import enarksh
 from enarksh.controller.node.CommandJobNode import CommandJobNode
 from enarksh.controller.node.CompoundJobNode import CompoundJobNode
-from enarksh.controller.node.DynamicJobNode import DynamicJobNode
 from enarksh.controller.node.DynamicInnerWorkerNode import DynamicInnerWorkerNode
+from enarksh.controller.node.DynamicJobNode import DynamicJobNode
 from enarksh.controller.node.DynamicOuterWorkerNode import DynamicOuterWorkerNode
 from enarksh.controller.node.ManualTriggerNode import ManualTriggerNode
 from enarksh.controller.node.Node import Node

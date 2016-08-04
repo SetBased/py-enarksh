@@ -44,5 +44,4 @@ class SimpleNode(Node, metaclass=abc.ABCMeta):
         self._recursion_level = recursion_level
         self._dependency_level = self.get_dependency_level()
 
-
 # ----------------------------------------------------------------------------------------------------------------------

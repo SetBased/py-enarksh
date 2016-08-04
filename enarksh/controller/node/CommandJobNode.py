@@ -6,13 +6,16 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import json
+
 from enarksh.controller.node.SimpleNode import SimpleNode
+from enarksh.spawner.message.SpawnJobMessage import SpawnJobMessage
 
 
 class CommandJobNode(SimpleNode):
     """
     Class for objects in the controller of type 'CommandJob'.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, node_data):
         """
@@ -37,13 +40,7 @@ class CommandJobNode(SimpleNode):
         """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def get_start_message(self):
-        message = SimpleNode.get_start_message(self)
-
-        message['user_name'] = self._user_name
-        message['args'] = self._command
-
-        return message
-
+    def get_start_message(self, sch_id):
+        return SpawnJobMessage(sch_id, self.rnd_id, self._user_name, self._command)
 
 # ----------------------------------------------------------------------------------------------------------------------

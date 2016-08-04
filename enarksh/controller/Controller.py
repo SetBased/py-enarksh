@@ -249,9 +249,8 @@ class Controller:
 
                         # If required send a message to the spanner.
                         if span_job:
-                            message = node.get_start_message()
-                            message['sch_id'] = schedule.sch_id
-                            self._zmq_spanner.send_json(message)
+                            message = node.get_start_message(schedule.sch_id)
+                            self._zmq_spanner.send_pyobj(message)
 
                         else:
                             node.stop(0)
@@ -495,13 +494,15 @@ class Controller:
         DataLayer.start_transaction()
 
         if self._zmq_pull_socket in socks:
-            message = self._zmq_pull_socket.recv_json()
+            message = self._zmq_pull_socket.recv_pyobj()
 
-            if message['type'] == 'node_stop':
-                self._message_handler_node_stop(message)
+            # if message['type'] == 'node_stop':
+            self._message_handler_node_stop({'sch_id':      message.sch_id,
+                                             'rnd_id':      message.rnd_id,
+                                             'exit_status': message.exit_status})
 
-            else:
-                raise Exception("Unknown message type '%s'." % message['type'])
+            # else:
+            #    raise Exception("Unknown message type '%s'." % message['type'])
 
         if self._zmq_lockstep_socket in socks:
             message = self._zmq_lockstep_socket.recv_json()

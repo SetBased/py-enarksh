@@ -8,7 +8,6 @@ Licence MIT
 import abc
 
 from enarksh.DataLayer import DataLayer
-
 from enarksh.xml_reader.consumption.CountingConsumption import CountingConsumption
 from enarksh.xml_reader.consumption.ReadWriteLockConsumption import ReadWriteLockConsumption
 from enarksh.xml_reader.port.InputPort import InputPort
@@ -20,6 +19,7 @@ class Node(metaclass=abc.ABCMeta):
     """
     Abstract class for parsing XML definition of nodes.
     """
+
     def __init__(self, parent_node=None):
         self._node_name = ''
         """

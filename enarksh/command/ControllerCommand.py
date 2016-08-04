@@ -5,14 +5,12 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-# ----------------------------------------------------------------------------------------------------------------------
 from cleo import Command
 
 from enarksh.controller.Controller import Controller
 from enarksh.style.EnarkshStyle import EnarkshStyle
 
 
-# ----------------------------------------------------------------------------------------------------------------------
 class ControllerCommand(Command):
     """
     Starts the controller.
@@ -25,7 +23,7 @@ class ControllerCommand(Command):
             'name':        'daemonize',
             'shortcut':    'd',
             'flag':        True,
-            'description': 'If set, use demonize'
+            'description': 'Become a daemon'
         }
     ]
 

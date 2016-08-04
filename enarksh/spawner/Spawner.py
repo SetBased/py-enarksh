@@ -6,85 +6,137 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import os
-import pwd
-import select
 import signal
-import sys
 
+import pwd
 import zmq
 
 import enarksh
-from enarksh import SPAWNER_PULL_END_POINT, CONTROLLER_PULL_END_POINT, LOGGER_PULL_END_POINT
+from enarksh.event.Event import Event
+from enarksh.event.EventActor import EventActor
+from enarksh.event.EventController import EventController
+from enarksh.message.ExitMessage import ExitMessage
+from enarksh.message.MessageController import MessageController
 from enarksh.spawner.JobHandler import JobHandler
+from enarksh.spawner.event_handler.EventQueueEmptyEventHandler import EventQueueEmptyEventHandler
+from enarksh.spawner.event_handler.ExitMessageEventHandler import ExitMessageEventHandler
+from enarksh.spawner.event_handler.SIGCHLDEventHandler import SIGCHLDEventHandler
+from enarksh.spawner.event_handler.SpawnJobMessageEventHandler import SpawnJobMessageEventHandler
+from enarksh.spawner.message.SpawnJobMessage import SpawnJobMessage
 
 
-class Spawner:
-    _instance = None
+class Spawner(EventActor):
+    """
+    The spawner.
+    """
+    # ------------------------------------------------------------------------------------------------------------------
+    instance = None
+    """
+    The instance of this class.
+
+    :type: None|enarksh.spawner.Spawner.Spawner
+    """
 
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self):
-        Spawner._instance = self
+        """
+        Object constructor.
+        """
+        EventActor.__init__(self)
 
-        self._child_flag = False
-        self._zmq_context = None
-        self._zmq_pull_socket = None
-        self._zmq_controller = None
-        self._zmq_logger = None
+        Spawner.instance = self
+
+        self._event_controller = EventController()
+        """
+        The event controller.
+
+        :type: enarksh.event.EventController.EventController
+        """
+
+        self._message_controller = MessageController()
+        """
+        The message controller.
+
+        :type: enarksh.message.MessageController.MessageController
+        """
 
         self._job_handlers = {}
         """
-        The job handlers. A dictionary from file descriptor (one for stdout and one for stderr) to the same job handler
-        for each currently running process.
+        The job handlers. A dictionary from PID to the job handler for the process (of the job).
 
         :type: dict[int,enarksh.spawner.JobHandler.JobHandler]
         """
 
+        self._sigchld_event = Event(self)
+        """
+        Event for SIGCHLD has been received.
+
+        :type: enarksh.event.Event.Event
+        """
+
+        self._zmq_incoming_message_event = Event(self)
+        """
+        Event for a ZMQ message is available.
+
+        :type: enarksh.event.Event.Event
+        """
+
     # ------------------------------------------------------------------------------------------------------------------
-    def _zmq_init(self):
-        self._zmq_context = zmq.Context()
+    @property
+    def sigchld_event(self):
+        """
+        Returns the event for SIGCHLD has been received.
 
-        # Create socket for asynchronous incoming messages.
-        self._zmq_pull_socket = self._zmq_context.socket(zmq.PULL)
-        self._zmq_pull_socket.bind(SPAWNER_PULL_END_POINT)
+        :rtype: enarksh.event.Event.Event
+        """
+        return self._sigchld_event
 
-        # Create socket for sending asynchronous messages to the controller.
-        self._zmq_controller = self._zmq_context.socket(zmq.PUSH)
-        self._zmq_controller.connect(CONTROLLER_PULL_END_POINT)
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def job_handlers(self):
+        """
+        Returns the job handlers for the currently running processes.
 
-        # Create socket for sending asynchronous messages to the logger.
-        self._zmq_logger = self._zmq_context.socket(zmq.PUSH)
-        self._zmq_logger.connect(LOGGER_PULL_END_POINT)
+        :rtype: dict[int,enarksh.spawner.JobHandler.JobHandler]
+        """
+        return self._job_handlers
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def zmq_incoming_message_event(self):
+        """
+        Returns the event for a ZMQ message is available.
+
+        :rtype: enarksh.event.Event.Event
+        """
+        return self._zmq_incoming_message_event
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def add_job_handler(self, job_handler):
+        """
+        Adds a job handler to this spawner.
+
+        :param enarksh.spawner.JobHandler.JobHandler job_handler: The job handler.
+        """
+        self._job_handlers[job_handler.pid] = job_handler
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def remove_job_handler(self, pid):
+        """
+        Removes a job handler to this spawner.
+
+        :param int pid: The (original) PID of the process that the jon handlers was handling.
+        """
+        self._job_handlers[pid].destroy()
+        del self._job_handlers[pid]
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def daemonize():
-        enarksh.daemonize(os.path.join(enarksh.HOME, 'var/lock/spawnerd.pid'),
-                          '/dev/null',
-                          os.path.join(enarksh.HOME, 'var/log/spawnerd.log'),
-                          os.path.join(enarksh.HOME, 'var/log/spawnerd.log'))
-
-    # ------------------------------------------------------------------------------------------------------------------
-    @staticmethod
-    def sigchld_handler(signum, frame):
+    def sigchld_handler(*_):
         """
         Static method for SIGCHLD. Set a flag that a child has exited.
         """
-        Spawner._instance._child_flag = True
-
-    # ------------------------------------------------------------------------------------------------------------------
-    @staticmethod
-    def sighup_handler(signum, frame):
-        """
-        SIGHUP is send by the log rotate daemon. CLoses the current log file and create a new log file.
-        """
-        sys.stdout.flush()
-        sys.stderr.flush()
-
-        with open(os.path.join(enarksh.HOME, 'var/log/spawnerd.log'), 'wb', 0) as f:
-            os.dup2(f.fileno(), sys.stdout.fileno())
-
-        with open(os.path.join(enarksh.HOME, 'var/log/spawnerd.log'), 'wb', 0) as f:
-            os.dup2(f.fileno(), sys.stderr.fileno())
+        Spawner.instance.sigchld_event.fire()
 
     # ------------------------------------------------------------------------------------------------------------------
     def _install_signal_handlers(self):
@@ -93,13 +145,6 @@ class Spawner:
         """
         # Install signal handler for child has exited.
         signal.signal(signal.SIGCHLD, self.sigchld_handler)
-
-        # Install signal handler log rotate.
-        signal.signal(signal.SIGHUP, self.sighup_handler)
-
-        # Unfortunately, restart system calls doesnt work.
-        # signal.siginterrupt(signal.SIGCHLD, False)
-        # signal.siginterrupt(signal.SIGHUP, False)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -117,158 +162,83 @@ class Spawner:
         """
         Performs the necessary actions for starting the spawner daemon.
         """
+        # Log stop of the spawner.
+        print('Start spawner')
+
         # Set the effective user and group to an unprivileged user and group.
         self._set_unprivileged_user()
 
-        # Become a daemon.
-        # self.__daemonize()
-
         # Install signal handlers.
         self._install_signal_handlers()
-
-        self._zmq_init()
 
         # Read all user names under which the controller is allowed to start jobs.
         JobHandler.read_allowed_users()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _handle_child_exits(self):
+    @staticmethod
+    def _shutdown():
         """
-        Handles an exit of a child and ends a jon handler.
+        Performs the necessary actions for stopping the spawner.
         """
-        try:
-            pid = -1
-            while pid != 0:
-                pid, status = os.waitpid(-1, os.WNOHANG + os.WUNTRACED + os.WCONTINUED)
-                if pid != 0:
-                    job_handler = self._job_handlers[pid]
-
-                    # Send message to controller that a job has finished.
-                    message = {'type':        'node_stop',
-                               'sch_id':      job_handler.sch_id,
-                               'rnd_id':      job_handler.rnd_id,
-                               'exit_status': status}
-                    self._zmq_controller.send_json(message)
-
-                    # Inform the job handler the job has finished.
-                    job_handler.set_job_has_finished()
-
-        except OSError:
-            # Ignore OSError. No more children to wait for.
-            pass
+        # Log stop of the spawner.
+        print('Stop spawner')
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _event_handler_start_node(self, sch_id, rnd_id, user_name, args):
+    def _register_sockets(self):
         """
-        Creates a new job handler and starts the job.
-
-        :param sch_id: The ID of the schedule of the job.
-        :param rnd_id: The ID of the job.
-        :param user_name: The user under which the job must run.
-        :param args: The arguments for the job.
+        Registers ZMQ sockets for communication with other processes in Enarksh.
         """
-        job_handler = JobHandler(sch_id, rnd_id, user_name, args)
-        job_handler.start_job()
+        # Register socket for receiving asynchronous incoming messages.
+        self._message_controller.register_end_point('pull', zmq.PULL, enarksh.SPAWNER_PULL_END_POINT)
 
-        self._job_handlers[job_handler.pid] = job_handler
+        # Register socket for sending asynchronous messages to the controller.
+        self._message_controller.register_end_point('controller', zmq.PUSH, enarksh.CONTROLLER_PULL_END_POINT)
+
+        # Register socket for sending asynchronous messages to the logger.
+        self._message_controller.register_end_point('logger', zmq.PUSH, enarksh.LOGGER_PULL_END_POINT)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _read_message(self):
+    def _register_message_types(self):
         """
-        Reads a message from the controller.
+        Registers all message type that the spawner handles at the message controller.
         """
-        try:
-            while True:
-                message = self._zmq_pull_socket.recv_json(zmq.NOBLOCK)
+        self._message_controller.register_message_type(ExitMessage.MESSAGE_TYPE)
+        self._message_controller.register_message_type(SpawnJobMessage.MESSAGE_TYPE)
 
-                if message['type'] == 'start_node':
-                    self._event_handler_start_node(message['sch_id'],
-                                                   message['rnd_id'],
-                                                   message['user_name'],
-                                                   message['args'])
+    # ------------------------------------------------------------------------------------------------------------------
+    def _register_events_handlers(self):
+        """
+        Registers all event handlers at the event controller.
+        """
+        EventQueueEmptyEventHandler.init()
 
-                else:
-                    raise IndexError("Unknown message type '{0!s}'.".format(message['type']))
-
-        except zmq.ZMQError as e:
-            # Ignore ZMQError with EAGAIN. Otherwise, re-raise the error.
-            if e.errno != zmq.EAGAIN:
-                raise e
+        # Register message received event handlers.
+        self._message_controller.register_listener(ExitMessage.MESSAGE_TYPE, ExitMessageEventHandler.handle)
+        self._message_controller.register_listener(SpawnJobMessage.MESSAGE_TYPE,
+                                                   SpawnJobMessageEventHandler.handle,
+                                                   self)
+        # Register other event handlers.
+        self._sigchld_event.register_listener(SIGCHLDEventHandler.handle, self)
+        self._zmq_incoming_message_event.register_listener(self._message_controller.receive_message)
+        self._event_controller.event_queue_empty.register_listener(EventQueueEmptyEventHandler.handle, self)
 
     # ------------------------------------------------------------------------------------------------------------------
     def main(self):
         """
         The main function of the job spawner.
         """
-        # Perform the necessary actions for starting up the spawner.
         self._startup()
 
-        while True:
-            # List with all file descriptors for reading.
-            read = []
+        self._register_sockets()
 
-            # Add the queue for incoming messages to the list of read file descriptors.
-            zmq_fd = self._zmq_pull_socket.get(zmq.FD)
-            read.append(zmq_fd)
+        self._register_message_types()
 
-            # Add the job handlers to the list of read file descriptors.
-            remove = []
-            for pid, job_handler in self._job_handlers.items():
-                fd_stdout = job_handler.stdout
-                if fd_stdout >= 0:
-                    read.append(fd_stdout)
-                fd_stderr = job_handler.stderr
-                if fd_stderr >= 0:
-                    read.append(fd_stderr)
+        self._register_events_handlers()
 
-                if fd_stdout == -1 and fd_stderr == -1 and job_handler.pid == -1:
-                    # The job handler has read all data from stdout and stderr from job and the child process has
-                    # exited.
-                    remove.append(pid)
+        self._message_controller.no_barking(3)
 
-            # Remove jobs that are finished.
-            for pid in remove:
-                job_handler = self._job_handlers[pid]
+        self._event_controller.loop()
 
-                # Tell the job handler we are done with the job.
-                job_handler.end_job()
-
-                # Send messages to logger daemon that the stdout and stderr of the job can be loaded into
-                # the database.
-                self._zmq_logger.send_pyobj(job_handler.get_logger_message('out'))
-                self._zmq_logger.send_pyobj(job_handler.get_logger_message('err'))
-
-                # Remove the job from the dictionary with jobs.
-                del self._job_handlers[pid]
-
-            # Unblock interrupts.
-            signal.pthread_sigmask(signal.SIG_UNBLOCK, {signal.SIGCHLD, signal.SIGHUP})
-
-            try:
-                # Wait for a fd becomes available for read or wait for an interrupt.
-                read, _, _ = select.select(read, [], [])
-
-            except InterruptedError:
-                # Ignore Interrupted system call errors (EINTR) in the select call.
-                pass
-
-            # Block all interrupts to prevent interrupted system call errors (EINTR).
-            signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGCHLD, signal.SIGHUP})
-
-            for fd in read:
-                if fd == zmq_fd:
-                    # fd of the message queue is ready to receive data.
-                    self._read_message()
-                else:
-                    # fd of one or more job handlers are ready to receive data.
-                    for job_handler in self._job_handlers.values():
-                        if fd == job_handler.stdout:
-                            job_handler.read(fd)
-                        if fd == job_handler.stderr:
-                            job_handler.read(fd)
-
-            if self._child_flag:
-                # Process one or more exited child processes.
-                self._handle_child_exits()
+        self._shutdown()
 
 # ----------------------------------------------------------------------------------------------------------------------

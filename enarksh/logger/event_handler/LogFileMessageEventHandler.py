@@ -14,6 +14,7 @@ class LogFileMessageEventHandler:
     """
     An event handler for a LogFileMessage received events.
     """
+
     @staticmethod
     # ------------------------------------------------------------------------------------------------------------------
     def handle(_event, message, _listener_data):

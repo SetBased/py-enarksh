@@ -43,5 +43,4 @@ class OutputPort(Port):
         for dependency in self._dependencies:
             dependency.store(self, self._node)
 
-
 # ----------------------------------------------------------------------------------------------------------------------

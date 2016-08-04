@@ -13,6 +13,7 @@ class Host:
     """
     Program for loading a host definition into the database.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self):
         self._hostname = ''
@@ -97,8 +98,8 @@ class Host:
         :param list errors: A list of error messages.
         """
         if self._hostname != 'localhost':
-            err = {'uri': self.get_uri(),
-                   'rule': 'Currently, only localhost is supported.',
+            err = {'uri':   self.get_uri(),
+                   'rule':  'Currently, only localhost is supported.',
                    'error': "Hostname must be 'localhost', found: '{0!s}'.".format(self._hostname)}
             errors.append(err)
 
@@ -161,6 +162,5 @@ class Host:
                 raise Exception("Duplicate resource '{0!s}'.".format(name))
 
             self._resources[name] = resource
-
 
 # ----------------------------------------------------------------------------------------------------------------------

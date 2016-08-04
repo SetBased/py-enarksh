@@ -12,6 +12,7 @@ class EventActor:
     """
     Parent class for classes that fire events and for classes that listen for events.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self):
         self.friend_registered_events = set()

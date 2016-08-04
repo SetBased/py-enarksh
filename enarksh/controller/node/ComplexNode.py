@@ -14,6 +14,7 @@ class ComplexNode(Node):
     """
     Class for objects in the controller of type 'ComplexJob'.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def is_simple_node(self):
         """
@@ -59,6 +60,5 @@ class ComplexNode(Node):
             # If child is a complex node cascade the process of restarting failed nodes.
             if child.is_complex_node():
                 child.restart_failed()
-
 
 # ----------------------------------------------------------------------------------------------------------------------

@@ -5,14 +5,12 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-# ----------------------------------------------------------------------------------------------------------------------
 from cleo import Command
 
-from enarksh.util.LoadHost import LoadHost
 from enarksh.style.EnarkshStyle import EnarkshStyle
+from enarksh.util.LoadHost import LoadHost
 
 
-# ----------------------------------------------------------------------------------------------------------------------
 class LoadHostCommand(Command):
     """
     Loads the host.

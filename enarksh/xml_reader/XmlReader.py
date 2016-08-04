@@ -44,7 +44,8 @@ class XmlReader:
             schedule.read_xml(root)
             error = schedule.validate()
             if error:
-                raise Exception("File '{0!s}' is not a valid schedule configuration file.\n{1!s}".format(filename, error))
+                raise Exception(
+                    "File '{0!s}' is not a valid schedule configuration file.\n{1!s}".format(filename, error))
 
             # Set recursion and dependency levels.
             schedule.set_levels()
@@ -120,6 +121,5 @@ class XmlReader:
             raise Exception("File '{0!s}' is not a valid host configuration file.\n{1!s}".format(filename, error))
 
         return host
-
 
 # ----------------------------------------------------------------------------------------------------------------------

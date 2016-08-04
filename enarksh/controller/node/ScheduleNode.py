@@ -5,8 +5,8 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-from enarksh.controller.node.ComplexNode import ComplexNode
 from enarksh.DataLayer import DataLayer
+from enarksh.controller.node.ComplexNode import ComplexNode
 
 
 class ScheduleNode(ComplexNode):

@@ -39,6 +39,7 @@ class Message(metaclass=abc.ABCMeta):
 
         :type: str
         """
+
     # ------------------------------------------------------------------------------------------------------------------
     @property
     def message_type(self):

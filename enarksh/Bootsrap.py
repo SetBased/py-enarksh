@@ -8,9 +8,10 @@ Licence MIT
 import os
 import subprocess
 import sys
-from pystratum_mysql.StaticDataLayer import StaticDataLayer
-import enarksh
 
+from pystratum_mysql.StaticDataLayer import StaticDataLayer
+
+import enarksh
 from enarksh.DataLayer import DataLayer
 
 

@@ -1,10 +1,10 @@
+from enarksh.xml_reader.node.CommandJobNode import CommandJobNode
+from enarksh.xml_reader.node.CompoundJobNode import CompoundJobNode
 from enarksh.xml_reader.node.DynamicInnerWorkerNode import DynamicInnerWorkerNode
 from enarksh.xml_reader.node.DynamicJobNode import DynamicJobNode
 from enarksh.xml_reader.node.DynamicOuterWorkerNode import DynamicOuterWorkerNode
-from enarksh.xml_reader.node.Node import Node
-from enarksh.xml_reader.node.CommandJobNode import CommandJobNode
-from enarksh.xml_reader.node.CompoundJobNode import CompoundJobNode
 from enarksh.xml_reader.node.ManualTriggerNode import ManualTriggerNode
+from enarksh.xml_reader.node.Node import Node
 from enarksh.xml_reader.node.ScheduleNode import ScheduleNode
 from enarksh.xml_reader.node.TerminatorNode import TerminatorNode
 

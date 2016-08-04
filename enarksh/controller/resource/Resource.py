@@ -14,6 +14,7 @@ class Resource(StateChange, metaclass=abc.ABCMeta):
     """
     Class for objects in the controller of type 'Resource'.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, data):
         """
@@ -80,6 +81,5 @@ class Resource(StateChange, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def get_type(self):
         raise NotImplementedError()
-
 
 # ----------------------------------------------------------------------------------------------------------------------

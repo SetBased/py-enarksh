@@ -38,15 +38,15 @@ class DynamicInnerWorkerNode(CompoundJobNode):
 
         # Validate worker node has one and only one input port.
         if len(self._input_ports) != 1:
-            err = {'uri': self.get_uri(),
-                   'rule': 'A worker node must have one and only one input port.',
+            err = {'uri':   self.get_uri(),
+                   'rule':  'A worker node must have one and only one input port.',
                    'error': "Node has {0:d} input ports.'.".format(len(self._input_ports))}
             errors.append(err)
 
         # Validate worker node has one and only one output port.
         if len(self._output_ports) != 1:
-            err = {'uri': self.get_uri(),
-                   'rule': 'A worker node must have one and only one output port.',
+            err = {'uri':   self.get_uri(),
+                   'rule':  'A worker node must have one and only one output port.',
                    'error': "Node has {0:d} output ports.'.".format(len(self._output_ports))}
             errors.append(err)
 
@@ -61,6 +61,5 @@ class DynamicInnerWorkerNode(CompoundJobNode):
         CompoundJobNode.store(self, srv_id, p_nod_master)
 
         self.store_dependencies()
-
 
 # ----------------------------------------------------------------------------------------------------------------------

@@ -8,7 +8,6 @@ Licence MIT
 import json
 
 from enarksh.DataLayer import DataLayer
-
 from enarksh.xml_reader.node.SimpleNode import SimpleNode
 
 
@@ -56,8 +55,8 @@ class CommandJobNode(SimpleNode):
 
         user_name = self.get_user_name()
         if not user_name:
-            err = {'uri': self.get_uri(),
-                   'rule': 'A command job requires a user name under which it must run.',
+            err = {'uri':   self.get_uri(),
+                   'rule':  'A command job requires a user name under which it must run.',
                    'error': 'User name is not set.'}
             errors.append(err)
 

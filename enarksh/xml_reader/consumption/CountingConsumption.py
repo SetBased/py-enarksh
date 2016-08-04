@@ -43,8 +43,8 @@ class CountingConsumption(Consumption):
         """
         resource = self._node.get_resource_by_name(self._resource_name)
         if not resource:
-            err = {'uri': self.get_uri(),
-                   'rule': 'A consumption requires a resource.',
+            err = {'uri':   self.get_uri(),
+                   'rule':  'A consumption requires a resource.',
                    'error': "Resource '{0!s}' not found.".format(self._resource_name)}
             errors.append(err)
             return
@@ -52,9 +52,10 @@ class CountingConsumption(Consumption):
         resource_type = resource.get_type()
         if not resource_type == 'CountingResource':
             # resource is not a valid resource for this consumption.
-            err = {'uri': self.get_uri(),
-                   'rule': 'A consumption requires a corresponding resource type.',
-                   'error': "Found a resource of type '{0!s}', expecting a resource of type 'CountingResource'.".format(resource_type)}
+            err = {'uri':   self.get_uri(),
+                   'rule':  'A consumption requires a corresponding resource type.',
+                   'error': "Found a resource of type '{0!s}', expecting a resource of type 'CountingResource'.".format(
+                       resource_type)}
             errors.append(err)
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -72,6 +73,5 @@ class CountingConsumption(Consumption):
                                                                                    rsc_id,
                                                                                    uri_id,
                                                                                    self._amount)
-
 
 # ----------------------------------------------------------------------------------------------------------------------

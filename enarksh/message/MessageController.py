@@ -5,10 +5,13 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+from time import sleep
+
 import zmq
 
 from enarksh.event.Event import Event
 from enarksh.event.EventActor import EventActor
+from enarksh.message.Message import Message
 
 
 class MessageController(EventActor):
@@ -22,6 +25,8 @@ class MessageController(EventActor):
         Object constructor.
         """
         EventActor.__init__(self)
+
+        Message.message_controller = self
 
         self._zmq_context = zmq.Context()
         """
@@ -46,6 +51,16 @@ class MessageController(EventActor):
         """
 
     # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def end_points(self):
+        """
+        Returns all end points.
+
+        :rtype: dict[str,zmq.sugar.socket.Socket]
+        """
+        return self._end_points
+
+    # ------------------------------------------------------------------------------------------------------------------
     def register_end_point(self, name, socket_type, end_point):
         """
         Registers an end point.
@@ -58,8 +73,13 @@ class MessageController(EventActor):
         :param str end_point: The end point.
         """
         socket = self._zmq_context.socket(socket_type)
-        socket.bind(end_point)
         self._end_points[name] = socket
+        if socket_type in [zmq.PULL, zmq.REP]:
+            socket.bind(end_point)
+        elif socket_type == zmq.PUSH:
+            socket.connect(end_point)
+        else:
+            raise ValueError("Unknown socket type {0}".format(socket_type))
 
     # ------------------------------------------------------------------------------------------------------------------
     def register_message_type(self, message_type):
@@ -132,7 +152,7 @@ class MessageController(EventActor):
             if socket.type in [zmq.PULL, zmq.REP]:
                 poller.register(socket, zmq.POLLIN)
 
-        # Wait for socket is read for reading.
+        # Wait for socket is ready for reading.
         socks = dict(poller.poll())
 
         for name, socket in self._end_points.items():
@@ -156,8 +176,26 @@ class MessageController(EventActor):
         Removes this object from the event system. This as preparation for removing this object such that there aren't
         references to this object and the garbage collector can remove this object.
         """
-        EventActor.destroy()
+        EventActor.destroy(self)
 
         self._message_types = {}
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def no_barking(self, seconds):
+        """
+        During start up of ZMQ the incoming file descriptors become 'ready for reading' while there is no message on
+        the socket. This method prevent incoming sockets barking that the are ready the for reading.
+
+        :param int seconds: The number of seconds the give the other ZMQ thread to start up.
+        """
+        sleep(seconds)
+
+        for _ in range(1, len(self.end_points)):
+            poller = zmq.Poller()
+            for socket in self.end_points.values():
+                if socket.type in [zmq.PULL, zmq.REP]:
+                    poller.register(socket, zmq.POLLIN)
+
+            poller.poll(1)
 
 # ----------------------------------------------------------------------------------------------------------------------

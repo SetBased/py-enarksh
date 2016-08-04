@@ -14,6 +14,7 @@ class ActivateNode(SimpleNode):
     """
     Class for objects in the controller of type 'ActivateNode'.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
     def start(self):

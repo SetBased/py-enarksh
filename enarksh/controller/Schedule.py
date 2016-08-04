@@ -610,7 +610,7 @@ class Schedule:
             node = self._nodes[rnd_id]
             node.rst_id = enarksh.ENK_RST_ID_QUEUED
 
-        return run_id  #  XXX Convert to bool
+        return run_id  # XXX Convert to bool
 
     # ------------------------------------------------------------------------------------------------------------------
     def _node_action_restart_failed(self, rnd_id):

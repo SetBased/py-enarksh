@@ -6,11 +6,10 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import argparse
-import traceback
 import sys
+import traceback
 
 import enarksh
-
 from enarksh.DataLayer import DataLayer
 from enarksh.xml_reader.XmlReader import XmlReader
 
@@ -19,6 +18,7 @@ class LoadHost:
     """
     A program for loading a host definition file into Enarksh.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self):
         # Set database configuration options.
@@ -60,8 +60,8 @@ class LoadHost:
                 DataLayer.rollback()
                 DataLayer.disconnect()
             except Exception as exception2:
-                    print(exception2, file=sys.stderr)
-                    traceback.print_exc(file=sys.stderr)
+                print(exception2, file=sys.stderr)
+                traceback.print_exc(file=sys.stderr)
             print(exception1, file=sys.stderr)
             traceback.print_exc(file=sys.stderr)
             exit_status = -1
