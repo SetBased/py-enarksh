@@ -18,8 +18,8 @@ class EventController(EventActor):
     other event is processed. Hence, an event listener will run entirely before any other code runs (which can
     potentially modify the data the event listener invokes).
 
-    Methods with name starting with 'friend_' MUST not be called from your application (only friend classes are allowed
-    to call these methods).
+    Methods with name starting with 'internal_' MUST not be called from your application (only friend classes are
+    allowed to call these methods).
     """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -27,9 +27,9 @@ class EventController(EventActor):
         """
         Object constructor.
         """
-        EventActor.__init__(self)
-
         Event.event_controller = self
+
+        EventActor.__init__(self)
 
         self._events = dict()
         """
@@ -144,17 +144,20 @@ class EventController(EventActor):
         :param enarksh.event.Event.Event event: The event to be dispatch.
         :param * event_data: Additional data supplied by the event source.
         """
-        for listeners in self._events[event].values():
+        for listener_object, listeners in self._events[event.ref].items():
             for listener, listener_data in listeners:
                 try:
-                    listener(event, event_data, listener_data)
+                    if listener_object:
+                        listener(listener_object(), event, event_data, listener_data)
+                    else:
+                        listener(event, event_data, listener_data)
                 except Exception as exception:
                     # @todo Improve logging.
                     print(exception, file=sys.stderr)
                     traceback.print_exc(file=sys.stderr)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def friend_queue_event(self, event, event_data):
+    def internal_queue_event(self, event, event_data):
         """
         Puts an event that has fired on the event queue.
 
@@ -166,43 +169,43 @@ class EventController(EventActor):
         self._queue.append((event, event_data))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def friend_unregister_event(self, event):
+    def internal_unregister_event_ref(self, event_ref):
         """
         Removes an event as an event in the current program.
 
         Note: Do not use this method directly. Use enarksh.event.EventActor.EventActor.destroy() instead.
 
-        :param enarksh.event.Event.Event event: The event that must be removed.
+        :param enarksh.event.Event.Event event_ref: The event that must be removed.
         """
-        if event in self._events:
-            for listener_object in self._events[event].keys():
+        if event_ref in self._events:
+            for listener_object in self._events[event_ref].keys():
                 events = self._listener_objects[listener_object]
-                events.remove(event)
+                events.remove(event_ref)
 
                 if not events:
                     del self._listener_objects[listener_object]
 
-            del self._events[event]
+            del self._events[event_ref]
 
     # ------------------------------------------------------------------------------------------------------------------
-    def friend_unregister_listener_object(self, listener_object):
+    def internal_unregister_listener_object_ref(self, listener_object_ref):
         """
         Removes an object as a listener object (i.e. an object with one or more methods registered as event listeners).
 
-        Note: Do not use this method directly. Use enarksh.event.EventActor.EventActor.destroy() instead.
+        Note: Do not use this method directly.
 
-        :param enarksh.event.Listener.Listener listener_object: The listener object.
+        :param enarksh.event.Listener.Listener listener_object_ref: The listener object.
         """
-        if listener_object in self._listener_objects:
+        if listener_object_ref in self._listener_objects:
             # Remove the object from all events.
-            for event in self._listener_objects[listener_object]:
-                del self._events[event][listener_object]
+            for event in self._listener_objects[listener_object_ref]:
+                del self._events[event][listener_object_ref]
 
             # Remove the object as listener object.
-            del self._listener_objects[listener_object]
+            del self._listener_objects[listener_object_ref]
 
     # ------------------------------------------------------------------------------------------------------------------
-    def friend_register_event(self, event):
+    def internal_register_event(self, event):
         """
         Registers an event as an event in the current program.
 
@@ -211,12 +214,10 @@ class EventController(EventActor):
 
         :param enarksh.event.Event.Event event: The event that must be registered.
         """
-        self._events[event] = dict()
-
-        event.source.friend_registered_events.add(event)
+        self._events[event.ref] = dict()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def friend_register_listener(self, event, listener, listener_data=None):
+    def internal_register_listener(self, event, listener, listener_data=None):
         """
         Registers a callable as a listener for an event.
 
@@ -231,18 +232,19 @@ class EventController(EventActor):
         if hasattr(listener, '__self__'):
             if not isinstance(listener.__self__, EventActor):
                 raise ValueError('Only an event actor can be a listener, got {0}'.format(listener.__self__))
-            listener_object = listener.__self__
+            listener_object = listener.__self__.ref
+            listener = listener.__func__
         else:
             listener_object = None
 
         # Register the event and the listener.
-        if listener_object not in self._events[event]:
-            self._events[event][listener_object] = list()
-        self._events[event][listener_object].append((listener, listener_data))
+        if listener_object not in self._events[event.ref]:
+            self._events[event.ref][listener_object] = list()
+        self._events[event.ref][listener_object].append((listener, listener_data))
 
         # Register the listener's object as a listener object.
         if listener_object not in self._listener_objects:
             self._listener_objects[listener_object] = set()
-        self._listener_objects[listener_object].add(event)
+        self._listener_objects[listener_object].add(event.ref)
 
 # ----------------------------------------------------------------------------------------------------------------------

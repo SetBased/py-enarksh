@@ -5,6 +5,8 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import weakref
+
 from enarksh.event.Event import Event
 
 
@@ -15,24 +17,11 @@ class EventActor:
 
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self):
-        self.friend_registered_events = set()
+        self.ref = weakref.ref(self, Event.event_controller.internal_unregister_listener_object_ref)
         """
-        All the (active) events this object can fire.
+        The weak reference to this event actor.
 
-        Note: This field MUST be touched by the event controller only.
-
-        :type: set[enarksh.event.Event.Event]
+        :type: weakref
         """
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def destroy(self):
-        """
-        Removes this object from the event system. This as preparation for removing this object such that there aren't
-        references (from the event system) to this object and the garbage collector can remove this object.
-        """
-        for event in self.friend_registered_events:
-            event.destroy()
-
-        Event.event_controller.friend_unregister_listener_object(self)
 
 # ----------------------------------------------------------------------------------------------------------------------

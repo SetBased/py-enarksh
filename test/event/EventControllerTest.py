@@ -1,6 +1,8 @@
 import unittest
 from io import StringIO
 
+import gc
+
 from enarksh.event.Event import Event
 from enarksh.event.EventActor import EventActor
 from enarksh.event.EventController import EventController
@@ -182,13 +184,13 @@ Processing: spam4 False
         # Start the event loop.
         controller.loop()
 
-        # Remove the objects (actually the variables) abd destory them first.
-        spam1.destroy()
-        spam2.destroy()
-        spam3.destroy()
+        # Remove the objects (actually the variables).
         del spam1
+        gc.collect()
         del spam2
+        gc.collect()
         del spam3
+        gc.collect()
 
         actual = out.getvalue()
 
@@ -400,10 +402,7 @@ event_loop_end
         # Start the event loop.
         controller.loop()
 
-        spam.event.destroy()
-        spam.event.destroy()
-        spam.destroy()
-        spam.destroy()
+        gc.collect()
 
         # Expect no exception.
         self.assertTrue(True)

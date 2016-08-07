@@ -203,16 +203,6 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         pass
 
     # ------------------------------------------------------------------------------------------------------------------
-    def destroy(self):
-        StateChange.unregister_all_observers(self)
-        self.resources = []
-        self.consumptions = []
-        self._child_nodes = []
-        self._parent_node = None
-        self._predecessor_nodes = []
-        self._successor_nodes = []
-
-    # ------------------------------------------------------------------------------------------------------------------
     def acquire_resources(self):
         """
         Acquires the resources required by this node.

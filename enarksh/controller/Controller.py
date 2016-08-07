@@ -195,8 +195,6 @@ class Controller:
             # Remove the schedule.
             del self._schedules[sch_id]
 
-            schedule.destroy()
-
             gc.collect()
 
     # ------------------------------------------------------------------------------------------------------------------

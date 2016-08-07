@@ -171,16 +171,6 @@ class MessageController(EventActor):
         socket.send_pyobj(message)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def destroy(self):
-        """
-        Removes this object from the event system. This as preparation for removing this object such that there aren't
-        references to this object and the garbage collector can remove this object.
-        """
-        EventActor.destroy(self)
-
-        self._message_types = {}
-
-    # ------------------------------------------------------------------------------------------------------------------
     def no_barking(self, seconds):
         """
         During start up of ZMQ the incoming file descriptors become 'ready for reading' while there is no message on

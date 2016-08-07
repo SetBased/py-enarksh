@@ -127,7 +127,6 @@ class Spawner(EventActor):
 
         :param int pid: The (original) PID of the process that the jon handlers was handling.
         """
-        self._job_handlers[pid].destroy()
         del self._job_handlers[pid]
 
     # ------------------------------------------------------------------------------------------------------------------

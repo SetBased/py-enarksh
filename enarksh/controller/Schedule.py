@@ -276,11 +276,6 @@ class Schedule:
         self._arrest_node = self._nodes[schedule['rnd_id_arrest']]
 
     # ------------------------------------------------------------------------------------------------------------------
-    def destroy(self):
-        for node in self._nodes.values():
-            node.destroy()
-
-    # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def _create_successor_lookup_table1(nodes_data, child_nodes_data, node_ports_data, ports_data, dependants_data):
         """
