@@ -58,9 +58,8 @@ class EventQueueEmptyEventHandler:
         zmq_fds = set()
         for socket in Message.message_controller.end_points.values():
             if socket.type in [zmq.PULL, zmq.REP]:
-                zmq_fd = socket.get(zmq.FD)
-                read.append(zmq_fd)
-                zmq_fds.add(zmq_fd)
+                read.append(socket)
+                zmq_fds.add(socket)
 
         # Add the job handlers to the list of read file descriptors.
         for job_handler in spawner.job_handlers.values():
@@ -76,7 +75,9 @@ class EventQueueEmptyEventHandler:
 
         try:
             # Wait for a fd becomes available for read or wait for an interrupt.
-            read, _, _ = select.select(read, [], [])
+            read, _, except_fds = zmq.sugar.poll.select(read, [], [])
+            # Somehow the sockets of the job handlers end up in the list of sockets with exceptions?!
+            read = read + except_fds
 
         except InterruptedError:
             # Ignore Interrupted system call errors (EINTR) in the select call.
