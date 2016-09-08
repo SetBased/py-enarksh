@@ -278,12 +278,16 @@ class Node(StateChange, metaclass=abc.ABCMeta):
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
-    def slot_child_node_state_change(self, node, old, new):
+    def child_node_event_state_change_handler(self, _event, _event_data, _listener_data):
         """
-        :param node:
-        :param dict old:
-        :param dict new:
+        Event handler for a sate change of a child node.
+
+        :param * _event: Not used.
+        :param * _event_data: The old and new state.
+        :param * _listener_data: Not used
         """
+        del _event, _event_data, _listener_data
+
         # Compute the running status of this complex node based on the running statuses of its child nodes.
         weight = 0
         for child_node in self._child_nodes:
@@ -294,12 +298,18 @@ class Node(StateChange, metaclass=abc.ABCMeta):
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
-    def slot_predecessor_node_state_change(self, node, old, new):
+    def predecessor_node_event_state_change_handler(self, _event, event_data, _listener_data):
         """
-        :param node:
-        :param dict old:
-        :param dict new:
+        Event handler for a sate change of a predecessor node.
+
+        :param * _event: Not used.
+        :param tuple[dict,dict] event_data: The old and new state.
+        :param * _listener_data: Not used
         """
+        del _event, _listener_data
+
+        old, new = event_data
+
         if old['rst_id'] != new['rst_id']:
             self._recompute_run_status()
 
@@ -356,14 +366,14 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         if self.rnd_id in direct_predecessors:
             for predecessor in direct_predecessors[self.rnd_id]:
                 node = run_nodes[predecessor]
-                node.register_observer(self.slot_predecessor_node_state_change)
+                node.event_state_change.register_listener(self.predecessor_node_event_state_change_handler)
                 self._predecessor_nodes.append(node)
 
         # Observe the child run_nodes of this node (for complex nodes only).
         if self.rnd_id in child_nodes:
             for child_node in child_nodes[self.rnd_id]:
                 node = run_nodes[child_node['rnd_id']]
-                node.register_observer(self.slot_child_node_state_change)
+                node.event_state_change.register_listener(self.child_node_event_state_change_handler)
                 self._child_nodes.append(node)
 
         # Set the parent node of this node.

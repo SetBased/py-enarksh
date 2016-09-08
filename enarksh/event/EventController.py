@@ -110,6 +110,15 @@ class EventController(EventActor):
         return self._event_queue_empty
 
     # ------------------------------------------------------------------------------------------------------------------
+    def queue_size(self):
+        """
+        Returns the number of event on the event queue.
+
+        :rtype: int
+        """
+        return len(self._queue)
+
+    # ------------------------------------------------------------------------------------------------------------------
     def loop(self):
         """
         Start the event handler loop.

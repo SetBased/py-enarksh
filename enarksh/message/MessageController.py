@@ -5,9 +5,11 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import pickle
 from time import sleep
 
 import zmq
+from zmq.utils import jsonapi
 
 from enarksh.event.Event import Event
 from enarksh.event.EventActor import EventActor
@@ -17,6 +19,13 @@ from enarksh.message.Message import Message
 class MessageController(EventActor):
     """
     A message controller for receiving messages and firing the appropriate events.
+    """
+
+    _json_message_creators = {}
+    """
+    All registered message creates from JSON data.
+
+    :type: dict[str,callable]
     """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -82,6 +91,17 @@ class MessageController(EventActor):
             raise ValueError("Unknown socket type {0}".format(socket_type))
 
     # ------------------------------------------------------------------------------------------------------------------
+    @staticmethod
+    def register_json_message_creator(message_type, creator):
+        """
+        Registers a function that creates a message from JSOn encode data.
+
+        :param str message_type: The message type to register.
+        :param callable creator: The function for creating a message from JSON encode data.
+        """
+        MessageController._json_message_creators[message_type] = creator
+
+    # ------------------------------------------------------------------------------------------------------------------
     def register_message_type(self, message_type):
         """
         Registers a message type together with the event and message constructor.
@@ -125,9 +145,16 @@ class MessageController(EventActor):
 
         XXX @todo Support JSON messages for communication with PHP front end.
         """
-        message = socket.recv_pyobj()
-        """:type: enarksh.message.Message.Message"""
-        message.message_source = name
+        buffer = socket.recv()
+        if buffer[:1] == b'{':
+            tmp = jsonapi.loads(buffer)
+            if tmp['type'] not in self._json_message_creators:
+                raise ValueError("Received JSON message with unknown message type '{0}'".format(tmp['type']))
+            message = self._json_message_creators[tmp['type']](tmp)
+        else:
+            message = pickle.loads(buffer)
+            """:type: enarksh.message.Message.Message"""
+            message.message_source = name
 
         if message.message_type not in self._message_types:
             raise ValueError("Received message with unknown message type '{0}'".format(message.message_type))
@@ -160,15 +187,19 @@ class MessageController(EventActor):
                 self._receive_message(name, socket)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def send_message(self, end_point, message):
+    def send_message(self, end_point, message, json=False):
         """
         Sends a message to an end point.
 
         :param str end_point: The name of the end point.
-        :param enarksh.message.Message.Message message: The message.
+        :param enarksh.message.Message.Message|* message: The message.
+        :param bool json: If True the message will be send as a JSON encode string.
         """
         socket = self._end_points[end_point]
-        socket.send_pyobj(message)
+        if json:
+            socket.send_json(message)
+        else:
+            socket.send_pyobj(message)
 
     # ------------------------------------------------------------------------------------------------------------------
     def no_barking(self, seconds):

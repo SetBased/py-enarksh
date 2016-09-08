@@ -16,23 +16,11 @@ from enarksh.DataLayer import DataLayer
 from enarksh.controller import consumption
 from enarksh.controller import resource
 from enarksh.controller.node import create_node
+from enarksh.event.Event import Event
+from enarksh.event.EventActor import EventActor
 
 
-class Schedule:
-    _observers_new_node = []
-    """
-    The objects that will notified when a schedule has create a new node.
-
-    :type: list
-    """
-
-    _observers_schedule_termination = []
-    """
-    The objects that will notified when a schedule has terminated.
-
-    :type: list
-    """
-
+class Schedule(EventActor):
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, sch_id, host_resources):
         """
@@ -41,6 +29,7 @@ class Schedule:
         :param int sch_id:
         :param dict host_resources:
         """
+        EventActor.__init__(self)
 
         self._sch_id = sch_id
         """
@@ -123,7 +112,21 @@ class Schedule:
         """
         The queue of nodes that are ready to run.
 
-        :type: set
+        :type: set[enarksh.controller.node.Node.Node]
+        """
+
+        self.event_new_node_creation = Event(self)
+        """
+        The event that wil be fired when this schedule creates a new node.
+
+        :type: enarksh.event.Event.Event
+        """
+
+        self.event_schedule_termination = Event(self)
+        """
+        The event that wil be fired when this schedule terminates.
+
+        :type: enarksh.event.Event.Event
         """
 
         self._load(sch_id, host_resources)
@@ -196,7 +199,7 @@ class Schedule:
                 resources[resource_data['rsc_id']] = rsc
 
                 # Observe resource for state changes.
-                rsc.register_observer(Schedule.slot_resource_state_change)
+                rsc.event_state_change.register_listener(Schedule.slot_resource_state_change)
 
         # Create all consumptions.
         consumptions = {}
@@ -231,10 +234,10 @@ class Schedule:
                                 successors)
 
                 # Observe node for state changes.
-                node.register_observer(self.slot_node_state_change)
+                node.event_state_change.register_listener(self.slot_node_state_change)
 
                 # Signal a new node has been created.
-                self._notify_observers_new_node(self, node)
+                self.event_new_node_creation.fire(node)
 
         # Second initialize complex nodes.
         for node_data in nodes_data.values():
@@ -253,10 +256,10 @@ class Schedule:
                                 successors)
 
                 # Observe node for state changes.
-                node.register_observer(self.slot_node_state_change)
+                node.event_state_change.register_listener(self.slot_node_state_change)
 
                 # Signal a new node has been created.
-                self._notify_observers_new_node(self, node)
+                self.event_new_node_creation.fire(node)
 
         # Create a map from rnd_id to all its child nodes.
         for (rnd_id_parent, nodes) in tmp_child_nodes.items():
@@ -392,46 +395,6 @@ class Schedule:
         return self._nodes[rnd_id]
 
     # ------------------------------------------------------------------------------------------------------------------
-    @staticmethod
-    def register_observer_new_node(method):
-        """
-        Registers an object as an observer of the state of this object.
-        """
-        Schedule._observers_new_node.append(method)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    @staticmethod
-    def register_observer_schedule_termination(method):
-        """
-        Registers an object as an observer for termination of this schedule.
-        """
-        Schedule._observers_schedule_termination.append(method)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    @staticmethod
-    def _notify_observers_new_node(schedule, node):
-        """
-        Notifies all observers that a new node has been created.
-
-        :param schedule:
-        :param enarksh.controller.node.Node.Node node:
-        """
-        for method in Schedule._observers_new_node:
-            method(schedule, node)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    @staticmethod
-    def _notify_observers_schedule_termination(schedule, rst_id):
-        """
-        Notifies all observers that a schedule has terminated.
-
-        :param schedule:
-        :param int rst_id:
-        """
-        for method in Schedule._observers_schedule_termination:
-            method(schedule, rst_id)
-
-    # ------------------------------------------------------------------------------------------------------------------
     def _test_node_run_status_of_successor(self, rnd_id, statuses, seen):
         """
         :param int rnd_id:
@@ -466,24 +429,42 @@ class Schedule:
         return False
 
     # ------------------------------------------------------------------------------------------------------------------
-    def request_possible_node_actions(self, rnd_id, message):
+    @staticmethod
+    def get_response_template():
+        actions = {enarksh.ENK_ACT_ID_TRIGGER:        {'act_id':      enarksh.ENK_ACT_ID_TRIGGER,
+                                                       'act_title':   'Trigger',
+                                                       'act_enabled': False},
+                   enarksh.ENK_ACT_ID_RESTART:        {'act_id':      enarksh.ENK_ACT_ID_RESTART,
+                                                       'act_title':   'Restart',
+                                                       'act_enabled': False},
+                   enarksh.ENK_ACT_ID_RESTART_FAILED: {'act_id':      enarksh.ENK_ACT_ID_RESTART_FAILED,
+                                                       'act_title':   'Restart Failed',
+                                                       'act_enabled': False}}
+
+        return {'actions':            actions,
+                'mail_on_completion': False,
+                'mail_on_error':      False}
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def request_possible_node_actions(self, rnd_id):
         """
         Returns the possible actions for a node.
 
         :param int rnd_id: The ID of the node.
-        :param dict message: The message containing possible actions and mail options.
 
         :rtype dict: The message with possible node actions enabled.
         """
+        response = self.get_response_template()
+
         # Find node in map from rnd_id to node.
         node = self._nodes.get(rnd_id, None)
         if not node:
-            # Node is not part of a current run of this schedule .
-            return message
+            # Node is not part of a current run of this schedule.
+            return response
 
         # Set the mail options.
-        message['mail_on_completion'] = self._mail_on_completion
-        message['mail_on_error'] = self._mail_on_error
+        response['mail_on_completion'] = self._mail_on_completion
+        response['mail_on_error'] = self._mail_on_error
 
         # Get the current run status of the node.
         rst_id = node.rst_id
@@ -491,10 +472,10 @@ class Schedule:
         if self._schedule_node.rnd_id == rnd_id:
             # Node rnd_id is the schedule it self.
             if rst_id == enarksh.ENK_RST_ID_WAITING:
-                message['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
+                response['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
                 errors = self._test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_ERROR,), set())
                 if errors:
-                    message['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
+                    response['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
 
             elif rst_id == enarksh.ENK_RST_ID_QUEUED:
                 # No actions are possible.
@@ -503,32 +484,32 @@ class Schedule:
             elif rst_id == enarksh.ENK_RST_ID_RUNNING:
                 errors = self._test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_ERROR,), set())
                 if errors:
-                    message['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
+                    response['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
 
             elif rst_id == enarksh.ENK_RST_ID_COMPLETED:
-                message['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
+                response['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
 
             elif rst_id == enarksh.ENK_RST_ID_ERROR:
-                message['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
-                message['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
+                response['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
+                response['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
 
             else:
                 raise Exception("Unexpected rst_id '%s'." % rst_id)
 
-            return message
+            return response
 
         if self._activate_node.rnd_id == rnd_id:
             # Node rnd_id is the trigger of the schedule.
             busy = self._test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_RUNNING,
                                                                     enarksh.ENK_RST_ID_QUEUED), set())
             if not busy:
-                message['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
+                response['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
 
-            return message
+            return response
 
         if self._arrest_node.rnd_id == rnd_id:
             # No actions are possible for an arrest node of a schedule.
-            return message
+            return response
 
         # Node is not an activate node nor an arrest node of the schedule.
         if rst_id == enarksh.ENK_RST_ID_WAITING:
@@ -547,21 +528,21 @@ class Schedule:
             if node.is_complex_node():
                 errors = self._test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_ERROR,), set())
                 if errors:
-                    message['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
+                    response['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
 
         elif rst_id == enarksh.ENK_RST_ID_COMPLETED:
             # Node has completed successfully.
             busy = self._test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_RUNNING,), set())
             if not busy:
-                message['actions'][enarksh.ENK_ACT_ID_RESTART]['act_enabled'] = True
+                response['actions'][enarksh.ENK_ACT_ID_RESTART]['act_enabled'] = True
 
         elif rst_id == enarksh.ENK_RST_ID_ERROR:
             if node.is_complex_node():
-                message['actions'][enarksh.ENK_ACT_ID_RESTART]['act_enabled'] = True
-                message['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
+                response['actions'][enarksh.ENK_ACT_ID_RESTART]['act_enabled'] = True
+                response['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
 
             elif node.is_simple_node():
-                message['actions'][enarksh.ENK_ACT_ID_RESTART]['act_enabled'] = True
+                response['actions'][enarksh.ENK_ACT_ID_RESTART]['act_enabled'] = True
 
             else:
                 raise Exception('Internal error.')
@@ -569,7 +550,7 @@ class Schedule:
         else:
             raise Exception("Unexpected rst_id '%d'." % rst_id)
 
-        return message
+        return response
 
     # ------------------------------------------------------------------------------------------------------------------
     def _node_action_restart(self, rnd_id):
@@ -709,12 +690,17 @@ class Schedule:
             traceback.print_exc(file=sys.stderr)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def slot_node_state_change(self, node, old, new):
+    def slot_node_state_change(self, event, event_data, _listener_data):
         """
-        :param enarksh.controller.node.Node.Node node:
-        :param dict old:
-        :param dict new:
+        :param enarksh.event.Event.Event event: The event.
+        :param tuple[disc,disc] event_data: Tuple with the old and new state.
+        :param * _listener_data: Not used.
         """
+        del _listener_data
+
+        node = event.source
+        old, new = event_data
+
         # If required: sync the status of the node to the database.
         if old['rst_id'] != new['rst_id']:
             node.sync_state()
@@ -760,17 +746,20 @@ class Schedule:
         # If the schedule has terminated inform all observer of this event.
         if node == self._schedule_node and old['rst_id'] != new['rst_id']:
             if new['rst_id'] in (enarksh.ENK_RST_ID_ERROR, enarksh.ENK_RST_ID_COMPLETED):
-                self._notify_observers_schedule_termination(self, new['rst_id'])
+                self.event_schedule_termination.fire(new['rst_id'])
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def slot_resource_state_change(resource, old, new):
+    def slot_resource_state_change(event, _event_data, _listener_data):
         """
-        :param enarksh.controller.resource resource:
-        :param dict old:
-        :param dict new:
+        :param enarksh.event.Event.Event event: The event.
+        :param * _event_data: Not used.
+        :param * _listener_data: Not used.
         """
-        resource.sync_state()
+        del _event_data, _listener_data
+
+        rsc = event.source
+        rsc.sync_state()
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_schedule_load(self):
@@ -796,10 +785,10 @@ class Schedule:
         Executes a node action.
 
         :param int rnd_id: The ID of the node.
-        :param int act_id: The ID of the action.
-        :param str usr_login:
-        :param bool mail_on_completion:
-        :param bool mail_on_error:
+        :param int act_id: The ID of the requested action.
+        :param str usr_login: The name of the user who has requested the node action.
+        :param bool mail_on_completion: If True the user wants to receive a mail when the schedule has completed.
+        :param bool mail_on_error: If True the user wants to receive a mail when an error occurs.
 
         :rtype bool: True if the controller must reload the schedule. False otherwise.
         """
@@ -867,7 +856,7 @@ class Schedule:
         """
         Returns the queued nodes sorted by scheduling wait.
 
-        :rtype: set
+        :rtype: list[enarksh.controller.node.Node.Node]
         """
         return sorted(self._queue, key=functools.cmp_to_key(Schedule.queue_compare))
 

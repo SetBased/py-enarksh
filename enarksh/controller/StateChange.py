@@ -7,49 +7,29 @@ Licence MIT
 """
 import abc
 
+from enarksh.event.Event import Event
+from enarksh.event.EventActor import EventActor
 
-class StateChange(metaclass=abc.ABCMeta):
+
+class StateChange(EventActor, metaclass=abc.ABCMeta):
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self):
-        self._observers = []
         """
-        The objects that observe the state of this object.
+        Object constructor.
+        """
+        EventActor.__init__(self)
 
-        :type: list
+        self.event_state_change = Event(self)
+        """
+        The event that will be fired when the state of this object has changed.
+
+        :type: enarksh.event.Event.Event
         """
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
     def get_state_attributes(self):
         raise NotImplementedError()
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def register_observer(self, method, **args):
-        """
-        Registers an object as an observer of the state of this object.
-
-        :param method:
-        :param dict args:
-        """
-        self._observers.append((method, args))
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def unregister_all_observers(self):
-        """
-        Unregisters all observers.
-        """
-        self._observers = []
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def notify_observer(self, old, new):
-        """
-        Notifies all observer about the state change of this object.
-
-        :param dict old:
-        :param dict new:
-        """
-        for (method, args) in self._observers:
-            method(self, old, new, *args)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -68,7 +48,7 @@ class StateChange(metaclass=abc.ABCMeta):
 
             # If state has changed inform all observers.
             if old != new:
-                obj.notify_observer(old, new)
+                obj.event_state_change.fire((old, new))
 
             return ret
 

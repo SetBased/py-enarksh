@@ -42,8 +42,6 @@ class Spawner(EventActor):
         """
         Object constructor.
         """
-        EventActor.__init__(self)
-
         Spawner.instance = self
 
         self._event_controller = EventController()
@@ -52,6 +50,8 @@ class Spawner(EventActor):
 
         :type: enarksh.event.EventController.EventController
         """
+
+        EventActor.__init__(self)
 
         self._message_controller = MessageController()
         """
