@@ -181,9 +181,9 @@ class Node(StateChange, metaclass=abc.ABCMeta):
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
-    def schedule_wait(self):
+    def scheduling_weight(self):
         """
-        Return the scheduling wait (i.e. the number (direct and indirect) of simple successors).
+        Return the scheduling weight (i.e. the number (direct and indirect) of simple successors).
 
         :rtype: int
         """

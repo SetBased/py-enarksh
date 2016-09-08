@@ -839,12 +839,12 @@ class Schedule(EventActor):
         :rtype: int
         """
         # Sort by scheduling weight.
-        cmp = node1.get_schedule_wait() - node2.get_schedule_wait()
+        cmp = node1.scheduling_weight - node2.scheduling_weight
 
         if cmp == 0:
-            if node1.get_name().lower() < node2.get_name().lower():
+            if node1.name.lower() < node2.name.lower():
                 cmp = -1
-            elif node1.get_name().lower() > node2.get_name().lower():
+            elif node1.name.lower() > node2.name.lower():
                 cmp = 1
             else:
                 cmp = 0
