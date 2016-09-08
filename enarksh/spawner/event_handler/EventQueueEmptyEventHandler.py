@@ -7,7 +7,6 @@ Licence MIT
 """
 import fcntl
 import os
-import select
 import signal
 
 import zmq

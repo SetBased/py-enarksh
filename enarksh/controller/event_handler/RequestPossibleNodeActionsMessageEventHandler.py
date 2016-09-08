@@ -5,11 +5,9 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import sys
 import traceback
 
-import sys
-
-import enarksh
 from enarksh.DataLayer import DataLayer
 from enarksh.controller.Schedule import Schedule
 
@@ -38,7 +36,7 @@ class RequestPossibleNodeActionsMessageEventHandler:
                 response = schedule.request_possible_node_actions(message.rnd_id)
             else:
                 response = Schedule.get_response_template()
-        except Exception as exception:  # XXX move to MessageHandler
+        except Exception as exception:
             print(exception, file=sys.stderr)
             traceback.print_exc(file=sys.stderr)
 

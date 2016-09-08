@@ -67,6 +67,7 @@ class RequestPossibleNodeActionsMessage(Message):
         """
         self.message_controller.send_message(end_point, self)
 
+
 # ----------------------------------------------------------------------------------------------------------------------
 MessageController.register_json_message_creator(RequestPossibleNodeActionsMessage.MESSAGE_TYPE,
                                                 RequestPossibleNodeActionsMessage.create_from_json)

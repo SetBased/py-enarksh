@@ -6,9 +6,9 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import os
+import pwd
 import signal
 
-import pwd
 import zmq
 
 import enarksh

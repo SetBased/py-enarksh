@@ -14,6 +14,7 @@ class ActivateNode(SimpleNode, metaclass=abc.ABCMeta):
     """
     Class for reading activate nodes.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def is_activate_node():

@@ -14,6 +14,7 @@ class ArrestNode(SimpleNode, metaclass=abc.ABCMeta):
     """
     Class for reading arrest nodes.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def is_arrest_node():

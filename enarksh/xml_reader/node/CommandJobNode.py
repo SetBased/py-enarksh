@@ -15,6 +15,7 @@ class CommandJobNode(SimpleNode):
     """
     Class for reading command job nodes.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, parent_node):
         """

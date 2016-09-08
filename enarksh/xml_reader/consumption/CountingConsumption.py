@@ -14,6 +14,7 @@ class CountingConsumption(Consumption):
     """
     Class reading counting consumptions.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, node):
         """

@@ -5,7 +5,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-
 import sys
 import traceback
 
@@ -66,7 +65,7 @@ class RequestNodeActionMessageEventHandler:
 
                     if message.act_id == enarksh.ENK_ACT_ID_TRIGGER:
                         response['new_run'] = 1
-        except Exception as exception:  # XXX move to MessageHandler
+        except Exception as exception:
             print(exception, file=sys.stderr)
             traceback.print_exc(file=sys.stderr)
 

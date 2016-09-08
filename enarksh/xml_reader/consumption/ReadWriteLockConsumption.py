@@ -14,6 +14,7 @@ class ReadWriteLockConsumption(Consumption):
     """
     Class reading read-write lock consumptions.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, node):
         """

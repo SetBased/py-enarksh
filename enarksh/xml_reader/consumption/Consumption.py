@@ -12,6 +12,7 @@ class Consumption(metaclass=abc.ABCMeta):
     """
     Abstract parent class for consumptions.
     """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, node):
         self._cns_id = 0
