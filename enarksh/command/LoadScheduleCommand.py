@@ -7,13 +7,13 @@ Licence MIT
 """
 from cleo import Command
 
+from enarksh.controller.client.LoadScheduleClient import LoadScheduleClient
 from enarksh.style.EnarkshStyle import EnarkshStyle
-from enarksh.util.LoadSchedule import LoadSchedule
 
 
 class LoadScheduleCommand(Command):
     """
-    Loads schedules
+    Requests the controller to load schedule definitions
 
     load_schedule
         {schedule.xml?* : The schedule(s) to load}
@@ -26,8 +26,8 @@ class LoadScheduleCommand(Command):
         """
         self.output = EnarkshStyle(self.input, self.output)
 
-        reader = LoadSchedule()
-        ret = reader.main(self.input.get_argument('schedule.xml'))
+        client = LoadScheduleClient()
+        ret = client.main(self.input.get_argument('schedule.xml'))
 
         return ret
 

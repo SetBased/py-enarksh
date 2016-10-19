@@ -19,14 +19,16 @@ from enarksh.controller.event_handler.DynamicWorkerDefinitionMessageEventHandler
     DynamicWorkerDefinitionMessageEventHandler
 from enarksh.controller.event_handler.EventQueueEmptyEventHandler import EventQueueEmptyEventHandler
 from enarksh.controller.event_handler.JobFinishedMessageEventHandler import JobFinishedMessageEventHandler
-from enarksh.controller.event_handler.RequestNodeActionMessageEventHandler import RequestNodeActionMessageEventHandler
-from enarksh.controller.event_handler.RequestPossibleNodeActionsMessageEventHandler import \
-    RequestPossibleNodeActionsMessageEventHandler
+from enarksh.controller.event_handler.NodeActionMessageEventHandler import NodeActionMessageEventHandler
+from enarksh.controller.event_handler.NodeActionMessageWebEventHandler import NodeActionMessageWebEventHandler
+from enarksh.controller.event_handler.PossibleNodeActionsWebMessageEventHandler import \
+    PossibleNodeActionsWebMessageEventHandler
 from enarksh.controller.event_handler.ScheduleDefinitionMessageEventHandler import ScheduleDefinitionMessageEventHandler
 from enarksh.controller.message.DynamicWorkerDefinitionMessage import DynamicWorkerDefinitionMessage
 from enarksh.controller.message.JobFinishedMessage import JobFinishedMessage
-from enarksh.controller.message.RequestNodeActionMessage import RequestNodeActionMessage
-from enarksh.controller.message.RequestPossibleNodeActionsMessage import RequestPossibleNodeActionsMessage
+from enarksh.controller.message.NodeActionMessage import NodeActionMessage
+from enarksh.controller.message.NodeActionWebMessage import NodeActionWebMessage
+from enarksh.controller.message.PossibleNodeActionsWebMessage import PossibleNodeActionsWebMessage
 from enarksh.controller.message.ScheduleDefinitionMessage import ScheduleDefinitionMessage
 from enarksh.event.EventActor import EventActor
 from enarksh.event.EventController import EventController
@@ -227,9 +229,16 @@ class Controller(EventActor):
         """
         self.message_controller.register_message_type(DynamicWorkerDefinitionMessage.MESSAGE_TYPE)
         self.message_controller.register_message_type(JobFinishedMessage.MESSAGE_TYPE)
-        self.message_controller.register_message_type(RequestNodeActionMessage.MESSAGE_TYPE)
-        self.message_controller.register_message_type(RequestPossibleNodeActionsMessage.MESSAGE_TYPE)
+        self.message_controller.register_message_type(NodeActionMessage.MESSAGE_TYPE)
         self.message_controller.register_message_type(ScheduleDefinitionMessage.MESSAGE_TYPE)
+        self.message_controller.register_message_type(NodeActionWebMessage.MESSAGE_TYPE)
+        self.message_controller.register_message_type(PossibleNodeActionsWebMessage.MESSAGE_TYPE)
+
+        # Register JSON messages.
+        self.message_controller.register_json_message_creator(PossibleNodeActionsWebMessage.MESSAGE_TYPE,
+                                                              PossibleNodeActionsWebMessage.create_from_json)
+        self.message_controller.register_json_message_creator(NodeActionWebMessage.MESSAGE_TYPE,
+                                                              NodeActionWebMessage.create_from_json)
 
     # ------------------------------------------------------------------------------------------------------------------
     def _register_events_handlers(self):
@@ -243,14 +252,17 @@ class Controller(EventActor):
         self.message_controller.register_listener(JobFinishedMessage.MESSAGE_TYPE,
                                                   JobFinishedMessageEventHandler.handle,
                                                   self)
-        self.message_controller.register_listener(RequestNodeActionMessage.MESSAGE_TYPE,
-                                                  RequestNodeActionMessageEventHandler.handle,
-                                                  self)
-        self.message_controller.register_listener(RequestPossibleNodeActionsMessage.MESSAGE_TYPE,
-                                                  RequestPossibleNodeActionsMessageEventHandler.handle,
+        self.message_controller.register_listener(NodeActionMessage.MESSAGE_TYPE,
+                                                  NodeActionMessageEventHandler.handle,
                                                   self)
         self.message_controller.register_listener(ScheduleDefinitionMessage.MESSAGE_TYPE,
                                                   ScheduleDefinitionMessageEventHandler.handle,
+                                                  self)
+        self.message_controller.register_listener(NodeActionWebMessage.MESSAGE_TYPE,
+                                                  NodeActionMessageWebEventHandler.handle,
+                                                  self)
+        self.message_controller.register_listener(PossibleNodeActionsWebMessage.MESSAGE_TYPE,
+                                                  PossibleNodeActionsWebMessageEventHandler.handle,
                                                   self)
 
         # Register other event handlers.

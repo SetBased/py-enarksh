@@ -296,7 +296,7 @@ class JobHandler(EventActor):
                     os.initgroups(self._user_name, gid)
                     os.setuid(uid)
                 else:
-                    raise SystemExit("Spanner is not allowed to start processes under user '%s'." % self._user_name)
+                    raise RuntimeError("Spanner is not allowed to start processes under user '%s'." % self._user_name)
 
                 # Set variable for subprocess.
                 os.putenv('ENK_RND_ID', str(self._rnd_id))
@@ -309,7 +309,8 @@ class JobHandler(EventActor):
                 print('Unable to start job.', file=sys.stderr)
                 print('Reason: %s' % e, file=sys.stderr)
                 traceback.print_exc(file=sys.stderr)
-                exit(-1)
+                # Exit immediately without running the exit handlers (e.g. from daemon) from the parent process.
+                os._exit(-1)
         else:
             # Parent process.
             # Close the write ends from the pipes.

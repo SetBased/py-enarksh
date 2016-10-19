@@ -15,9 +15,9 @@ import enarksh
 from enarksh.controller.message.ScheduleDefinitionMessage import ScheduleDefinitionMessage
 
 
-class LoadSchedule:
+class LoadScheduleClient:
     """
-    A client to communicates with the controller for loading a new schedule.
+    A client for requesting the controller to load new schedules.
     """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ class LoadSchedule:
         # Compose the message for the controller.
         message = ScheduleDefinitionMessage(xml, os.path.realpath(filename))
 
-        # Send the message tot the controller.
+        # Send the message to the controller.
         self._zmq_controller.send_pyobj(message)
 
         # Await the response from the controller.

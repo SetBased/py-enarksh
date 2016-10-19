@@ -12,19 +12,19 @@ from enarksh.DataLayer import DataLayer
 from enarksh.controller.Schedule import Schedule
 
 
-class RequestPossibleNodeActionsMessageEventHandler:
+class PossibleNodeActionsWebMessageEventHandler:
     """
-    An event handler for a RequestPossibleNodeActions received events.
+    An event handler for a PossibleNodeActionsWebMessage received events.
     """
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def handle(_event, message, controller):
         """
-        Handles a RequestPossibleNodeActions received event.
+        Handles a PossibleNodeActionsWebMessage received event.
 
         :param * _event: Not used.
-        :param enarksh.controller.message.RequestPossibleNodeActionsMessage.RequestPossibleNodeActionsMessage message:
+        :param enarksh.controller.message.PossibleNodeActionsWebMessage.PossibleNodeActionsWebMessage message:
                The message.
         :param enarksh.controller.Controller.Controller controller: The controller.
         """

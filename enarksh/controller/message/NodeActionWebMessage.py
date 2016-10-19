@@ -6,14 +6,13 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 from enarksh.message.Message import Message
-from enarksh.message.MessageController import MessageController
 
 
-class RequestNodeActionMessage(Message):
+class NodeActionWebMessage(Message):
     """
-    Message type for requesting a node action.
+    Message type for requesting a node action made through the web application.
     """
-    MESSAGE_TYPE = 'controller:RequestNodeActionMessage'
+    MESSAGE_TYPE = 'controller:NodeActionWebMessage'
     """
     The message type.
 
@@ -32,7 +31,7 @@ class RequestNodeActionMessage(Message):
         :param bool mail_on_completion: If True the user wants to receive a mail when the schedule has completed.
         :param bool mail_on_error: If True the user wants to receive a mail when an error occurs.
         """
-        Message.__init__(self, RequestNodeActionMessage.MESSAGE_TYPE)
+        Message.__init__(self, NodeActionWebMessage.MESSAGE_TYPE)
 
         self.sch_id = sch_id
         """
@@ -59,7 +58,7 @@ class RequestNodeActionMessage(Message):
         """
         The name of the user who has requested the node action.
 
-        :type: int
+        :type: str
         """
 
         self.mail_on_completion = mail_on_completion
@@ -84,14 +83,14 @@ class RequestNodeActionMessage(Message):
 
         :param * message: The message.
 
-        :rtype: enarksh.controller.message.RequestPossibleNodeActionsMessage.RequestPossibleNodeActionsMessage
+        :rtype: enarksh.controller.message.PossibleNodeActionsWebMessage.PossibleNodeActionsWebMessage
         """
-        return RequestNodeActionMessage(int(message['sch_id']),
-                                        int(message['rnd_id']),
-                                        int(message['act_id']),
-                                        message['usr_login'],
-                                        bool(message['mail_on_completion']),
-                                        bool(message['mail_on_error']))
+        return NodeActionWebMessage(int(message['sch_id']),
+                                    int(message['rnd_id']),
+                                    int(message['act_id']),
+                                    message['usr_login'],
+                                    bool(message['mail_on_completion']),
+                                    bool(message['mail_on_error']))
 
     # ------------------------------------------------------------------------------------------------------------------
     def send_message(self, end_point):
@@ -104,7 +103,4 @@ class RequestNodeActionMessage(Message):
         """
         self.message_controller.send_message(end_point, self)
 
-
 # ----------------------------------------------------------------------------------------------------------------------
-MessageController.register_json_message_creator(RequestNodeActionMessage.MESSAGE_TYPE,
-                                                RequestNodeActionMessage.create_from_json)

@@ -38,6 +38,7 @@ begin
 
   open c_data;
   loop1: loop
+    set l_done = false;
     fetch c_data
     into  l_bdt_id
     ,     l_bdt_data

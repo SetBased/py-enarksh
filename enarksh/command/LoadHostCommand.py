@@ -7,13 +7,13 @@ Licence MIT
 """
 from cleo import Command
 
+from enarksh.controller.client.LoadHostClient import LoadHostClient
 from enarksh.style.EnarkshStyle import EnarkshStyle
-from enarksh.util.LoadHost import LoadHost
 
 
 class LoadHostCommand(Command):
     """
-    Loads the host
+    Requests the controller to load a host definition
 
     load_host
     """
@@ -25,7 +25,9 @@ class LoadHostCommand(Command):
         """
         self.output = EnarkshStyle(self.input, self.output)
 
-        reader = LoadHost()
-        reader.main()
+        client = LoadHostClient()
+        ret = client.main()
+
+        return ret
 
 # ----------------------------------------------------------------------------------------------------------------------

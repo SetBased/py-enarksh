@@ -1,0 +1,23 @@
+/**
+ * Selects a current run node based on the URI of the node.
+ *
+ * @param p_uri_uri The URI of the node.
+ */
+create procedure enk_back_run_node_get_by_uri(in p_uri_uri @enk_uri.uri_uri%type@)
+reads sql data
+-- type: row1
+begin
+  select srv.sch_id
+  ,      nod.nod_id
+  ,      rnd.rnd_id
+  from       ENK_NODE              nod
+  inner join ENK_URI               uri  on  uri.uri_id = nod.uri_id
+  inner join ENK_RUN_NODE          rnd  on  rnd.nod_id = nod.nod_id
+  inner join ENK_RUN               run  on  run.run_id = rnd.run_id
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = run.srv_id
+  where uri.uri_uri     = p_uri_uri
+  and   uri.uri_crc32   = crc32(p_uri_uri)
+  and   rnd.rnd_current = 1
+  and   srv.srv_current = 1
+  ;
+end

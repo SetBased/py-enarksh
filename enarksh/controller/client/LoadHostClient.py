@@ -14,9 +14,9 @@ from enarksh.DataLayer import DataLayer
 from enarksh.xml_reader.XmlReader import XmlReader
 
 
-class LoadHost:
+class LoadHostClient:
     """
-    A program for loading a host definition file into Enarksh.
+    A client for requesting the controller to load a host definition.
     """
 
     # ------------------------------------------------------------------------------------------------------------------

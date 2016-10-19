@@ -586,7 +586,7 @@ class Schedule(EventActor):
             node = self._nodes[rnd_id]
             node.rst_id = enarksh.ENK_RST_ID_QUEUED
 
-        return run_id  # XXX Convert to bool
+        return bool(run_id)
 
     # ------------------------------------------------------------------------------------------------------------------
     def _node_action_restart_failed(self, rnd_id):
@@ -628,64 +628,66 @@ class Schedule(EventActor):
 
         :param enarksh.controller.node.Node.Node node: The node that has failed.
         """
-        try:
-            user = DataLayer.enk_back_get_user_info(self._usr_login)
+        if self._usr_login:
+            try:
+                user = DataLayer.enk_back_get_user_info(self._usr_login)
 
-            body = "Dear Enarksh user,"
-            ""
-            "Job " + str(node.name) + " has run unsuccessfully."
-            ""
-            "Greetings from Enarksh"
-            subject = "Job of schedule " + str(self._schedule_node.name) + "failed."
+                body = "Dear Enarksh user,"
+                ""
+                "Job " + str(node.name) + " has run unsuccessfully."
+                ""
+                "Greetings from Enarksh"
+                subject = "Job of schedule " + str(self._schedule_node.name) + "failed."
 
-            msg = MIMEText(body)
-            msg['Subject'] = subject
-            msg['To'] = user['usr_email']
-            msg['From'] = user['usr_email']
+                msg = MIMEText(body)
+                msg['Subject'] = subject
+                msg['To'] = user['usr_email']
+                msg['From'] = user['usr_email']
 
-            # Send the message via our local SMTP server.
-            s = smtplib.SMTP('localhost')
-            s.send_message(msg)
-            s.quit()
-        except Exception as exception:
-            print(exception, file=sys.stderr)
-            traceback.print_exc(file=sys.stderr)
+                # Send the message via our local SMTP server.
+                s = smtplib.SMTP('localhost')
+                s.send_message(msg)
+                s.quit()
+            except Exception as exception:
+                print(exception, file=sys.stderr)
+                traceback.print_exc(file=sys.stderr)
 
     # ------------------------------------------------------------------------------------------------------------------
     def _send_mail_on_completion(self):
         """
         Sends an email to the administrator that the schedule has completed.
         """
-        try:
-            user = DataLayer.enk_back_get_user_info(self._usr_login)
+        if self._usr_login:
+            try:
+                user = DataLayer.enk_back_get_user_info(self._usr_login)
 
-            if self._schedule_node.rst_id == enarksh.ENK_RST_ID_ERROR:
-                body = "Dear Enarksh user,"
-                ""
-                "Schedule " + str(self._schedule_node.name) + " has finished unsuccessfully."
-                ""
-                "Greetings from Enarksh"
-                subject = "Schedule " + self._schedule_node.name + "finished unsuccessfully."
-            else:
-                body = "Dear Enarksh user,"
-                ""
-                "Schedule " + str(self._schedule_node.name) + " has finished successfully."
-                ""
-                "Greetings from Enarksh"
-                subject = "Schedule " + self._schedule_node.name + "finished successfully."
+                if self._schedule_node.rst_id == enarksh.ENK_RST_ID_ERROR:
+                    body = "Dear Enarksh user,"
+                    ""
+                    "Schedule " + str(self._schedule_node.name) + " has finished unsuccessfully."
+                    ""
+                    "Greetings from Enarksh"
+                    subject = "Schedule " + self._schedule_node.name + "finished unsuccessfully."
+                else:
+                    body = "Dear Enarksh user,"
+                    ""
+                    "Schedule " + str(self._schedule_node.name) + " has finished successfully."
+                    ""
+                    "Greetings from Enarksh"
+                    subject = "Schedule " + self._schedule_node.name + "finished successfully."
 
-            msg = MIMEText(body)
-            msg['Subject'] = subject
-            msg['To'] = user['usr_email']
-            msg['From'] = user['usr_email']
+                msg = MIMEText(body)
+                msg['Subject'] = subject
+                msg['To'] = user['usr_email']
+                msg['From'] = user['usr_email']
 
-            # Send the message via our local SMTP server.
-            s = smtplib.SMTP('localhost')
-            s.send_message(msg)
-            s.quit()
-        except Exception as exception:
-            print(exception, file=sys.stderr)
-            traceback.print_exc(file=sys.stderr)
+                # Send the message via our local SMTP server.
+                s = smtplib.SMTP('localhost')
+                s.send_message(msg)
+                s.quit()
+            except Exception as exception:
+                print(exception, file=sys.stderr)
+                traceback.print_exc(file=sys.stderr)
 
     # ------------------------------------------------------------------------------------------------------------------
     def slot_node_state_change(self, event, event_data, _listener_data):

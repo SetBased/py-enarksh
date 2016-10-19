@@ -23,7 +23,7 @@ class MessageController(EventActor):
 
     _json_message_creators = {}
     """
-    All registered message creates from JSON data.
+    All registered message creators from JSON data.
 
     :type: dict[str,callable]
     """

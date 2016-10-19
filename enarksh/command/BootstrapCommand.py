@@ -31,8 +31,6 @@ class BootstrapCommand(Command):
         os.chdir(enarksh.HOME)
 
         bootstrap = Bootstrap()
-        ret = bootstrap.main()
-
-        exit(ret)
+        bootstrap.main()
 
 # ----------------------------------------------------------------------------------------------------------------------
