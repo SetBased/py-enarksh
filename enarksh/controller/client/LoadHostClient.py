@@ -21,7 +21,9 @@ class LoadHostClient:
 
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self):
-        # Set database configuration options.
+        """
+        Object constructor.
+        """
         DataLayer.config['host'] = enarksh.MYSQL_HOSTNAME
         DataLayer.config['user'] = enarksh.MYSQL_USERNAME
         DataLayer.config['password'] = enarksh.MYSQL_PASSWORD

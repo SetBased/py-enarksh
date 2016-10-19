@@ -62,6 +62,9 @@ class LoadScheduleClient:
 
     # ------------------------------------------------------------------------------------------------------------------
     def _zmq_init(self):
+        """
+        Initializes ZMQ.
+        """
         self._zmq_context = zmq.Context()
 
         # Create socket for communicating with the controller.

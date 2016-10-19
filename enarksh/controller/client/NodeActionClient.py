@@ -5,15 +5,10 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-import os
-import sys
-import traceback
-
 import zmq
 
 import enarksh
 from enarksh.controller.message.NodeActionMessage import NodeActionMessage
-from enarksh.controller.message.ScheduleDefinitionMessage import ScheduleDefinitionMessage
 
 
 class NodeActionClient:
@@ -67,6 +62,9 @@ class NodeActionClient:
 
     # ------------------------------------------------------------------------------------------------------------------
     def _zmq_init(self):
+        """
+        Initializes ZMQ.
+        """
         self._zmq_context = zmq.Context()
 
         # Create socket for communicating with the controller.

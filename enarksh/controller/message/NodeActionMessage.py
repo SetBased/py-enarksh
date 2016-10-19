@@ -6,7 +6,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 from enarksh.message.Message import Message
-from enarksh.message.MessageController import MessageController
 
 
 class NodeActionMessage(Message):
