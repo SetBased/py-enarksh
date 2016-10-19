@@ -71,14 +71,6 @@ class Controller(EventActor):
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def daemonize():
-        enarksh.daemonize(os.path.join(enarksh.HOME, 'var/lock/controllerd.pid'),
-                          '/dev/null',
-                          os.path.join(enarksh.HOME, 'var/log/controllerd.log'),
-                          os.path.join(enarksh.HOME, 'var/log/controllerd.log'))
-
-    # ------------------------------------------------------------------------------------------------------------------
-    @staticmethod
     def __set_unprivileged_user():
         """
         Set the real and effective user and group to an unprivileged user.

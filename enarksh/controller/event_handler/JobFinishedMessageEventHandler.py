@@ -25,6 +25,6 @@ class JobFinishedMessageEventHandler:
         del _event
 
         schedule = controller.get_schedule_by_sch_id(message.sch_id)
-        schedule.event_node_stop(message.rnd_id, message.exit_status)
+        schedule.node_stop(message.rnd_id, message.exit_status)
 
 # ----------------------------------------------------------------------------------------------------------------------

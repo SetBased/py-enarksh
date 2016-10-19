@@ -48,11 +48,4 @@ class ActivateNode(SimpleNode):
         """
         raise Exception("Not possible to restart an activate node")
 
-    # ------------------------------------------------------------------------------------------------------------------
-    def get_start_message(self):
-        """
-        Raises an exception.
-        """
-        raise Exception("Internal error.")
-
 # ----------------------------------------------------------------------------------------------------------------------

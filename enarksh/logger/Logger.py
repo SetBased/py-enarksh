@@ -5,6 +5,8 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import os
+import pwd
 import zmq
 
 import enarksh
@@ -71,6 +73,17 @@ class Logger:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
+    def __set_unprivileged_user():
+        """
+        Set the real and effective user and group to an unprivileged user.
+        """
+        _, _, uid, gid, _, _, _ = pwd.getpwnam('enarksh')
+
+        os.setresgid(gid, gid, 0)
+        os.setresuid(uid, uid, 0)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @staticmethod
     def _shutdown():
         """
         Performs the necessary actions for stopping the logger.
@@ -79,13 +92,15 @@ class Logger:
         print('Stop logger')
 
     # ------------------------------------------------------------------------------------------------------------------
-    @staticmethod
-    def _startup():
+    def _startup(self):
         """
         Performs the necessary actions for starting up the logger.
         """
         # Log the start of the logger.
         print('Start logger')
+
+        # Set the effective user and group to an unprivileged user and group.
+        self.__set_unprivileged_user()
 
         # Set database configuration options.
         DataLayer.config['host'] = enarksh.MYSQL_HOSTNAME

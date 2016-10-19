@@ -77,7 +77,7 @@ class CountingConsumption(Consumption):
         :param int nod_id: The ID of the node to which this consumption belongs.
         """
         resource = self._node.get_resource_by_name(self._resource_name)
-        rsc_id = resource.get_rsc_id()
+        rsc_id = resource.rsc_id
         uri_id = DataLayer.enk_misc_insert_uri(self.get_uri())
 
         self._cns_id = DataLayer.enk_reader_consumption_store_counting_consumption(nod_id,

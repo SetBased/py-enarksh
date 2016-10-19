@@ -12,6 +12,7 @@ import traceback
 import zmq
 
 import enarksh
+from enarksh.controller.message.ScheduleDefinitionMessage import ScheduleDefinitionMessage
 
 
 class LoadSchedule:
@@ -80,12 +81,10 @@ class LoadSchedule:
             xml = f.read()
 
         # Compose the message for the controller.
-        message = {'type':     'schedule_definition',
-                   'filename': os.path.realpath(filename),
-                   'xml':      xml}
+        message = ScheduleDefinitionMessage(xml, os.path.realpath(filename))
 
         # Send the message tot the controller.
-        self._zmq_controller.send_json(message)
+        self._zmq_controller.send_pyobj(message)
 
         # Await the response from the controller.
         response = self._zmq_controller.recv_json()

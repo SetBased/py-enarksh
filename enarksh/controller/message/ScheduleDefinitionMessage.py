@@ -24,8 +24,8 @@ class ScheduleDefinitionMessage(Message):
         """
         Object constructor.
 
-        :param int xml: The XML with the schedule definition.
-        :param int filename: The name of the file with the schedule definition.
+        :param str xml: The XML with the schedule definition.
+        :param str filename: The name of the file with the schedule definition.
         """
         Message.__init__(self, ScheduleDefinitionMessage.MESSAGE_TYPE)
 

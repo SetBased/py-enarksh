@@ -105,7 +105,7 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         """
         The parent node of this node.
 
-        :type: None|enarksh.controller.node.Node.Node
+        :type: enarksh.controller.node.Node.Node|None
         """
 
         self._child_nodes = []
@@ -199,6 +199,9 @@ class Node(StateChange, metaclass=abc.ABCMeta):
 
     # ------------------------------------------------------------------------------------------------------------------
     def __del__(self):
+        """
+        Object destructor.
+        """
         # print("Deleting node %s" % self.rnd_id)
         pass
 
@@ -236,6 +239,9 @@ class Node(StateChange, metaclass=abc.ABCMeta):
 
     # ------------------------------------------------------------------------------------------------------------------
     def _recompute_run_status(self):
+        """
+        Recomputes the run status of that node based on the run statuses of the predecessor nodes of this node.
+        """
         if self._predecessor_nodes:
             count_not_completed = 0
             count_not_finished = 0
@@ -339,6 +345,8 @@ class Node(StateChange, metaclass=abc.ABCMeta):
                    direct_successors,
                    successors):
         """
+        Initializes this node.
+
         :param dict node_data:
         :param dict schedule:
         :param dict resources:
@@ -391,9 +399,35 @@ class Node(StateChange, metaclass=abc.ABCMeta):
             self._scheduling_weight = len(successors[self.rnd_id])
 
     # ------------------------------------------------------------------------------------------------------------------
-    # @abc.abstractmethod
     def get_start_message(self, sch_id):
-        raise NotImplementedError()
+        """
+        Returns the message to be send to the spawner for starting this node. Raises an exception if this node can not
+        be started by the spawner (e.g. a complex node).
+
+        :param int sch_id: The ID of the schedule.
+
+        :rtype: enarksh.message.Message.Message
+        """
+        raise RuntimeError("Node of class '{}' can not be started by the spawner".format(self.__class__))
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def start(self):
+        """
+        Does the housekeeping for starting this node. Returns True if an actual job must be started by the spawner.
+        Returns False otherwise.
+
+        :rtype: bool
+        """
+        raise RuntimeError("Node of class '{}' can not be marked started".format(self.__class__))
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def stop(self, exit_status):
+        """
+        Does the housekeeping when the node has stopped.
+
+        :param int exit_status: The exits status of the job.
+        """
+        raise RuntimeError("Node of class '{}' can not be marked stopped".format(self.__class__))
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
@@ -412,42 +446,13 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
-    @StateChange.wrapper
-    def start(self):
-        """
-        :rtype: bool
-        """
-        # Acquire the required resources of this node.
-        self.acquire_resources()
-
-        # Set the status of this node to running.
-        self._set_rst_id(enarksh.ENK_RST_ID_RUNNING)
-
-        return True
-
-    # ------------------------------------------------------------------------------------------------------------------
-    @StateChange.wrapper
-    def stop(self, exit_status):
-        # Release all by this node consumed resources.
-        self.release_resources()
-
-        # Save the exit status of the job.
-        self._exit_status = exit_status
-
-        # Update the run status of this node based on the exit status of the job.
-        if exit_status == 0:
-            self._set_rst_id(enarksh.ENK_RST_ID_COMPLETED)
-        else:
-            self._set_rst_id(enarksh.ENK_RST_ID_ERROR)
-
-    # ------------------------------------------------------------------------------------------------------------------
     def fake_get_resource_by_name(self, name):
         """
         Returns a resource.
 
-        :param str name: string The name of the requested resource.
+        :param str name: The name of the requested resource.
 
-        :rtype: mixed
+        :rtype: enarksh.controller.resource.Resource.Resource|None
         """
         for resource in self.resources:
             if resource.get_name() == name:
@@ -460,19 +465,14 @@ class Node(StateChange, metaclass=abc.ABCMeta):
 
     # ------------------------------------------------------------------------------------------------------------------
     def sync_state(self):
+        """
+        Updates the state of this node into the database.
+        """
         DataLayer.enk_back_run_node_update_status(self.rnd_id,
                                                   self.rst_id,
                                                   self._rnd_datetime_start,
                                                   self._rnd_datetime_stop,
                                                   self._exit_status)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    @abc.abstractmethod
-    def is_simple_node(self):
-        """
-        Returns True if this node is a simple node. Otherwise, returns False.
-        """
-        raise NotImplementedError()
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_uri(self, obj_type='node'):
@@ -492,9 +492,21 @@ class Node(StateChange, metaclass=abc.ABCMeta):
 
     # ------------------------------------------------------------------------------------------------------------------
     @abc.abstractmethod
+    def is_simple_node(self):
+        """
+        Returns True if this node is a simple node. Otherwise, returns False.
+
+        :rtype: bool
+        """
+        raise NotImplementedError()
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @abc.abstractmethod
     def is_complex_node(self):
         """
         Returns True if this node is a complex node. Otherwise, returns False.
+
+        :rtype: bool
         """
         raise NotImplementedError()
 

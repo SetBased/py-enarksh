@@ -27,6 +27,8 @@ begin
   ,      rnd.rnd_size_err
   ,      rnd.blb_id_log
   ,      rnd.blb_id_err
+
+  ,      rst.rst_name
   ,      rst.rst_label
   from       ENK_NODE       nod
   inner join ENK_RUN_NODE   rnd  on  rnd.nod_id = nod.nod_id

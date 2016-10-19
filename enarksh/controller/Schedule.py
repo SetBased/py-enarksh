@@ -608,12 +608,10 @@ class Schedule(EventActor):
         return False
 
     # ------------------------------------------------------------------------------------------------------------------
-    def event_node_stop(self, rnd_id, exit_status):
+    def node_stop(self, rnd_id, exit_status):
         """
         :param int rnd_id:
         :param int exit_status:
-
-        :rtype: None
         """
         # Find node in map from rnd_id to node.
         node = self._nodes.get(rnd_id, None)
@@ -805,18 +803,18 @@ class Schedule(EventActor):
             if act_id == enarksh.ENK_ACT_ID_RESTART_FAILED:
                 return self._node_action_restart_failed(rnd_id)
 
-            raise Exception("Unknown or unsupported act_id '%s'." % act_id)
+            raise RuntimeError("Unknown or unsupported act_id '%s'." % act_id)
 
         if self._activate_node.rnd_id == rnd_id:
             # Node is the activate node of the schedule.
             if act_id == enarksh.ENK_ACT_ID_TRIGGER:
                 return self._node_action_trigger_schedule(rnd_id)
 
-            raise Exception("Unknown or unsupported act_id '%s'." % act_id)
+            raise RuntimeError("Unknown or unsupported act_id '%s'." % act_id)
 
         if self._arrest_node.rnd_id == rnd_id:
             # Node is the arrest node of the schedule. No actions are possible.
-            raise Exception("Unknown or unsupported act_id '%s'." % act_id)
+            raise RuntimeError("Unknown or unsupported act_id '%s'." % act_id)
 
         # Node is a "normal" node in the schedule.
         if act_id == enarksh.ENK_ACT_ID_RESTART:
@@ -825,7 +823,7 @@ class Schedule(EventActor):
         if act_id == enarksh.ENK_ACT_ID_RESTART_FAILED:
             return self._node_action_restart_failed(rnd_id)
 
-        raise Exception("Unknown or unsupported act_id '%s'." % act_id)
+        raise RuntimeError("Unknown or unsupported act_id '%s'." % act_id)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -839,7 +837,7 @@ class Schedule(EventActor):
         :rtype: int
         """
         # Sort by scheduling weight.
-        cmp = node1.scheduling_weight - node2.scheduling_weight
+        cmp = node2.scheduling_weight - node1.scheduling_weight
 
         if cmp == 0:
             if node1.name.lower() < node2.name.lower():

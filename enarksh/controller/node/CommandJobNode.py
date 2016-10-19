@@ -41,6 +41,13 @@ class CommandJobNode(SimpleNode):
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_start_message(self, sch_id):
+        """
+        Returns the message to be send to the spawner for starting this node.
+
+        :param int sch_id: The ID of the schedule.
+
+        :rtype: enarksh.message.Message.Message
+        """
         return SpawnJobMessage(sch_id, self.rnd_id, self._user_name, self._command)
 
 # ----------------------------------------------------------------------------------------------------------------------

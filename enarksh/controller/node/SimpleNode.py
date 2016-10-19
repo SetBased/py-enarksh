@@ -35,6 +35,43 @@ class SimpleNode(Node):
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
+    def start(self):
+        """
+        Does the housekeeping for starting this node. Returns True if an actual job must be started by the spawner.
+        Returns False otherwise.
+
+        :rtype: bool
+        """
+        # Acquire the required resources of this node.
+        self.acquire_resources()
+
+        # Set the status of this node to running.
+        self._set_rst_id(enarksh.ENK_RST_ID_RUNNING)
+
+        return True
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @StateChange.wrapper
+    def stop(self, exit_status):
+        """
+        Does the housekeeping when the node has stopped.
+
+        :param int exit_status: The exits status of the job.
+        """
+        # Release all by this node consumed resources.
+        self.release_resources()
+
+        # Save the exit status of the job.
+        self._exit_status = exit_status
+
+        # Update the run status of this node based on the exit status of the job.
+        if exit_status == 0:
+            self._set_rst_id(enarksh.ENK_RST_ID_COMPLETED)
+        else:
+            self._set_rst_id(enarksh.ENK_RST_ID_ERROR)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @StateChange.wrapper
     def restart(self):
         """
         Restart this node and its successors.
@@ -52,7 +89,6 @@ class SimpleNode(Node):
         if self.rst_id == enarksh.ENK_RST_ID_ERROR:
             self._renew()
             self._recompute_run_status()
-
         else:
             raise Exception("Not possible to restart node with rst_id '{0!s}'.".format(self.rst_id))
 

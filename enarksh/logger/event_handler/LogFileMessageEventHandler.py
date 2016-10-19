@@ -47,13 +47,13 @@ class LogFileMessageEventHandler:
 
             if skipped != 0:
                 # Add a newline to the end of the buffer, if required.
-                if log[-1:] != '\n':
-                    log += '\n'
+                if log[-1:] != b'\n':
+                    log += b'\n'
 
                     # Note: This concatenation doesn't work for multi byte character sets.
-                    log += '\n'
-                    log += "Enarksh: Skipped {0} bytes.\n".format(skipped)
-                    log += '\n'
+                    log += b'\n'
+                    log += bytes("Enarksh: Skipped {0} bytes.\n".format(skipped), 'utf8')
+                    log += b'\n'
 
                 log += buf2
 
