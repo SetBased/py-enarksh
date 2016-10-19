@@ -18,19 +18,11 @@ from enarksh.style.EnarkshStyle import EnarkshStyle
 
 class SpawnerCommand(Command):
     """
-    Starts the spawner.
+    Starts the spawner
+
+    spawner
+        {--d|daemonize : Become a daemon}
     """
-
-    name = 'spawner'
-
-    options = [
-        {
-            'name':        'daemonize',
-            'shortcut':    'd',
-            'flag':        True,
-            'description': 'Become a daemon'
-        }
-    ]
 
     # ------------------------------------------------------------------------------------------------------------------
     def handle(self):

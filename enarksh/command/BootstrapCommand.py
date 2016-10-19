@@ -16,10 +16,10 @@ from enarksh.style.EnarkshStyle import EnarkshStyle
 
 class BootstrapCommand(Command):
     """
-    Executes bootstrap.
-    """
+    Executes bootstrap
 
-    name = 'bootstrap'
+    bootstrap
+    """
 
     # ------------------------------------------------------------------------------------------------------------------
     def handle(self):

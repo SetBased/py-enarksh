@@ -13,10 +13,10 @@ from enarksh.util.LoadHost import LoadHost
 
 class LoadHostCommand(Command):
     """
-    Loads the host.
-    """
+    Loads the host
 
-    name = 'load_host'
+    load_host
+    """
 
     # ------------------------------------------------------------------------------------------------------------------
     def handle(self):

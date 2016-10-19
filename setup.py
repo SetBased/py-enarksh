@@ -43,7 +43,7 @@ setup(
 
     packages=find_packages(exclude=['build', 'test']),
 
-    install_requires=['cleo==0.4.1', 'pystratum-mysql', 'pyzmq', 'lxml', 'python-daemon'],
+    install_requires=['cleo==0.5.0', 'pystratum-mysql', 'pyzmq', 'lxml', 'python-daemon'],
 
     entry_points={}
 )

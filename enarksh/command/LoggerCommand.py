@@ -18,19 +18,11 @@ from enarksh.style.EnarkshStyle import EnarkshStyle
 
 class LoggerCommand(Command):
     """
-    Starts the logger.
+    Starts the logger
+
+    logger
+        {--d|daemonize : Become a daemon}
     """
-
-    name = 'logger'
-
-    options = [
-        {
-            'name':        'daemonize',
-            'shortcut':    'd',
-            'flag':        True,
-            'description': 'Become a daemon'
-        }
-    ]
 
     # ------------------------------------------------------------------------------------------------------------------
     def handle(self):

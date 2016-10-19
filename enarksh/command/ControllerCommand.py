@@ -18,19 +18,11 @@ from enarksh.style.EnarkshStyle import EnarkshStyle
 
 class ControllerCommand(Command):
     """
-    Starts the controller.
+    Starts the controller
+
+    controller
+        {--d|daemonize : Become a daemon}
     """
-
-    name = 'controller'
-
-    options = [
-        {
-            'name':        'daemonize',
-            'shortcut':    'd',
-            'flag':        True,
-            'description': 'Become a daemon'
-        }
-    ]
 
     # ------------------------------------------------------------------------------------------------------------------
     def handle(self):

@@ -13,18 +13,11 @@ from enarksh.util.LoadSchedule import LoadSchedule
 
 class LoadScheduleCommand(Command):
     """
-    Loads the schedule.
+    Loads schedules
+
+    load_schedule
+        {schedule.xml?* : The schedule(s) to load}
     """
-
-    name = 'load_schedule'
-
-    arguments = [
-        {
-            'name':        'schedule.xml',
-            'description': 'The schedule(s) to load',
-            'list':        True
-        }
-    ]
 
     # ------------------------------------------------------------------------------------------------------------------
     def handle(self):
@@ -34,7 +27,7 @@ class LoadScheduleCommand(Command):
         self.output = EnarkshStyle(self.input, self.output)
 
         reader = LoadSchedule()
-        ret = reader.main(self.argument('schedule.xml'))
+        ret = reader.main(self.input.get_argument('schedule.xml'))
 
         return ret
 
