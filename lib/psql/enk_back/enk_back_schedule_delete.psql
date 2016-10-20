@@ -1,0 +1,135 @@
+/**
+ * Deletes an entire schedule.
+ */
+create procedure enk_back_schedule_delete( in p_sch_id @enk_schedule.sch_id%type@ )
+reads sql data
+-- type: none
+begin
+  declare l_sch_name @enk_schedule.sch_name%type@;
+
+  drop temporary table if exists TMP_BLOB;
+
+  create temporary table TMP_BLOB(blb_id @enk_blob.blb_id%type@)
+  ;
+
+  select sch_name
+  into   l_sch_name
+  from   ENK_SCHEDULE
+  where  sch_id  = p_sch_id
+  ;
+
+  delete from nsc
+  using      ENK_RUN_NODE_STATUS_CHANGE nsc
+  inner join ENK_RUN_NODE               rnd  on  rnd.rnd_id = nsc.rnd_id
+  inner join ENK_NODE                   nod  on  nod.nod_id = rnd.nod_id
+  inner join ENK_SCHEDULE_REVISION      srv  on srv.srv_id = nod.srv_id
+  where srv.sch_id = p_sch_id
+  ;
+
+  insert into TMP_BLOB(blb_id)
+  select  rnd.blb_id_log
+  from       ENK_RUN_NODE          rnd
+  inner join ENK_NODE              nod  on  nod.nod_id = rnd.nod_id
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = nod.srv_id
+  where srv.sch_id = p_sch_id
+  and   rnd.blb_id_log is not null
+  ;
+
+  insert into TMP_BLOB(blb_id)
+  select  rnd.blb_id_err
+  from       ENK_RUN_NODE          rnd
+  inner join ENK_NODE              nod  on  nod.nod_id = rnd.nod_id
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = nod.srv_id
+  where srv.sch_id = p_sch_id
+  and   rnd.blb_id_err is not null
+  ;
+
+  delete from rnd
+  using      ENK_RUN_NODE          rnd
+  inner join ENK_NODE              nod  on  nod.nod_id = rnd.nod_id
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = nod.srv_id
+  where srv.sch_id = p_sch_id
+  ;
+
+  delete from blb
+  using      ENK_BLOB blb
+  inner join TMP_BLOB tmp  on  tmp.blb_id = blb.blb_id
+  ;
+
+  delete from cns
+  using      ENK_NODE              nod
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = nod.srv_id
+  inner join ENK_CONSUMPTION       cns  on  cns.nod_id = nod.nod_id
+  where srv.sch_id = p_sch_id
+  ;
+
+  delete from rsc
+  using      ENK_NODE              nod
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = nod.srv_id
+  inner join ENK_RESOURCE          rsc  on  rsc.nod_id = nod.nod_id
+  where srv.sch_id = p_sch_id
+  ;
+
+  delete from dep
+  using      ENK_NODE              nod
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = nod.srv_id
+  inner join ENK_PORT              prt  on  prt.nod_id = nod.nod_id
+  inner join ENK_DEPENDENCY        dep  on  dep.prt_id_dependant = prt.prt_id
+  where srv.sch_id = p_sch_id
+  ;
+
+  delete from dep
+  using      ENK_NODE              nod
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = nod.srv_id
+  inner join ENK_PORT              prt  on  prt.nod_id = nod.nod_id
+  inner join ENK_DEPENDENCY        dep  on  dep.prt_id_predecessor = prt.prt_id
+  where srv.sch_id = p_sch_id
+  ;
+
+  delete from prt
+  using      ENK_NODE              nod
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = nod.srv_id
+  inner join ENK_PORT              prt  on  prt.nod_id = nod.nod_id
+  where srv.sch_id = p_sch_id
+  ;
+
+  delete from sra
+  using      ENK_SCHEDULE_REVISION_ADDENDUM sra
+  inner join ENK_SCHEDULE_REVISION          srv  on  srv.srv_id = sra.srv_id
+  where srv.sch_id = p_sch_id
+  ;
+
+  update     ENK_NODE              nod
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = nod.srv_id
+  set nod_id_parent = null
+  where srv.sch_id = p_sch_id
+  ;
+
+  delete from nod
+  using      ENK_NODE              nod
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = nod.srv_id
+  where srv.sch_id = p_sch_id
+  ;
+
+  delete from run
+  using      ENK_RUN               run
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = run.srv_id
+  where srv.sch_id = p_sch_id
+  ;
+
+  delete from ENK_SCHEDULE_REVISION
+  where sch_id = p_sch_id
+  ;
+
+  delete from ENK_SCHEDULE
+  where sch_id = p_sch_id
+  ;
+
+  delete from ENK_URI
+  where uri_uri like concat('//consumption/', l_sch_name, '/%')
+  or    uri_uri like concat('//node/', l_sch_name, '/%')
+  or    uri_uri like concat('//input_port/', l_sch_name, '/%')
+  or    uri_uri like concat('//output_port/', l_sch_name, '/%')
+  or    uri_uri like concat('//resource/', l_sch_name, '/%')
+  ;
+end
