@@ -6,10 +6,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import functools
-import smtplib
-import sys
-import traceback
-from email.mime.text import MIMEText
 
 import enarksh
 from enarksh.DataLayer import DataLayer
@@ -87,39 +83,11 @@ class Schedule(EventActor):
         :type: Node
         """
 
-        self.__mail_on_completion = True
-        """
-        If set a mail must be send to the operator when the schedule is finished running.
-
-        :type: bool
-        """
-
-        self.__mail_on_error = True
-        """
-        If set a mail must be send to the operator for each failed (simple) node.
-
-        :type: bool
-        """
-
-        self.__usr_login = ''
-        """
-        The user ID of the operator.
-
-        :type: str
-        """
-
         self.__queue = set()
         """
         The queue of nodes that are ready to run.
 
         :type: set[enarksh.controller.node.Node.Node]
-        """
-
-        self.event_new_node_creation = Event(self)
-        """
-        The event that wil be fired when this schedule creates a new node.
-
-        :type: enarksh.event.Event.Event
         """
 
         self.event_schedule_termination = Event(self)
@@ -150,8 +118,8 @@ class Schedule(EventActor):
         """
         Loads the schedule from the database.
 
-        :param int sch_id:
-        :param dict host_resources:
+        :param int sch_id: The ID of the schedule.
+        :param dict host_resources: The host resources.
         """
         schedule = DataLayer.enk_back_schedule_get_schedule(sch_id)
 
@@ -236,9 +204,6 @@ class Schedule(EventActor):
                 # Observe node for state changes.
                 node.event_state_change.register_listener(self.slot_node_state_change)
 
-                # Signal a new node has been created.
-                self.event_new_node_creation.fire(node)
-
         # Second initialize complex nodes.
         for node_data in nodes_data.values():
             node = self.__nodes[node_data['rnd_id']]
@@ -257,9 +222,6 @@ class Schedule(EventActor):
 
                 # Observe node for state changes.
                 node.event_state_change.register_listener(self.slot_node_state_change)
-
-                # Signal a new node has been created.
-                self.event_new_node_creation.fire(node)
 
         # Create a map from rnd_id to all its child nodes.
         for (rnd_id_parent, nodes) in tmp_child_nodes.items():
@@ -462,10 +424,6 @@ class Schedule(EventActor):
             # Node is not part of a current run of this schedule.
             return response
 
-        # Set the mail options.
-        response['mail_on_completion'] = self.__mail_on_completion
-        response['mail_on_error'] = self.__mail_on_error
-
         # Get the current run status of the node.
         rst_id = node.rst_id
 
@@ -622,74 +580,6 @@ class Schedule(EventActor):
         node.stop(exit_status)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def __send_mail_on_error(self, node):
-        """
-        Sends an email to the administrator that a simple node has failed.
-
-        :param enarksh.controller.node.Node.Node node: The node that has failed.
-        """
-        if self.__usr_login:
-            try:
-                user = DataLayer.enk_back_get_user_info(self.__usr_login)
-
-                body = "Dear Enarksh user,"
-                ""
-                "Job " + str(node.name) + " has run unsuccessfully."
-                ""
-                "Greetings from Enarksh"
-                subject = "Job of schedule " + str(self.__schedule_node.name) + "failed."
-
-                msg = MIMEText(body)
-                msg['Subject'] = subject
-                msg['To'] = user['usr_email']
-                msg['From'] = user['usr_email']
-
-                # Send the message via our local SMTP server.
-                s = smtplib.SMTP('localhost')
-                s.send_message(msg)
-                s.quit()
-            except Exception as exception:
-                print(exception, file=sys.stderr)
-                traceback.print_exc(file=sys.stderr)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def __send_mail_on_completion(self):
-        """
-        Sends an email to the administrator that the schedule has completed.
-        """
-        if self.__usr_login:
-            try:
-                user = DataLayer.enk_back_get_user_info(self.__usr_login)
-
-                if self.__schedule_node.rst_id == enarksh.ENK_RST_ID_ERROR:
-                    body = "Dear Enarksh user,"
-                    ""
-                    "Schedule " + str(self.__schedule_node.name) + " has finished unsuccessfully."
-                    ""
-                    "Greetings from Enarksh"
-                    subject = "Schedule " + self.__schedule_node.name + "finished unsuccessfully."
-                else:
-                    body = "Dear Enarksh user,"
-                    ""
-                    "Schedule " + str(self.__schedule_node.name) + " has finished successfully."
-                    ""
-                    "Greetings from Enarksh"
-                    subject = "Schedule " + self.__schedule_node.name + "finished successfully."
-
-                msg = MIMEText(body)
-                msg['Subject'] = subject
-                msg['To'] = user['usr_email']
-                msg['From'] = user['usr_email']
-
-                # Send the message via our local SMTP server.
-                s = smtplib.SMTP('localhost')
-                s.send_message(msg)
-                s.quit()
-            except Exception as exception:
-                print(exception, file=sys.stderr)
-                traceback.print_exc(file=sys.stderr)
-
-    # ------------------------------------------------------------------------------------------------------------------
     def slot_node_state_change(self, event, event_data, _listener_data):
         """
         :param enarksh.event.Event.Event event: The event.
@@ -733,16 +623,6 @@ class Schedule(EventActor):
                 self.__successors[new['rnd_id']] = self.__successors[old['rnd_id']]
                 del self.__successors[old['rnd_id']]
 
-        # If a simple node has failed send mail to administrator.
-        if node.is_simple_node() and old['rst_id'] != new['rst_id']:
-            if new['rst_id'] == enarksh.ENK_RST_ID_ERROR and self.__mail_on_error:
-                self.__send_mail_on_error(node)
-
-        # If the schedule has finished send an mail to the administrator.
-        if node == self.__schedule_node and old['rst_id'] != new['rst_id']:
-            if new['rst_id'] in (enarksh.ENK_RST_ID_ERROR, enarksh.ENK_RST_ID_COMPLETED):
-                self.__send_mail_on_completion()
-
         # If the schedule has terminated inform all observer of this event.
         if node == self.__schedule_node and old['rst_id'] != new['rst_id']:
             if new['rst_id'] in (enarksh.ENK_RST_ID_ERROR, enarksh.ENK_RST_ID_COMPLETED):
@@ -780,23 +660,15 @@ class Schedule(EventActor):
         return self.__activate_node
 
     # ------------------------------------------------------------------------------------------------------------------
-    def request_node_action(self, rnd_id, act_id, usr_login, mail_on_completion, mail_on_error):
+    def request_node_action(self, rnd_id, act_id):
         """
         Executes a node action.
 
         :param int rnd_id: The ID of the node.
-        :param int act_id: The ID of the requested action.
-        :param str usr_login: The name of the user who has requested the node action.
-        :param bool mail_on_completion: If True the user wants to receive a mail when the schedule has completed.
-        :param bool mail_on_error: If True the user wants to receive a mail when an error occurs.
+        :param int act_id: The ID of the requested action
 
         :rtype bool: True if the controller must reload the schedule. False otherwise.
         """
-        # Store the mail options.
-        self.__usr_login = usr_login
-        self.__mail_on_completion = mail_on_completion
-        self.__mail_on_error = mail_on_error
-
         if self.__schedule_node.rnd_id == rnd_id:
             # Node is the schedule is self.
             if act_id == enarksh.ENK_ACT_ID_TRIGGER:

@@ -61,16 +61,13 @@ class DataLayer(StaticDataLayer):
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def enk_back_get_user_info(p_usr_login):
+    def enk_back_get_operators():
         """
-        Selects all resources of all nodes in a schedule revision.
+        Selects all operators (with email addresses).
 
-        :param str p_usr_login: 
-                                varchar(32) character set utf8 collation utf8_general_ci
-
-        :rtype: dict[str,*]
+        :rtype: list[dict[str,*]]
         """
-        return StaticDataLayer.execute_sp_row1("call enk_back_get_user_info(%s)", p_usr_login)
+        return StaticDataLayer.execute_sp_rows("call enk_back_get_operators()")
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -273,6 +270,19 @@ class DataLayer(StaticDataLayer):
         :rtype: dict[str,*]
         """
         return StaticDataLayer.execute_sp_row1("call enk_back_run_node_get_by_uri(%s)", p_uri_uri)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @staticmethod
+    def enk_back_run_node_get_details(p_rnd_id):
+        """
+        Selects the details of a run node.
+
+        :param int p_rnd_id: The ID of the run node.
+                             int(11)
+
+        :rtype: dict[str,*]
+        """
+        return StaticDataLayer.execute_sp_row1("call enk_back_run_node_get_details(%s)", p_rnd_id)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod

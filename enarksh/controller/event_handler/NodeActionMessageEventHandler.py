@@ -40,10 +40,7 @@ class NodeActionMessageEventHandler(NodeActionMessageBaseEventHandler):
                                                           response,
                                                           run_node['sch_id'],
                                                           run_node['rnd_id'],
-                                                          message.act_id,
-                                                          '',
-                                                          False,
-                                                          False)
+                                                          message.act_id)
         except Exception as exception:
             print(exception, file=sys.stderr)
             traceback.print_exc(file=sys.stderr)

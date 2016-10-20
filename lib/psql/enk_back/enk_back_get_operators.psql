@@ -1,0 +1,15 @@
+/**
+ * Selects all operators (with email addresses).
+ */
+create procedure enk_back_get_operators()
+reads sql data
+-- type: rows
+begin
+  select usr_login
+  ,      usr_email
+  from   AUT_USER
+  where  usr_role_operator = 1
+  and    usr_email is not null
+  order by usr_login
+  ;
+end

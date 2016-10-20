@@ -9,7 +9,7 @@ Licence MIT
 
 class JobFinishedMessageEventHandler:
     """
-    An event handler for a ScheduleDefinitionMessage received events.
+    An event handler for a JobFinishedMessage received events.
     """
 
     # ------------------------------------------------------------------------------------------------------------------

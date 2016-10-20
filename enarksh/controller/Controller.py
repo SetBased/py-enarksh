@@ -19,6 +19,7 @@ from enarksh.controller.event_handler.DynamicWorkerDefinitionMessageEventHandler
     DynamicWorkerDefinitionMessageEventHandler
 from enarksh.controller.event_handler.EventQueueEmptyEventHandler import EventQueueEmptyEventHandler
 from enarksh.controller.event_handler.JobFinishedMessageEventHandler import JobFinishedMessageEventHandler
+from enarksh.controller.event_handler.MailOperatorEventHandler import MailOperatorEventHandler
 from enarksh.controller.event_handler.NodeActionMessageEventHandler import NodeActionMessageEventHandler
 from enarksh.controller.event_handler.NodeActionMessageWebEventHandler import NodeActionMessageWebEventHandler
 from enarksh.controller.event_handler.PossibleNodeActionsWebMessageEventHandler import \
@@ -30,6 +31,8 @@ from enarksh.controller.message.NodeActionMessage import NodeActionMessage
 from enarksh.controller.message.NodeActionWebMessage import NodeActionWebMessage
 from enarksh.controller.message.PossibleNodeActionsWebMessage import PossibleNodeActionsWebMessage
 from enarksh.controller.message.ScheduleDefinitionMessage import ScheduleDefinitionMessage
+from enarksh.controller.node import Node
+from enarksh.event.Event import Event
 from enarksh.event.EventActor import EventActor
 from enarksh.event.EventController import EventController
 from enarksh.message.MessageController import MessageController
@@ -70,6 +73,9 @@ class Controller(EventActor):
 
         :type: dict[int,enarksh.controller.Schedule.Schedule]
         """
+
+        # Create event for a new node has been created.
+        Node.event_new_node_creation = Event(self)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -267,6 +273,8 @@ class Controller(EventActor):
 
         # Register other event handlers.
         self.event_controller.event_queue_empty.register_listener(EventQueueEmptyEventHandler.handle, self)
+
+        Node.event_new_node_creation.register_listener(MailOperatorEventHandler.handle_node_creation)
 
     # ------------------------------------------------------------------------------------------------------------------
     def main(self):

@@ -39,10 +39,7 @@ class NodeActionMessageWebEventHandler(NodeActionMessageBaseEventHandler):
                                                           response,
                                                           message.sch_id,
                                                           message.rnd_id,
-                                                          message.act_id,
-                                                          message.usr_login,
-                                                          message.mail_on_completion,
-                                                          message.mail_on_error)
+                                                          message.act_id)
         except Exception as exception:
             print(exception, file=sys.stderr)
             traceback.print_exc(file=sys.stderr)

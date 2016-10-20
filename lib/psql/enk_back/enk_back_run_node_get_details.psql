@@ -1,0 +1,23 @@
+/**
+ * Selects the details of a run node.
+ *
+ * @param p_rnd_id The ID of the run node.
+ */
+create procedure enk_back_run_node_get_details(in p_rnd_id @enk_run_node.rnd_id%type@)
+reads sql data
+-- type: row1
+begin
+  select sch.sch_id
+  ,      sch.sch_name
+  ,      nod.nod_id
+  ,      nod.nod_name
+  from       ENK_RUN_NODE          rnd
+  inner join ENK_NODE              nod  on  nod.nod_id = rnd.nod_id
+  inner join ENK_RUN               run  on  run.run_id = rnd.run_id
+  inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = run.srv_id
+  inner join ENK_SCHEDULE          sch  on  sch.sch_id = srv.sch_id
+  where rnd.rnd_id      = p_rnd_id
+  and   rnd.rnd_current = 1
+  and   srv.srv_current = 1
+  ;
+end

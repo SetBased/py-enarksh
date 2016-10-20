@@ -29,6 +29,13 @@ class Node(StateChange, metaclass=abc.ABCMeta):
                       2: enarksh.ENK_RST_ID_WAITING,
                       1: enarksh.ENK_RST_ID_COMPLETED}
 
+    event_new_node_creation = None
+    """
+    The event that wil be fired when a new node has been created.
+
+    :type: enarksh.event.Event.Event
+    """
+
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self, node_data):
         """
@@ -128,6 +135,8 @@ class Node(StateChange, metaclass=abc.ABCMeta):
 
         :type: list[enarksh.controller.node.Node.Node]
         """
+
+        Node.event_new_node_creation.fire(self)
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
