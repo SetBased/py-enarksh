@@ -539,8 +539,7 @@ class Schedule(EventActor):
         run_id = DataLayer.enk_back_schedule_trigger(self.__sch_id)
 
         if not run_id:
-            node = self.__nodes[self.__activate_node]
-            node.rst_id = enarksh.ENK_RST_ID_QUEUED
+            self.__activate_node.rst_id = enarksh.ENK_RST_ID_QUEUED
 
         return bool(run_id)
 

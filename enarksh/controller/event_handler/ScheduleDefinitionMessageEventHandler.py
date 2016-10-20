@@ -52,11 +52,16 @@ class ScheduleDefinitionMessageEventHandler:
 
             response = {'ret':     0,
                         'message': "Schedule '%s' successfully loaded." % name}
+
+            DataLayer.commit()
         except Exception as exception:
             print(exception, file=sys.stderr)
+            traceback.print_exc(file=sys.stderr)
+
             response = {'ret':     -1,
                         'message': str(exception)}
-            traceback.print_exc(file=sys.stderr)
+
+            DataLayer.rollback()
 
         # Send the message to the web interface.
         controller.message_controller.send_message('lockstep', response, True)

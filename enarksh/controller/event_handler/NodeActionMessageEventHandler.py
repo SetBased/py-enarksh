@@ -41,6 +41,8 @@ class NodeActionMessageEventHandler(NodeActionMessageBaseEventHandler):
                                                           run_node['sch_id'],
                                                           run_node['rnd_id'],
                                                           message.act_id)
+
+            DataLayer.commit()
         except Exception as exception:
             print(exception, file=sys.stderr)
             traceback.print_exc(file=sys.stderr)

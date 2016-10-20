@@ -17,8 +17,8 @@ class NodeActionCommand(Command):
     Requests the controller for a node action
 
     node_action
-        {uri : The URI of the node}
         {action : The action: trigger, restart, or restart_failed}
+        {uri : The URI of the node}
     """
 
     # ------------------------------------------------------------------------------------------------------------------

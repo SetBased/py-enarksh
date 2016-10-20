@@ -16,6 +16,7 @@ class LoadHostCommand(Command):
     Requests the controller to load a host definition
 
     load_host
+        {host.xml : The host definition to load}
     """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -26,7 +27,7 @@ class LoadHostCommand(Command):
         self.output = EnarkshStyle(self.input, self.output)
 
         client = LoadHostClient()
-        ret = client.main()
+        ret = client.main(self.input.get_argument('host.xml'))
 
         return ret
 

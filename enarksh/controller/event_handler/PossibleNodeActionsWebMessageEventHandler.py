@@ -36,6 +36,8 @@ class PossibleNodeActionsWebMessageEventHandler:
                 response = schedule.request_possible_node_actions(message.rnd_id)
             else:
                 response = Schedule.get_response_template()
+
+            DataLayer.commit()
         except Exception as exception:
             print(exception, file=sys.stderr)
             traceback.print_exc(file=sys.stderr)
