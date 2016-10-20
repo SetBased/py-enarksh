@@ -40,7 +40,7 @@ class NodeActionCommand(Command):
 
         uri = self.input.get_argument('uri')
 
-        client = NodeActionClient()
+        client = NodeActionClient(self.output)
         ret = client.main(uri, act_id)
 
         return ret

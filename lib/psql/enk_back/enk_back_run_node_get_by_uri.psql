@@ -17,6 +17,7 @@ begin
   inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = run.srv_id
   where uri.uri_uri     = p_uri_uri
   and   uri.uri_crc32   = crc32(p_uri_uri)
+  and   run.run_current = 1
   and   rnd.rnd_current = 1
   and   srv.srv_current = 1
   ;

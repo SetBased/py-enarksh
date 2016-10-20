@@ -17,7 +17,12 @@ class NodeActionClient:
     """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def __init__(self):
+    def __init__(self, io):
+        """
+        Object constructor.
+
+        :param enarksh.style.EnarkshStyle.EnarkshStyle io: The output decorator.
+        """
         self._zmq_context = None
         """
         The ZMQ context.
@@ -30,6 +35,13 @@ class NodeActionClient:
         The socket for communicating with the controller.
 
         :type: zmq.sugar.socket.Socket
+        """
+
+        self._io = io
+        """
+        The output decorator.
+
+        :type: enarksh.style.EnarkshStyle.EnarkshStyle
         """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -52,11 +64,8 @@ class NodeActionClient:
         # Await the response from the controller.
         response = self._zmq_controller.recv_pyobj()
 
-        print(response['message'], end='')
-        if response['message'] and response['message'][-1:] != '\n':
-            print()
-
-        print(response)
+        if response['ret']:
+            self._io.error(response['message'])
 
         return response['ret']
 

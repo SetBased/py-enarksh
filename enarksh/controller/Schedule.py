@@ -530,18 +530,16 @@ class Schedule(EventActor):
         return False
 
     # ------------------------------------------------------------------------------------------------------------------
-    def __node_action_trigger_schedule(self, rnd_id):
+    def __node_action_trigger_schedule(self):
         """
         Triggers the schedule.
-
-        :param int rnd_id:
 
         :rtype bool: True if the controller must reload the schedule. False otherwise.
         """
         run_id = DataLayer.enk_back_schedule_trigger(self.__sch_id)
 
         if not run_id:
-            node = self.__nodes[rnd_id]
+            node = self.__nodes[self.__activate_node]
             node.rst_id = enarksh.ENK_RST_ID_QUEUED
 
         return bool(run_id)
@@ -672,7 +670,7 @@ class Schedule(EventActor):
         if self.__schedule_node.rnd_id == rnd_id:
             # Node is the schedule is self.
             if act_id == enarksh.ENK_ACT_ID_TRIGGER:
-                return self.__node_action_trigger_schedule(rnd_id)
+                return self.__node_action_trigger_schedule()
 
             if act_id == enarksh.ENK_ACT_ID_RESTART_FAILED:
                 return self.__node_action_restart_failed(rnd_id)
@@ -682,7 +680,7 @@ class Schedule(EventActor):
         if self.__activate_node.rnd_id == rnd_id:
             # Node is the activate node of the schedule.
             if act_id == enarksh.ENK_ACT_ID_TRIGGER:
-                return self.__node_action_trigger_schedule(rnd_id)
+                return self.__node_action_trigger_schedule()
 
             raise RuntimeError("Unknown or unsupported act_id '%s'." % act_id)
 
