@@ -31,84 +31,84 @@ class Schedule(EventActor):
         """
         EventActor.__init__(self)
 
-        self._sch_id = sch_id
+        self.__sch_id = sch_id
         """
         The ID of the schedule.
 
         :type: int
         """
 
-        self._nodes = {}
+        self.__nodes = {}
         """
         A map from rnd_id to node for all the current nodes in this schedule.
 
         :type: dict[int,enarksh.controller.node.Node.Node]
         """
 
-        self._children = {}
+        self.__children = {}
         """
         A map from rnd_id to a list with all child nodes.
 
         :type: dict
         """
 
-        self._successors = {}
+        self.__successors = {}
         """
         A map from rnd_id to a list with all (direct and indirect) successor nodes.
 
         :type: dict
         """
 
-        self._schedule_load = 0
+        self.__schedule_load = 0
         """
         The load of this schedule. I.e. the current running (simple) nodes of this schedule.
 
         :type: dict
         """
 
-        self._schedule_node = None
+        self.__schedule_node = None
         """
         The node that is the actual schedule.
 
         :type: Node
         """
 
-        self._activate_node = None
+        self.__activate_node = None
         """
         The node that is the activate node of the schedule.
 
         :type: Node
         """
 
-        self._arrest_node = None
+        self.__arrest_node = None
         """
         The node that is the arrest node of the schedule.
 
         :type: Node
         """
 
-        self._mail_on_completion = True
+        self.__mail_on_completion = True
         """
         If set a mail must be send to the operator when the schedule is finished running.
 
         :type: bool
         """
 
-        self._mail_on_error = True
+        self.__mail_on_error = True
         """
         If set a mail must be send to the operator for each failed (simple) node.
 
         :type: bool
         """
 
-        self._usr_login = ''
+        self.__usr_login = ''
         """
         The user ID of the operator.
 
         :type: str
         """
 
-        self._queue = set()
+        self.__queue = set()
         """
         The queue of nodes that are ready to run.
 
@@ -129,7 +129,7 @@ class Schedule(EventActor):
         :type: enarksh.event.Event.Event
         """
 
-        self._load(sch_id, host_resources)
+        self.__load(sch_id, host_resources)
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
@@ -139,14 +139,14 @@ class Schedule(EventActor):
 
         :rtype: int
         """
-        return self._sch_id
+        return self.__sch_id
 
     # ------------------------------------------------------------------------------------------------------------------
     def __del__(self):
-        print("Deleting schedule %s" % self._sch_id)
+        print("Deleting schedule %s" % self.__sch_id)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _load(self, sch_id, host_resources):
+    def __load(self, sch_id, host_resources):
         """
         Loads the schedule from the database.
 
@@ -172,14 +172,14 @@ class Schedule(EventActor):
                 tmp_child_nodes[node_data['rnd_id_parent']].append(node_data)
 
         # Create a lookup table for all direct successor nodes of a node.
-        direct_successors = Schedule._create_successor_lookup_table1(nodes_data,
-                                                                     tmp_child_nodes,
-                                                                     node_ports_data,
-                                                                     ports_data,
-                                                                     dependants_data)
+        direct_successors = Schedule.__create_successor_lookup_table1(nodes_data,
+                                                                      tmp_child_nodes,
+                                                                      node_ports_data,
+                                                                      ports_data,
+                                                                      dependants_data)
 
         # Create a lookup table for all direct predecessor nodes of a node.
-        direct_predecessors = Schedule._create_predecessor_lookup_table1(direct_successors)
+        direct_predecessors = Schedule.__create_predecessor_lookup_table1(direct_successors)
 
         # Create a lookup table for all (direct and indirect) successor nodes of a node.
         successors = {}
@@ -187,9 +187,9 @@ class Schedule(EventActor):
             successors[rnd_id_predecessor] = {}
             for rnd_id_successor in direct_successors[rnd_id_predecessor]:
                 successors[rnd_id_predecessor][rnd_id_successor] = True
-                Schedule._create_successor_lookup_table3(successors[rnd_id_predecessor],
-                                                         direct_successors,
-                                                         rnd_id_successor)
+                Schedule.__create_successor_lookup_table3(successors[rnd_id_predecessor],
+                                                          direct_successors,
+                                                          rnd_id_successor)
 
         # Create all resources.
         resources = {}
@@ -211,7 +211,7 @@ class Schedule(EventActor):
 
         # Create all nodes.
         for node_data in nodes_data.values():
-            self._nodes[node_data['rnd_id']] = create_node(node_data)
+            self.__nodes[node_data['rnd_id']] = create_node(node_data)
 
         # Initialize all nodes.
         # First initialize all simple nodes. This has the effect that signals via StateChange.notify_observer are
@@ -219,7 +219,7 @@ class Schedule(EventActor):
         # will be set to run status ENK_RST_ID_ERROR while a simple successor node did not yet receive a signal that
         # would put this node in run status ENK_RST_ID_QUEUED.
         for node_data in nodes_data.values():
-            node = self._nodes[node_data['rnd_id']]
+            node = self.__nodes[node_data['rnd_id']]
             if node.is_simple_node():
                 node.initialize(node_data,
                                 schedule,
@@ -227,7 +227,7 @@ class Schedule(EventActor):
                                 resources_data,
                                 consumptions,
                                 consumptions_data,
-                                self._nodes,
+                                self.__nodes,
                                 tmp_child_nodes,
                                 direct_predecessors,
                                 direct_successors,
@@ -241,7 +241,7 @@ class Schedule(EventActor):
 
         # Second initialize complex nodes.
         for node_data in nodes_data.values():
-            node = self._nodes[node_data['rnd_id']]
+            node = self.__nodes[node_data['rnd_id']]
             if node.is_complex_node():
                 node.initialize(node_data,
                                 schedule,
@@ -249,7 +249,7 @@ class Schedule(EventActor):
                                 resources_data,
                                 consumptions,
                                 consumptions_data,
-                                self._nodes,
+                                self.__nodes,
                                 tmp_child_nodes,
                                 direct_predecessors,
                                 direct_successors,
@@ -263,24 +263,24 @@ class Schedule(EventActor):
 
         # Create a map from rnd_id to all its child nodes.
         for (rnd_id_parent, nodes) in tmp_child_nodes.items():
-            self._children[rnd_id_parent] = []
+            self.__children[rnd_id_parent] = []
             for node_data in nodes:
-                self._children[rnd_id_parent].append(self._nodes[node_data['rnd_id']])
+                self.__children[rnd_id_parent].append(self.__nodes[node_data['rnd_id']])
 
         # Create a map from rnd_id to all its successor nodes.
         for (rnd_id, edges) in successors.items():
-            self._successors[rnd_id] = []
+            self.__successors[rnd_id] = []
             for rnd_id_successor in edges.keys():
-                self._successors[rnd_id].append(self._nodes[rnd_id_successor])
+                self.__successors[rnd_id].append(self.__nodes[rnd_id_successor])
 
         # Store the schedule, activate, and arrest node.
-        self._schedule_node = self._nodes[schedule['rnd_id_schedule']]
-        self._activate_node = self._nodes[schedule['rnd_id_activate']]
-        self._arrest_node = self._nodes[schedule['rnd_id_arrest']]
+        self.__schedule_node = self.__nodes[schedule['rnd_id_schedule']]
+        self.__activate_node = self.__nodes[schedule['rnd_id_activate']]
+        self.__arrest_node = self.__nodes[schedule['rnd_id_arrest']]
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _create_successor_lookup_table1(nodes_data, child_nodes_data, node_ports_data, ports_data, dependants_data):
+    def __create_successor_lookup_table1(nodes_data, child_nodes_data, node_ports_data, ports_data, dependants_data):
         """
         :param dict nodes_data:
         :param dict child_nodes_data:
@@ -303,7 +303,7 @@ class Schedule(EventActor):
                                     rnd_id = ports_data[edge['prt_id_dependant']]['rnd_id']
                                     if rnd_id in child_nodes_data:
                                         # Node rnd_id is a complex node.
-                                        Schedule._create_successor_lookup_table2(
+                                        Schedule.__create_successor_lookup_table2(
                                             direct_lookup[node_data['rnd_id']],
                                             nodes_data,
                                             child_nodes_data,
@@ -318,7 +318,7 @@ class Schedule(EventActor):
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _create_successor_lookup_table2(lookup, nodes_data, child_nodes_data, ports_data, dependants_data, prt_id):
+    def __create_successor_lookup_table2(lookup, nodes_data, child_nodes_data, ports_data, dependants_data, prt_id):
         """
         :param list lookup:
         :param dict nodes_data:
@@ -332,19 +332,19 @@ class Schedule(EventActor):
             # Node rnd_id is a complex node.
             if prt_id in dependants_data:
                 for edge in dependants_data[prt_id]:
-                    Schedule._create_successor_lookup_table2(lookup,
-                                                             nodes_data,
-                                                             child_nodes_data,
-                                                             ports_data,
-                                                             dependants_data,
-                                                             edge['prt_id_dependant'])
+                    Schedule.__create_successor_lookup_table2(lookup,
+                                                              nodes_data,
+                                                              child_nodes_data,
+                                                              ports_data,
+                                                              dependants_data,
+                                                              edge['prt_id_dependant'])
         else:
             # Node rnd_id is a simple node.
             lookup.append(rnd_id1)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _create_successor_lookup_table3(lookup, direct_lookup, rnd_id_predecessor):
+    def __create_successor_lookup_table3(lookup, direct_lookup, rnd_id_predecessor):
         """
         :param dict lookup:
         :param dict direct_lookup:
@@ -354,11 +354,11 @@ class Schedule(EventActor):
             for rnd_id_successor in direct_lookup[rnd_id_predecessor]:
                 if rnd_id_successor not in lookup:
                     lookup[rnd_id_successor] = False
-                    Schedule._create_successor_lookup_table3(lookup, direct_lookup, rnd_id_successor)
+                    Schedule.__create_successor_lookup_table3(lookup, direct_lookup, rnd_id_successor)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _create_predecessor_lookup_table1(direct_successors):
+    def __create_predecessor_lookup_table1(direct_successors):
         """
         :param dict direct_successors:
 
@@ -381,7 +381,7 @@ class Schedule(EventActor):
 
         :rtype: dict
         """
-        return self._nodes
+        return self.__nodes
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_node(self, rnd_id):
@@ -392,10 +392,10 @@ class Schedule(EventActor):
 
         :rtype: enarksh.controller.node.Node.Node
         """
-        return self._nodes[rnd_id]
+        return self.__nodes[rnd_id]
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _test_node_run_status_of_successor(self, rnd_id, statuses, seen):
+    def __test_node_run_status_of_successor(self, rnd_id, statuses, seen):
         """
         :param int rnd_id:
         :param tuple statuses:
@@ -403,27 +403,27 @@ class Schedule(EventActor):
 
         :rtype: bool
         """
-        if rnd_id in self._children:
+        if rnd_id in self.__children:
             # Node rnd_id is complex node.
-            for node in self._children[rnd_id]:
+            for node in self.__children[rnd_id]:
                 if node.rnd_id not in seen:
                     seen.add(node.rnd_id)
-                    if self._test_node_run_status_of_successor(node.rnd_id, statuses, seen):
+                    if self.__test_node_run_status_of_successor(node.rnd_id, statuses, seen):
                         return True
 
         else:
             # Node rnd_id is a simple node.
-            if self._nodes[rnd_id].rst_id in statuses:
+            if self.__nodes[rnd_id].rst_id in statuses:
                 return True
 
-            if rnd_id in self._successors:
-                for node in self._successors[rnd_id]:
+            if rnd_id in self.__successors:
+                for node in self.__successors[rnd_id]:
                     if node.rnd_id not in seen:
                         seen.add(node.rnd_id)
                         if node.rst_id in statuses:
                             return True
 
-                        if self._test_node_run_status_of_successor(node.rnd_id, statuses, seen):
+                        if self.__test_node_run_status_of_successor(node.rnd_id, statuses, seen):
                             return True
 
         return False
@@ -457,23 +457,23 @@ class Schedule(EventActor):
         response = self.get_response_template()
 
         # Find node in map from rnd_id to node.
-        node = self._nodes.get(rnd_id, None)
+        node = self.__nodes.get(rnd_id, None)
         if not node:
             # Node is not part of a current run of this schedule.
             return response
 
         # Set the mail options.
-        response['mail_on_completion'] = self._mail_on_completion
-        response['mail_on_error'] = self._mail_on_error
+        response['mail_on_completion'] = self.__mail_on_completion
+        response['mail_on_error'] = self.__mail_on_error
 
         # Get the current run status of the node.
         rst_id = node.rst_id
 
-        if self._schedule_node.rnd_id == rnd_id:
+        if self.__schedule_node.rnd_id == rnd_id:
             # Node rnd_id is the schedule it self.
             if rst_id == enarksh.ENK_RST_ID_WAITING:
                 response['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
-                errors = self._test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_ERROR,), set())
+                errors = self.__test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_ERROR,), set())
                 if errors:
                     response['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
 
@@ -482,7 +482,7 @@ class Schedule(EventActor):
                 pass
 
             elif rst_id == enarksh.ENK_RST_ID_RUNNING:
-                errors = self._test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_ERROR,), set())
+                errors = self.__test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_ERROR,), set())
                 if errors:
                     response['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
 
@@ -498,16 +498,16 @@ class Schedule(EventActor):
 
             return response
 
-        if self._activate_node.rnd_id == rnd_id:
+        if self.__activate_node.rnd_id == rnd_id:
             # Node rnd_id is the trigger of the schedule.
-            busy = self._test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_RUNNING,
-                                                                    enarksh.ENK_RST_ID_QUEUED), set())
+            busy = self.__test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_RUNNING,
+                                                                     enarksh.ENK_RST_ID_QUEUED), set())
             if not busy:
                 response['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
 
             return response
 
-        if self._arrest_node.rnd_id == rnd_id:
+        if self.__arrest_node.rnd_id == rnd_id:
             # No actions are possible for an arrest node of a schedule.
             return response
 
@@ -526,13 +526,13 @@ class Schedule(EventActor):
             # Node is running.
             # No actions are possible for simple nodes.
             if node.is_complex_node():
-                errors = self._test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_ERROR,), set())
+                errors = self.__test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_ERROR,), set())
                 if errors:
                     response['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
 
         elif rst_id == enarksh.ENK_RST_ID_COMPLETED:
             # Node has completed successfully.
-            busy = self._test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_RUNNING,), set())
+            busy = self.__test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_RUNNING,), set())
             if not busy:
                 response['actions'][enarksh.ENK_ACT_ID_RESTART]['act_enabled'] = True
 
@@ -553,7 +553,7 @@ class Schedule(EventActor):
         return response
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _node_action_restart(self, rnd_id):
+    def __node_action_restart(self, rnd_id):
         """
         Restarts a node.
 
@@ -562,7 +562,7 @@ class Schedule(EventActor):
         :rtype bool: True if the controller must reload the schedule. False otherwise.
         """
         # Find node in map from rnd_id to node.
-        node = self._nodes.get(rnd_id, None)
+        node = self.__nodes.get(rnd_id, None)
         if not node:
             # Node is not part of a current run of a this schedule.
             return False
@@ -572,7 +572,7 @@ class Schedule(EventActor):
         return False
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _node_action_trigger_schedule(self, rnd_id):
+    def __node_action_trigger_schedule(self, rnd_id):
         """
         Triggers the schedule.
 
@@ -580,16 +580,16 @@ class Schedule(EventActor):
 
         :rtype bool: True if the controller must reload the schedule. False otherwise.
         """
-        run_id = DataLayer.enk_back_schedule_trigger(self._sch_id)
+        run_id = DataLayer.enk_back_schedule_trigger(self.__sch_id)
 
         if not run_id:
-            node = self._nodes[rnd_id]
+            node = self.__nodes[rnd_id]
             node.rst_id = enarksh.ENK_RST_ID_QUEUED
 
         return bool(run_id)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _node_action_restart_failed(self, rnd_id):
+    def __node_action_restart_failed(self, rnd_id):
         """
         Restarts a node.
 
@@ -598,7 +598,7 @@ class Schedule(EventActor):
         :rtype bool: False.
         """
         # Find node in map from rnd_id to node.
-        node = self._nodes.get(rnd_id, None)
+        node = self.__nodes.get(rnd_id, None)
         if not node:
             # Node is not part of a current run of a this schedule.
             return False
@@ -614,7 +614,7 @@ class Schedule(EventActor):
         :param int exit_status:
         """
         # Find node in map from rnd_id to node.
-        node = self._nodes.get(rnd_id, None)
+        node = self.__nodes.get(rnd_id, None)
         if not node:
             # Node is not part of a current run of a this schedule.
             return
@@ -622,22 +622,22 @@ class Schedule(EventActor):
         node.stop(exit_status)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _send_mail_on_error(self, node):
+    def __send_mail_on_error(self, node):
         """
         Sends an email to the administrator that a simple node has failed.
 
         :param enarksh.controller.node.Node.Node node: The node that has failed.
         """
-        if self._usr_login:
+        if self.__usr_login:
             try:
-                user = DataLayer.enk_back_get_user_info(self._usr_login)
+                user = DataLayer.enk_back_get_user_info(self.__usr_login)
 
                 body = "Dear Enarksh user,"
                 ""
                 "Job " + str(node.name) + " has run unsuccessfully."
                 ""
                 "Greetings from Enarksh"
-                subject = "Job of schedule " + str(self._schedule_node.name) + "failed."
+                subject = "Job of schedule " + str(self.__schedule_node.name) + "failed."
 
                 msg = MIMEText(body)
                 msg['Subject'] = subject
@@ -653,28 +653,28 @@ class Schedule(EventActor):
                 traceback.print_exc(file=sys.stderr)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _send_mail_on_completion(self):
+    def __send_mail_on_completion(self):
         """
         Sends an email to the administrator that the schedule has completed.
         """
-        if self._usr_login:
+        if self.__usr_login:
             try:
-                user = DataLayer.enk_back_get_user_info(self._usr_login)
+                user = DataLayer.enk_back_get_user_info(self.__usr_login)
 
-                if self._schedule_node.rst_id == enarksh.ENK_RST_ID_ERROR:
+                if self.__schedule_node.rst_id == enarksh.ENK_RST_ID_ERROR:
                     body = "Dear Enarksh user,"
                     ""
-                    "Schedule " + str(self._schedule_node.name) + " has finished unsuccessfully."
+                    "Schedule " + str(self.__schedule_node.name) + " has finished unsuccessfully."
                     ""
                     "Greetings from Enarksh"
-                    subject = "Schedule " + self._schedule_node.name + "finished unsuccessfully."
+                    subject = "Schedule " + self.__schedule_node.name + "finished unsuccessfully."
                 else:
                     body = "Dear Enarksh user,"
                     ""
-                    "Schedule " + str(self._schedule_node.name) + " has finished successfully."
+                    "Schedule " + str(self.__schedule_node.name) + " has finished successfully."
                     ""
                     "Greetings from Enarksh"
-                    subject = "Schedule " + self._schedule_node.name + "finished successfully."
+                    subject = "Schedule " + self.__schedule_node.name + "finished successfully."
 
                 msg = MIMEText(body)
                 msg['Subject'] = subject
@@ -708,43 +708,43 @@ class Schedule(EventActor):
         # If required: update the queue.
         if old['rst_id'] != new['rst_id'] and node.is_simple_node():
             if new['rst_id'] == enarksh.ENK_RST_ID_QUEUED:
-                self._queue.add(node)
+                self.__queue.add(node)
             elif old['rst_id'] == enarksh.ENK_RST_ID_QUEUED:
-                self._queue.discard(node)
+                self.__queue.discard(node)
 
         # Adjust the schedule load (i.e. number of running nodes) of this schedule.
         if node.is_simple_node():
             if old['rst_id'] != new['rst_id']:
                 if new['rst_id'] == enarksh.ENK_RST_ID_RUNNING:
-                    self._schedule_load += 1
+                    self.__schedule_load += 1
                 if old['rst_id'] == enarksh.ENK_RST_ID_RUNNING:
-                    self._schedule_load -= 1
+                    self.__schedule_load -= 1
 
         # Adjust all mappings from rnd_id.
         if old['rnd_id'] != new['rnd_id']:
-            if old['rnd_id'] in self._children:
-                self._children[new['rnd_id']] = self._children[old['rnd_id']]
-                del self._children[old['rnd_id']]
+            if old['rnd_id'] in self.__children:
+                self.__children[new['rnd_id']] = self.__children[old['rnd_id']]
+                del self.__children[old['rnd_id']]
 
-            self._nodes[new['rnd_id']] = self._nodes[old['rnd_id']]
-            del self._nodes[old['rnd_id']]
+            self.__nodes[new['rnd_id']] = self.__nodes[old['rnd_id']]
+            del self.__nodes[old['rnd_id']]
 
-            if old['rnd_id'] in self._successors:
-                self._successors[new['rnd_id']] = self._successors[old['rnd_id']]
-                del self._successors[old['rnd_id']]
+            if old['rnd_id'] in self.__successors:
+                self.__successors[new['rnd_id']] = self.__successors[old['rnd_id']]
+                del self.__successors[old['rnd_id']]
 
         # If a simple node has failed send mail to administrator.
         if node.is_simple_node() and old['rst_id'] != new['rst_id']:
-            if new['rst_id'] == enarksh.ENK_RST_ID_ERROR and self._mail_on_error:
-                self._send_mail_on_error(node)
+            if new['rst_id'] == enarksh.ENK_RST_ID_ERROR and self.__mail_on_error:
+                self.__send_mail_on_error(node)
 
         # If the schedule has finished send an mail to the administrator.
-        if node == self._schedule_node and old['rst_id'] != new['rst_id']:
+        if node == self.__schedule_node and old['rst_id'] != new['rst_id']:
             if new['rst_id'] in (enarksh.ENK_RST_ID_ERROR, enarksh.ENK_RST_ID_COMPLETED):
-                self._send_mail_on_completion()
+                self.__send_mail_on_completion()
 
         # If the schedule has terminated inform all observer of this event.
-        if node == self._schedule_node and old['rst_id'] != new['rst_id']:
+        if node == self.__schedule_node and old['rst_id'] != new['rst_id']:
             if new['rst_id'] in (enarksh.ENK_RST_ID_ERROR, enarksh.ENK_RST_ID_COMPLETED):
                 self.event_schedule_termination.fire(new['rst_id'])
 
@@ -768,7 +768,7 @@ class Schedule(EventActor):
 
         :rtype: int
         """
-        return self._schedule_load
+        return self.__schedule_load
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_activate_node(self):
@@ -777,7 +777,7 @@ class Schedule(EventActor):
 
         :rtype: enarksh.controller.node.Node
         """
-        return self._activate_node
+        return self.__activate_node
 
     # ------------------------------------------------------------------------------------------------------------------
     def request_node_action(self, rnd_id, act_id, usr_login, mail_on_completion, mail_on_error):
@@ -793,37 +793,37 @@ class Schedule(EventActor):
         :rtype bool: True if the controller must reload the schedule. False otherwise.
         """
         # Store the mail options.
-        self._usr_login = usr_login
-        self._mail_on_completion = mail_on_completion
-        self._mail_on_error = mail_on_error
+        self.__usr_login = usr_login
+        self.__mail_on_completion = mail_on_completion
+        self.__mail_on_error = mail_on_error
 
-        if self._schedule_node.rnd_id == rnd_id:
+        if self.__schedule_node.rnd_id == rnd_id:
             # Node is the schedule is self.
             if act_id == enarksh.ENK_ACT_ID_TRIGGER:
-                return self._node_action_trigger_schedule(rnd_id)
+                return self.__node_action_trigger_schedule(rnd_id)
 
             if act_id == enarksh.ENK_ACT_ID_RESTART_FAILED:
-                return self._node_action_restart_failed(rnd_id)
+                return self.__node_action_restart_failed(rnd_id)
 
             raise RuntimeError("Unknown or unsupported act_id '%s'." % act_id)
 
-        if self._activate_node.rnd_id == rnd_id:
+        if self.__activate_node.rnd_id == rnd_id:
             # Node is the activate node of the schedule.
             if act_id == enarksh.ENK_ACT_ID_TRIGGER:
-                return self._node_action_trigger_schedule(rnd_id)
+                return self.__node_action_trigger_schedule(rnd_id)
 
             raise RuntimeError("Unknown or unsupported act_id '%s'." % act_id)
 
-        if self._arrest_node.rnd_id == rnd_id:
+        if self.__arrest_node.rnd_id == rnd_id:
             # Node is the arrest node of the schedule. No actions are possible.
             raise RuntimeError("Unknown or unsupported act_id '%s'." % act_id)
 
         # Node is a "normal" node in the schedule.
         if act_id == enarksh.ENK_ACT_ID_RESTART:
-            return self._node_action_restart(rnd_id)
+            return self.__node_action_restart(rnd_id)
 
         if act_id == enarksh.ENK_ACT_ID_RESTART_FAILED:
-            return self._node_action_restart_failed(rnd_id)
+            return self.__node_action_restart_failed(rnd_id)
 
         raise RuntimeError("Unknown or unsupported act_id '%s'." % act_id)
 
@@ -858,6 +858,6 @@ class Schedule(EventActor):
 
         :rtype: list[enarksh.controller.node.Node.Node]
         """
-        return sorted(self._queue, key=functools.cmp_to_key(Schedule.queue_compare))
+        return sorted(self.__queue, key=functools.cmp_to_key(Schedule.queue_compare))
 
 # ----------------------------------------------------------------------------------------------------------------------

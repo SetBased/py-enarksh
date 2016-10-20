@@ -20,9 +20,9 @@ from enarksh.spawner.ChunkLogger import ChunkLogger
 
 class JobHandler(EventActor):
     """
-    Class for reading the sdtout and stderr and monitoring the processes of a job.
+    Class for reading the stdout and stderr and monitoring the processes of a job.
     """
-    _allowed_users = []
+    __allowed_users = []
     """
     The list of user names under which a process can be started.
 
@@ -41,28 +41,28 @@ class JobHandler(EventActor):
         """
         EventActor.__init__(self)
 
-        self._sch_id = sch_id
+        self.__sch_id = sch_id
         """
         The ID of the schedule of the job.
 
         :type: int
         """
 
-        self._rnd_id = rnd_id
+        self.__rnd_id = rnd_id
         """
         The ID of the job.
 
         :type: int
         """
 
-        self._user_name = user_name
+        self.__user_name = user_name
         """
         The user under which the job must run.
 
         :type: str
         """
 
-        self._args = args
+        self.__args = args
         """
         The arguments for the job.
 
@@ -83,21 +83,21 @@ class JobHandler(EventActor):
         :type: enarksh.spawner.ChunkLogger.ChunkLogger
         """
 
-        self._child_pid = -1
+        self.__child_pid = -1
         """
         The PID of the child process.
 
         :type: int
         """
 
-        self._stdout = -1
+        self.__stdout = -1
         """
         The fd for reading the STDOUT of the child process.
 
         :type: int
         """
 
-        self._stderr = -1
+        self.__stderr = -1
         """
         The fd for reading the STDERR of the child process.
 
@@ -119,7 +119,7 @@ class JobHandler(EventActor):
 
         :rtype int: The PID of the job.
         """
-        return self._child_pid
+        return self.__child_pid
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
@@ -129,7 +129,7 @@ class JobHandler(EventActor):
 
         :rtype int: file descriptor
         """
-        return self._stderr
+        return self.__stderr
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
@@ -139,7 +139,7 @@ class JobHandler(EventActor):
 
         :rtype int: file descriptor
         """
-        return self._stdout
+        return self.__stdout
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
@@ -149,7 +149,7 @@ class JobHandler(EventActor):
 
         :rtype: int
         """
-        return self._rnd_id
+        return self.__rnd_id
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
@@ -159,29 +159,29 @@ class JobHandler(EventActor):
 
         :rtype: int
         """
-        return self._sch_id
+        return self.__sch_id
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _log_job_start(self):
+    def __log_job_start(self):
         """
         Logs the starting of a job.
         """
-        print("Start rnd_id: %10d, %8s, %s" % (self._rnd_id, self._user_name, str(self._args)))
+        print("Start rnd_id: %10d, %8s, %s" % (self.__rnd_id, self.__user_name, str(self.__args)))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _log_job_stop(self):
+    def __log_job_stop(self):
         """
         Logs the end of job.
         """
-        print("End   rnd_id: %10d, %8s, %s" % (self._rnd_id, self._user_name, str(self._args)))
+        print("End   rnd_id: %10d, %8s, %s" % (self.__rnd_id, self.__user_name, str(self.__args)))
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _final(self):
+    def __final(self):
         """
         When the job is finally done fires a done event.
         """
-        if self._child_pid == -1 and self._stdout == -1 and self._stderr == -1:
-            self._log_job_stop()
+        if self.__child_pid == -1 and self.__stdout == -1 and self.__stderr == -1:
+            self.__log_job_stop()
 
             # Close the files of the chunk loggers.
             self.stdout_logger.close()
@@ -199,8 +199,8 @@ class JobHandler(EventActor):
         """
         Marks that the job has finished.
         """
-        self._child_pid = -1
-        self._final()
+        self.__child_pid = -1
+        self.__final()
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_logger_message(self, std):
@@ -218,7 +218,7 @@ class JobHandler(EventActor):
         else:
             raise Exception("Unknown output '%s'." % std)
 
-        return LogFileMessage(self._rnd_id,
+        return LogFileMessage(self.__rnd_id,
                               std,
                               chunk_logger.get_total_log_size(),
                               chunk_logger.filename1,
@@ -231,23 +231,23 @@ class JobHandler(EventActor):
 
         :param int fd: The file descriptor.
         """
-        if fd == self._stdout:
+        if fd == self.__stdout:
             data = os.read(fd, 1000)
             if data == b'':
                 # The pipe has been closed by the child process.
-                os.close(self._stdout)
-                self._stdout = -1
-                self._final()
+                os.close(self.__stdout)
+                self.__stdout = -1
+                self.__final()
             else:
                 self.stdout_logger.write(data)
 
-        elif fd == self._stderr:
+        elif fd == self.__stderr:
             data = os.read(fd, 1000)
             if data == b'':
                 # The pipe has been closed by the child process.
-                os.close(self._stderr)
-                self._stderr = -1
-                self._final()
+                os.close(self.__stderr)
+                self.__stderr = -1
+                self.__final()
             else:
                 self.stdout_logger.write(data)
                 self.stderr_logger.write(data)
@@ -264,18 +264,18 @@ class JobHandler(EventActor):
         config = ConfigParser()
         config.read(os.path.join(enarksh.HOME, 'etc/enarksh.cfg'))
 
-        JobHandler._allowed_users = config.get('spawner', 'users').split()
+        JobHandler.__allowed_users = config.get('spawner', 'users').split()
 
     # ------------------------------------------------------------------------------------------------------------------
     def start_job(self):
-        self._log_job_start()
+        self.__log_job_start()
 
         # Create pipes for stdout and stderr.
         pipe_stdout = os.pipe()
         pipe_stderr = os.pipe()
 
-        self._child_pid = os.fork()
-        if self._child_pid == 0:
+        self.__child_pid = os.fork()
+        if self.__child_pid == 0:
             # Child process.
             try:
                 # Close the read ends from the pipes.
@@ -289,21 +289,21 @@ class JobHandler(EventActor):
                 os.dup2(pipe_stderr[1], sys.stderr.fileno())
 
                 # Set the effective user and group.
-                if self._user_name in self._allowed_users:
-                    _, _, uid, gid, _, _, _ = pwd.getpwnam(self._user_name)
+                if self.__user_name in self.__allowed_users:
+                    _, _, uid, gid, _, _, _ = pwd.getpwnam(self.__user_name)
                     os.setuid(0)
 
-                    os.initgroups(self._user_name, gid)
+                    os.initgroups(self.__user_name, gid)
                     os.setuid(uid)
                 else:
-                    raise RuntimeError("Spanner is not allowed to start processes under user '%s'." % self._user_name)
+                    raise RuntimeError("Spanner is not allowed to start processes under user '%s'." % self.__user_name)
 
                 # Set variable for subprocess.
-                os.putenv('ENK_RND_ID', str(self._rnd_id))
-                os.putenv('ENK_SCH_ID', str(self._sch_id))
+                os.putenv('ENK_RND_ID', str(self.__rnd_id))
+                os.putenv('ENK_SCH_ID', str(self.__sch_id))
 
                 # Replace this child process with the actual job.
-                os.execv(self._args[0], self._args)
+                os.execv(self.__args[0], self.__args)
 
             except Exception as e:
                 print('Unable to start job.', file=sys.stderr)
@@ -318,8 +318,8 @@ class JobHandler(EventActor):
             os.close(pipe_stderr[1])
 
             # Remember the fds for reading the stdout and stderr from the child process.
-            self._stdout = pipe_stdout[0]
-            self._stderr = pipe_stderr[0]
+            self.__stdout = pipe_stdout[0]
+            self.__stderr = pipe_stderr[0]
 
             # Make reading from the pipes non-blocking.
             # fcntl.fcntl(self._stdout, 0)

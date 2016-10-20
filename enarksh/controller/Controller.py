@@ -206,7 +206,7 @@ class Controller(EventActor):
         return schedule
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _register_sockets(self):
+    def __register_sockets(self):
         """
         Registers ZMQ sockets for communication with other processes in Enarksh.
         """
@@ -223,7 +223,7 @@ class Controller(EventActor):
         self.message_controller.register_end_point('logger', zmq.PUSH, enarksh.LOGGER_PULL_END_POINT)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _register_message_types(self):
+    def __register_message_types(self):
         """
         Registers all message type that the controller handles at the message controller.
         """
@@ -241,7 +241,7 @@ class Controller(EventActor):
                                                               NodeActionWebMessage.create_from_json)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _register_events_handlers(self):
+    def __register_events_handlers(self):
         """
         Registers all event handlers at the event controller.
         """
@@ -275,11 +275,11 @@ class Controller(EventActor):
         """
         self.__startup()
 
-        self._register_sockets()
+        self.__register_sockets()
 
-        self._register_message_types()
+        self.__register_message_types()
 
-        self._register_events_handlers()
+        self.__register_events_handlers()
 
         self.message_controller.no_barking(5)
 

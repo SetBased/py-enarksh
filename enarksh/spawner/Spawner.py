@@ -44,7 +44,7 @@ class Spawner(EventActor):
         """
         Spawner.instance = self
 
-        self._event_controller = EventController()
+        self.__event_controller = EventController()
         """
         The event controller.
 
@@ -53,28 +53,28 @@ class Spawner(EventActor):
 
         EventActor.__init__(self)
 
-        self._message_controller = MessageController()
+        self.__message_controller = MessageController()
         """
         The message controller.
 
         :type: enarksh.message.MessageController.MessageController
         """
 
-        self._job_handlers = {}
+        self.__job_handlers = {}
         """
         The job handlers. A dictionary from PID to the job handler for the process (of the job).
 
         :type: dict[int,enarksh.spawner.JobHandler.JobHandler]
         """
 
-        self._sigchld_event = Event(self)
+        self.__sigchld_event = Event(self)
         """
         Event for SIGCHLD has been received.
 
         :type: enarksh.event.Event.Event
         """
 
-        self._zmq_incoming_message_event = Event(self)
+        self.__zmq_incoming_message_event = Event(self)
         """
         Event for a ZMQ message is available.
 
@@ -89,7 +89,7 @@ class Spawner(EventActor):
 
         :rtype: enarksh.event.Event.Event
         """
-        return self._sigchld_event
+        return self.__sigchld_event
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
@@ -99,7 +99,7 @@ class Spawner(EventActor):
 
         :rtype: dict[int,enarksh.spawner.JobHandler.JobHandler]
         """
-        return self._job_handlers
+        return self.__job_handlers
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
@@ -109,7 +109,7 @@ class Spawner(EventActor):
 
         :rtype: enarksh.event.Event.Event
         """
-        return self._zmq_incoming_message_event
+        return self.__zmq_incoming_message_event
 
     # ------------------------------------------------------------------------------------------------------------------
     def add_job_handler(self, job_handler):
@@ -118,7 +118,7 @@ class Spawner(EventActor):
 
         :param enarksh.spawner.JobHandler.JobHandler job_handler: The job handler.
         """
-        self._job_handlers[job_handler.pid] = job_handler
+        self.__job_handlers[job_handler.pid] = job_handler
 
     # ------------------------------------------------------------------------------------------------------------------
     def remove_job_handler(self, pid):
@@ -127,7 +127,7 @@ class Spawner(EventActor):
 
         :param int pid: The (original) PID of the process that the jon handlers was handling.
         """
-        del self._job_handlers[pid]
+        del self.__job_handlers[pid]
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -138,7 +138,7 @@ class Spawner(EventActor):
         Spawner.instance.sigchld_event.fire()
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _install_signal_handlers(self):
+    def __install_signal_handlers(self):
         """
         Install signal handlers for SIGCHLD and SIGHUP.
         """
@@ -147,7 +147,7 @@ class Spawner(EventActor):
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _set_unprivileged_user():
+    def __set_unprivileged_user():
         """
         Set the real and effective user and group to an unprivileged user.
         """
@@ -157,7 +157,7 @@ class Spawner(EventActor):
         os.setresuid(uid, uid, 0)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _startup(self):
+    def __startup(self):
         """
         Performs the necessary actions for starting the spawner daemon.
         """
@@ -165,17 +165,17 @@ class Spawner(EventActor):
         print('Start spawner')
 
         # Set the effective user and group to an unprivileged user and group.
-        self._set_unprivileged_user()
+        self.__set_unprivileged_user()
 
         # Install signal handlers.
-        self._install_signal_handlers()
+        self.__install_signal_handlers()
 
         # Read all user names under which the controller is allowed to start jobs.
         JobHandler.read_allowed_users()
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _shutdown():
+    def __shutdown():
         """
         Performs the necessary actions for stopping the spawner.
         """
@@ -183,61 +183,61 @@ class Spawner(EventActor):
         print('Stop spawner')
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _register_sockets(self):
+    def __register_sockets(self):
         """
         Registers ZMQ sockets for communication with other processes in Enarksh.
         """
         # Register socket for receiving asynchronous incoming messages.
-        self._message_controller.register_end_point('pull', zmq.PULL, enarksh.SPAWNER_PULL_END_POINT)
+        self.__message_controller.register_end_point('pull', zmq.PULL, enarksh.SPAWNER_PULL_END_POINT)
 
         # Register socket for sending asynchronous messages to the controller.
-        self._message_controller.register_end_point('controller', zmq.PUSH, enarksh.CONTROLLER_PULL_END_POINT)
+        self.__message_controller.register_end_point('controller', zmq.PUSH, enarksh.CONTROLLER_PULL_END_POINT)
 
         # Register socket for sending asynchronous messages to the logger.
-        self._message_controller.register_end_point('logger', zmq.PUSH, enarksh.LOGGER_PULL_END_POINT)
+        self.__message_controller.register_end_point('logger', zmq.PUSH, enarksh.LOGGER_PULL_END_POINT)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _register_message_types(self):
+    def __register_message_types(self):
         """
         Registers all message type that the spawner handles at the message controller.
         """
-        self._message_controller.register_message_type(ExitMessage.MESSAGE_TYPE)
-        self._message_controller.register_message_type(SpawnJobMessage.MESSAGE_TYPE)
+        self.__message_controller.register_message_type(ExitMessage.MESSAGE_TYPE)
+        self.__message_controller.register_message_type(SpawnJobMessage.MESSAGE_TYPE)
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _register_events_handlers(self):
+    def __register_events_handlers(self):
         """
         Registers all event handlers at the event controller.
         """
         EventQueueEmptyEventHandler.init()
 
         # Register message received event handlers.
-        self._message_controller.register_listener(ExitMessage.MESSAGE_TYPE, ExitMessageEventHandler.handle)
-        self._message_controller.register_listener(SpawnJobMessage.MESSAGE_TYPE,
-                                                   SpawnJobMessageEventHandler.handle,
-                                                   self)
+        self.__message_controller.register_listener(ExitMessage.MESSAGE_TYPE, ExitMessageEventHandler.handle)
+        self.__message_controller.register_listener(SpawnJobMessage.MESSAGE_TYPE,
+                                                    SpawnJobMessageEventHandler.handle,
+                                                    self)
         # Register other event handlers.
-        self._sigchld_event.register_listener(SIGCHLDEventHandler.handle, self)
-        self._zmq_incoming_message_event.register_listener(self._message_controller.receive_message)
-        self._event_controller.event_queue_empty.register_listener(EventQueueEmptyEventHandler.handle, self)
+        self.__sigchld_event.register_listener(SIGCHLDEventHandler.handle, self)
+        self.__zmq_incoming_message_event.register_listener(self.__message_controller.receive_message)
+        self.__event_controller.event_queue_empty.register_listener(EventQueueEmptyEventHandler.handle, self)
 
     # ------------------------------------------------------------------------------------------------------------------
     def main(self):
         """
         The main function of the job spawner.
         """
-        self._startup()
+        self.__startup()
 
-        self._register_sockets()
+        self.__register_sockets()
 
-        self._register_message_types()
+        self.__register_message_types()
 
-        self._register_events_handlers()
+        self.__register_events_handlers()
 
-        self._message_controller.no_barking(3)
+        self.__message_controller.no_barking(3)
 
-        self._event_controller.loop()
+        self.__event_controller.loop()
 
-        self._shutdown()
+        self.__shutdown()
 
 # ----------------------------------------------------------------------------------------------------------------------

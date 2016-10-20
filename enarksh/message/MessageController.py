@@ -37,14 +37,14 @@ class MessageController(EventActor):
 
         Message.message_controller = self
 
-        self._zmq_context = zmq.Context()
+        self.__zmq_context = zmq.Context()
         """
         The ZMQ context.
 
         :type: None|zmq.Context
         """
 
-        self._message_types = {}
+        self.__message_types = {}
         """
         All registered message types. A dict from message type to the event that must fire when a message of
         that message type has been received.
@@ -52,7 +52,7 @@ class MessageController(EventActor):
         :type: dict[str,enarksh.event.Event.Event]
         """
 
-        self._end_points = {}
+        self.__end_points = {}
         """
         All registered end points.
 
@@ -67,7 +67,7 @@ class MessageController(EventActor):
 
         :rtype: dict[str,zmq.sugar.socket.Socket]
         """
-        return self._end_points
+        return self.__end_points
 
     # ------------------------------------------------------------------------------------------------------------------
     def register_end_point(self, name, socket_type, end_point):
@@ -81,8 +81,8 @@ class MessageController(EventActor):
                                 - zmq.PUSH for asynchronous outgoing messages
         :param str end_point: The end point.
         """
-        socket = self._zmq_context.socket(socket_type)
-        self._end_points[name] = socket
+        socket = self.__zmq_context.socket(socket_type)
+        self.__end_points[name] = socket
         if socket_type in [zmq.PULL, zmq.REP]:
             socket.bind(end_point)
         elif socket_type == zmq.PUSH:
@@ -108,7 +108,7 @@ class MessageController(EventActor):
 
         :param str message_type: The message type to register.
         """
-        self._message_types[message_type] = Event(self)
+        self.__message_types[message_type] = Event(self)
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_event_by_message_type(self, message_type):
@@ -119,10 +119,10 @@ class MessageController(EventActor):
 
         :rtype: enarksh.event.Event.Event
         """
-        if message_type not in self._message_types:
+        if message_type not in self.__message_types:
             raise ValueError("Unknown message type '{0}'".format(message_type))
 
-        return self._message_types[message_type]
+        return self.__message_types[message_type]
 
     # ------------------------------------------------------------------------------------------------------------------
     def register_listener(self, message_type, listener, listener_data=None):
@@ -142,8 +142,6 @@ class MessageController(EventActor):
 
         :param str name: The name of the end point of source of the message.
         :param zmq.sugar.socket.Socket socket: The ZMQ socket.
-
-        XXX @todo Support JSON messages for communication with PHP front end.
         """
         buffer = socket.recv()
         if buffer[:1] == b'{':
@@ -156,10 +154,10 @@ class MessageController(EventActor):
             """:type: enarksh.message.Message.Message"""
             message.message_source = name
 
-        if message.message_type not in self._message_types:
+        if message.message_type not in self.__message_types:
             raise ValueError("Received message with unknown message type '{0}'".format(message.message_type))
 
-        event = self._message_types[message.message_type]
+        event = self.__message_types[message.message_type]
         event.fire(message)
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -175,14 +173,14 @@ class MessageController(EventActor):
 
         # Make a poller for all incoming sockets.
         poller = zmq.Poller()
-        for socket in self._end_points.values():
+        for socket in self.__end_points.values():
             if socket.type in [zmq.PULL, zmq.REP]:
                 poller.register(socket, zmq.POLLIN)
 
         # Wait for socket is ready for reading.
         socks = dict(poller.poll())
 
-        for name, socket in self._end_points.items():
+        for name, socket in self.__end_points.items():
             if socket in socks:
                 self._receive_message(name, socket)
 
@@ -195,7 +193,7 @@ class MessageController(EventActor):
         :param enarksh.message.Message.Message|* message: The message.
         :param bool json: If True the message will be send as a JSON encode string.
         """
-        socket = self._end_points[end_point]
+        socket = self.__end_points[end_point]
         if json:
             socket.send_json(message)
         else:

@@ -12,91 +12,143 @@ import enarksh
 
 class ChunkLogger:
     """
-    A class for logging the first and lats chunk of a stream.
+    A class for logging the first and last chunk of a stream.
     """
-    _file_count = 0
+    __file_count = 0
+    """
+    The number of files (with chunks) written.
+
+    :type: int
+    """
 
     # ------------------------------------------------------------------------------------------------------------------
     def __init__(self):
-        self._chunk_count = 0
-        self._position = 0
-        self._buffer = bytearray(b' ' * enarksh.CHUNK_SIZE)
-        self._filename1 = ''
-        self._filename2 = ''
+        """
+        Object constructor.
+        """
+        self.__chunk_count = 0
+        """
+        The total number of chunks to are writen.
+
+        :type: int
+        """
+
+        self.__position = 0
+        """
+        The current position for writing the next byte in the buffer.
+
+        :type: int
+        """
+
+        self.__buffer = bytearray(b' ' * enarksh.CHUNK_SIZE)
+        """
+        The buffer.
+
+        :type: bytes
+        """
+
+        self.__filename1 = ''
+        """
+        The filename where the first chunk has been stored.
+
+        :type: str
+        """
+
+        self.__filename2 = ''
+        """
+        The filename where the last chunk has been stored.
+
+        :type: str
+        """
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
     def filename1(self):
         """
-        Getter for filename1.
+        Getter for the filename where the first chunk has been stored. Empty if no first chunk has been stored.
 
         :rtype: str
         """
-        return self._filename1
+        return self.__filename1
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
     def filename2(self):
         """
-        Getter for filename2.
+        Getter for the filename where the last chunk has been stored. Empty if no last chunk has been stored.
 
         :rtype: str
         """
-        return self._filename2
+        return self.__filename2
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _get_filename():
-        ChunkLogger._file_count += 1
+    def __get_filename():
+        """
+        Returns an unique filename for storing a chunk.
 
-        return os.path.join(enarksh.HOME, 'var/lib/logger', '{0:010d}.log'.format(ChunkLogger._file_count))
+        :rtype: str
+        """
+        ChunkLogger.__file_count += 1
+
+        return os.path.join(enarksh.HOME, 'var/lib/logger', '{0:010d}.log'.format(ChunkLogger.__file_count))
 
     # ------------------------------------------------------------------------------------------------------------------
     def write(self, buffer):
         """
-        :param bytes buffer:
+        Writes bytes from a buffer to this chunk logger.
+
+        :param bytes buffer: The buffer.
         """
         bytes_remaining = len(buffer)
         pos = 0
 
         while bytes_remaining > 0:
-            size = min(bytes_remaining, enarksh.CHUNK_SIZE - self._position)
-            self._buffer[self._position:self._position + size] = buffer[pos:pos + size]
+            size = min(bytes_remaining, enarksh.CHUNK_SIZE - self.__position)
+            self.__buffer[self.__position:self.__position + size] = buffer[pos:pos + size]
 
             if size < bytes_remaining:
-                if self._chunk_count == 0:
-                    self._filename1 = self._get_filename()
-                    with open(self._filename1, "wb") as file:
-                        file.write(self._buffer[:enarksh.CHUNK_SIZE])
+                if self.__chunk_count == 0:
+                    self.__filename1 = self.__get_filename()
+                    with open(self.__filename1, "wb") as file:
+                        file.write(self.__buffer[:enarksh.CHUNK_SIZE])
 
-                self._position = 0
-                self._chunk_count += 1
+                self.__position = 0
+                self.__chunk_count += 1
             else:
-                self._position += size
+                self.__position += size
 
             bytes_remaining -= size
             pos += size
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_total_log_size(self):
-        return self._chunk_count * enarksh.CHUNK_SIZE + self._position
+        """
+        Returns the total number of bytes written to the chunk logger.
+
+        :rtype: int
+        """
+        return self.__chunk_count * enarksh.CHUNK_SIZE + self.__position
 
     # ------------------------------------------------------------------------------------------------------------------
     def close(self):
-        if self._position != 0:
-            if self._chunk_count == 0:
+        """
+        Closes this chunk logger. Remaining bytes are flushed.
+        """
+        if self.__position != 0:
+            if self.__chunk_count == 0:
                 # Write first chunk to the file system.
-                self._filename1 = self._get_filename()
-                with open(self._filename1, "wb") as file:
-                    file.write(self._buffer[:self._position])
+                self.__filename1 = self.__get_filename()
+                with open(self.__filename1, "wb") as file:
+                    file.write(self.__buffer[:self.__position])
                     file.close()
 
             else:
-                self._filename2 = self._get_filename()
-                with open(self._filename2, "wb") as file:
-                    if self._chunk_count >= 2:
-                        file.write(self._buffer[self._position:enarksh.CHUNK_SIZE])
-                    file.write(self._buffer[:self._position])
+                self.__filename2 = self.__get_filename()
+                with open(self.__filename2, "wb") as file:
+                    if self.__chunk_count >= 2:
+                        file.write(self.__buffer[self.__position:enarksh.CHUNK_SIZE])
+                    file.write(self.__buffer[:self.__position])
                     file.close()
 
 # ----------------------------------------------------------------------------------------------------------------------

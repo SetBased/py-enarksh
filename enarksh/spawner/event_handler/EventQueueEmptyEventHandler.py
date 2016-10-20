@@ -19,7 +19,7 @@ class EventQueueEmptyEventHandler:
     """
     An event handler for an empty event queue.
     """
-    _wake_up_pipe = None
+    __wake_up_pipe = None
     """
     The wakeup file descriptor when a signal is received.
 
@@ -32,10 +32,10 @@ class EventQueueEmptyEventHandler:
         """
         Creates a pipe for waking up a select call when a signal has been received.
         """
-        cls._wake_up_pipe = os.pipe()
-        fcntl.fcntl(cls._wake_up_pipe[0], fcntl.F_SETFL, os.O_NONBLOCK)
+        cls.__wake_up_pipe = os.pipe()
+        fcntl.fcntl(cls.__wake_up_pipe[0], fcntl.F_SETFL, os.O_NONBLOCK)
 
-        signal.set_wakeup_fd(EventQueueEmptyEventHandler._wake_up_pipe[1])
+        signal.set_wakeup_fd(EventQueueEmptyEventHandler.__wake_up_pipe[1])
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -51,7 +51,7 @@ class EventQueueEmptyEventHandler:
 
         # List with all file descriptors for reading.
         # Add the file descriptor for waking up select when a signal has been received.
-        read = [EventQueueEmptyEventHandler._wake_up_pipe[0]]
+        read = [EventQueueEmptyEventHandler.__wake_up_pipe[0]]
 
         # Add the sockets for incoming messages to the list of read file descriptors.
         zmq_fds = set()
@@ -92,8 +92,8 @@ class EventQueueEmptyEventHandler:
             if fd in zmq_fds:
                 # fd of the message queue is ready to receive data.
                 zmq_event = True
-            elif fd == EventQueueEmptyEventHandler._wake_up_pipe[0]:
-                os.read(EventQueueEmptyEventHandler._wake_up_pipe[0], 512)
+            elif fd == EventQueueEmptyEventHandler.__wake_up_pipe[0]:
+                os.read(EventQueueEmptyEventHandler.__wake_up_pipe[0], 512)
             else:
                 # fd of one or more job handlers are ready to receive data.
                 for job_handler in spawner.job_handlers.values():

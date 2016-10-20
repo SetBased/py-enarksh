@@ -29,14 +29,14 @@ class Logger:
         """
         Object constructor.
         """
-        self._event_controller = EventController()
+        self.__event_controller = EventController()
         """
         The event controller.
 
         :type: enarksh.event.EventController.EventController
         """
 
-        self._message_controller = MessageController()
+        self.__message_controller = MessageController()
         """
         The message controller.
 
@@ -49,27 +49,27 @@ class Logger:
         The main of the logger.
         """
         # Startup logger.
-        self._startup()
+        self.__startup()
 
         # Register our socket for asynchronous incoming messages.
-        self._message_controller.register_end_point('pull', zmq.PULL, enarksh.LOGGER_PULL_END_POINT)
+        self.__message_controller.register_end_point('pull', zmq.PULL, enarksh.LOGGER_PULL_END_POINT)
 
         # Register supported message types
-        self._message_controller.register_message_type(ExitMessage.MESSAGE_TYPE)
-        self._message_controller.register_message_type(LogFileMessage.MESSAGE_TYPE)
+        self.__message_controller.register_message_type(ExitMessage.MESSAGE_TYPE)
+        self.__message_controller.register_message_type(LogFileMessage.MESSAGE_TYPE)
 
         # Register message received event handlers.
-        self._message_controller.register_listener(ExitMessage.MESSAGE_TYPE, ExitMessageEventHandler.handle)
-        self._message_controller.register_listener(LogFileMessage.MESSAGE_TYPE, LogFileMessageEventHandler.handle)
+        self.__message_controller.register_listener(ExitMessage.MESSAGE_TYPE, ExitMessageEventHandler.handle)
+        self.__message_controller.register_listener(LogFileMessage.MESSAGE_TYPE, LogFileMessageEventHandler.handle)
 
         # Register other event handlers.
-        self._event_controller.event_queue_empty.register_listener(self._message_controller.receive_message)
+        self.__event_controller.event_queue_empty.register_listener(self.__message_controller.receive_message)
 
         # Run the event loop.
-        self._event_controller.loop()
+        self.__event_controller.loop()
 
         # Shutdown logger.
-        self._shutdown()
+        self.__shutdown()
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -84,7 +84,7 @@ class Logger:
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def _shutdown():
+    def __shutdown():
         """
         Performs the necessary actions for stopping the logger.
         """
@@ -92,7 +92,7 @@ class Logger:
         print('Stop logger')
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _startup(self):
+    def __startup(self):
         """
         Performs the necessary actions for starting up the logger.
         """
