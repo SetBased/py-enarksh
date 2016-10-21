@@ -41,7 +41,7 @@ class NagiosMessageEventHandler(NodeActionMessageBaseEventHandler):
                     'sch_count': len(controller.schedules)}
 
         try:
-            for schedule in controller.schedules:
+            for schedule in controller.schedules.values():
                 schedule.nagios_performance_data(rst_count)
 
         except Exception as exception:

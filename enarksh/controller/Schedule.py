@@ -664,8 +664,8 @@ class Schedule(EventActor):
 
         :param dict[int,int] rst_count: The count per run status.
         """
-        for node in self.__nodes:
-            if isinstance(node, SimpleNode):
+        for node in self.__nodes.values():
+            if node.is_simple_node():
                 rst_count[node.rst_id] += 1
 
     # ------------------------------------------------------------------------------------------------------------------
