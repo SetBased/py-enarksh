@@ -12,6 +12,7 @@ from enarksh.DataLayer import DataLayer
 from enarksh.controller import consumption
 from enarksh.controller import resource
 from enarksh.controller.node import create_node
+from enarksh.controller.node.SimpleNode import SimpleNode
 from enarksh.event.Event import Event
 from enarksh.event.EventActor import EventActor
 
@@ -655,6 +656,17 @@ class Schedule(EventActor):
         :rtype: enarksh.controller.node.Node
         """
         return self.__activate_node
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def nagios_performance_data(self, rst_count):
+        """
+        Counts the number of simple nodes per run status.
+
+        :param dict[int,int] rst_count: The count per run status.
+        """
+        for node in self.__nodes:
+            if isinstance(node, SimpleNode):
+                rst_count[node.rst_id] += 1
 
     # ------------------------------------------------------------------------------------------------------------------
     def request_node_action(self, rnd_id, act_id):

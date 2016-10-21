@@ -10,6 +10,7 @@ from cleo import Application
 from enarksh.command.BootstrapCommand import BootstrapCommand
 from enarksh.command.LoadHostCommand import LoadHostCommand
 from enarksh.command.LoadScheduleCommand import LoadScheduleCommand
+from enarksh.command.NagiosCommand import NagiosCommand
 from enarksh.command.NodeActionCommand import NodeActionCommand
 
 
@@ -37,6 +38,7 @@ class EnarkshApplication(Application):
         self.add(BootstrapCommand())
         self.add(LoadHostCommand())
         self.add(LoadScheduleCommand())
+        self.add(NagiosCommand())
         self.add(NodeActionCommand())
 
         return commands

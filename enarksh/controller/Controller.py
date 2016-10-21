@@ -20,6 +20,7 @@ from enarksh.controller.event_handler.DynamicWorkerDefinitionMessageEventHandler
 from enarksh.controller.event_handler.EventQueueEmptyEventHandler import EventQueueEmptyEventHandler
 from enarksh.controller.event_handler.JobFinishedMessageEventHandler import JobFinishedMessageEventHandler
 from enarksh.controller.event_handler.MailOperatorEventHandler import MailOperatorEventHandler
+from enarksh.controller.event_handler.NagiosMessageEventHandler import NagiosMessageEventHandler
 from enarksh.controller.event_handler.NodeActionMessageEventHandler import NodeActionMessageEventHandler
 from enarksh.controller.event_handler.NodeActionMessageWebEventHandler import NodeActionMessageWebEventHandler
 from enarksh.controller.event_handler.PossibleNodeActionsWebMessageEventHandler import \
@@ -27,6 +28,7 @@ from enarksh.controller.event_handler.PossibleNodeActionsWebMessageEventHandler 
 from enarksh.controller.event_handler.ScheduleDefinitionMessageEventHandler import ScheduleDefinitionMessageEventHandler
 from enarksh.controller.message.DynamicWorkerDefinitionMessage import DynamicWorkerDefinitionMessage
 from enarksh.controller.message.JobFinishedMessage import JobFinishedMessage
+from enarksh.controller.message.NagiosMessage import NagiosMessage
 from enarksh.controller.message.NodeActionMessage import NodeActionMessage
 from enarksh.controller.message.NodeActionWebMessage import NodeActionWebMessage
 from enarksh.controller.message.PossibleNodeActionsWebMessage import PossibleNodeActionsWebMessage
@@ -235,6 +237,7 @@ class Controller(EventActor):
         """
         self.message_controller.register_message_type(DynamicWorkerDefinitionMessage.MESSAGE_TYPE)
         self.message_controller.register_message_type(JobFinishedMessage.MESSAGE_TYPE)
+        self.message_controller.register_message_type(NagiosMessage.MESSAGE_TYPE)
         self.message_controller.register_message_type(NodeActionMessage.MESSAGE_TYPE)
         self.message_controller.register_message_type(ScheduleDefinitionMessage.MESSAGE_TYPE)
         self.message_controller.register_message_type(NodeActionWebMessage.MESSAGE_TYPE)
@@ -257,6 +260,9 @@ class Controller(EventActor):
                                                   self)
         self.message_controller.register_listener(JobFinishedMessage.MESSAGE_TYPE,
                                                   JobFinishedMessageEventHandler.handle,
+                                                  self)
+        self.message_controller.register_listener(NagiosMessage.MESSAGE_TYPE,
+                                                  NagiosMessageEventHandler.handle,
                                                   self)
         self.message_controller.register_listener(NodeActionMessage.MESSAGE_TYPE,
                                                   NodeActionMessageEventHandler.handle,
