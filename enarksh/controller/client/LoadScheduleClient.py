@@ -21,7 +21,12 @@ class LoadScheduleClient:
     """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def __init__(self):
+    def __init__(self, io):
+        """
+        Object constructor.
+
+        :param enarksh.style.EnarkshStyle.EnarkshStyle io: The output decorator.
+        """
         self._zmq_context = None
         """
         The ZMQ context.
@@ -34,6 +39,13 @@ class LoadScheduleClient:
         The socket for communicating with the controller.
 
         :type: zmq.sugar.socket.Socket
+        """
+
+        self._io = io
+        """
+        The output decorator.
+
+        :type: enarksh.style.EnarkshStyle.EnarkshStyle
         """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -92,9 +104,10 @@ class LoadScheduleClient:
         # Await the response from the controller.
         response = self._zmq_controller.recv_json()
 
-        print(response['message'], end='')
-        if response['message'][-1:] != '\n':
-            print()
+        if response['ret'] == 0:
+            self._io.log_verbose(response['message'])
+        else:
+            self._io.error(response['message'])
 
         return response['ret'] == 0
 

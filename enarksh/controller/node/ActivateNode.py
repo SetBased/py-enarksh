@@ -16,14 +16,15 @@ class ActivateNode(SimpleNode):
     """
 
     # ------------------------------------------------------------------------------------------------------------------
-    @StateChange.wrapper
     def start(self):
         """
         Sets the status of this node to running.
 
         :rtype: bool
         """
+        self._exit_status = 0
         self.rst_id = enarksh.ENK_RST_ID_RUNNING
+        self.rst_id = enarksh.ENK_RST_ID_COMPLETED
 
         return False
 

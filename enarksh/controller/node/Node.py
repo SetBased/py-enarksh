@@ -170,7 +170,7 @@ class Node(StateChange, metaclass=abc.ABCMeta):
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
-    def _rst_id_wrapper(self, rst_id):  # XXX Hack!
+    def __rst_id_wrapper(self, rst_id):
         """
         Setter for rst_id. Sets the the run status of this node.
 
@@ -182,11 +182,22 @@ class Node(StateChange, metaclass=abc.ABCMeta):
     @rst_id.setter
     def rst_id(self, rst_id):
         """
-        Setter for rst_id. Sets the the run status of this node.
+        Sets the run status of this node.
 
-        :param int rst_id: The ID of the run status.
+        :param int rst_id: The new run status for this node.
         """
-        self._rst_id_wrapper(rst_id)
+        old_rst_id = self.rst_id
+        self.__rst_id_wrapper(rst_id)
+
+        # Update the start datetime of this node.
+        if rst_id == enarksh.ENK_RST_ID_RUNNING:
+            if not self._rnd_datetime_start:
+                self._rnd_datetime_start = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+            self._rnd_datetime_stop = None
+
+        # Update the stop datetime of this node.
+        if old_rst_id != rst_id and rst_id in (enarksh.ENK_RST_ID_COMPLETED, enarksh.ENK_RST_ID_ERROR):
+            self._rnd_datetime_stop = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
@@ -264,32 +275,12 @@ class Node(StateChange, metaclass=abc.ABCMeta):
             if count_not_completed == 0:
                 # All predecessors have run status completed.
                 self._renew()
-                self._set_rst_id(enarksh.ENK_RST_ID_QUEUED)
+                self.rst_id = enarksh.ENK_RST_ID_QUEUED
 
             if count_not_finished != 0 and self.rst_id != enarksh.ENK_RST_ID_WAITING:
                 # A predecessors is been restarted.
                 self._renew()
-                self._set_rst_id(enarksh.ENK_RST_ID_WAITING)
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def _set_rst_id(self, rst_id):
-        """
-        Sets the run status of this node.
-
-        :param int rst_id: The new run status for this node.
-        """
-        old_rst_id = self.rst_id
-        self._rst_id = rst_id
-
-        # Update the start datetime of this node.
-        if rst_id == enarksh.ENK_RST_ID_RUNNING:
-            if not self._rnd_datetime_start:
-                self._rnd_datetime_start = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-            self._rnd_datetime_stop = None
-
-        # Update the stop datetime of this node.
-        if old_rst_id != rst_id and rst_id in (enarksh.ENK_RST_ID_COMPLETED, enarksh.ENK_RST_ID_ERROR):
-            self._rnd_datetime_stop = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+                self.rst_id = enarksh.ENK_RST_ID_WAITING
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper
@@ -309,7 +300,7 @@ class Node(StateChange, metaclass=abc.ABCMeta):
             weight = max(weight, Node._rst_id_weight[child_node.rst_id])
 
         # Update the run status of this node.
-        self._set_rst_id(self._weight_rst_id[weight])
+        self.rst_id = self._weight_rst_id[weight]
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper

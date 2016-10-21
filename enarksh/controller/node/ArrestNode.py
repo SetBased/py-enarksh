@@ -16,9 +16,10 @@ class ArrestNode(SimpleNode):
     """
 
     # ------------------------------------------------------------------------------------------------------------------
-    @StateChange.wrapper
     def start(self):
-        self._set_rst_id(enarksh.ENK_RST_ID_COMPLETED)
+        self._exit_status = 0
+        self.rst_id = enarksh.ENK_RST_ID_RUNNING
+        self.rst_id = enarksh.ENK_RST_ID_COMPLETED
 
         return False
 

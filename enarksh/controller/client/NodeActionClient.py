@@ -64,7 +64,9 @@ class NodeActionClient:
         # Await the response from the controller.
         response = self._zmq_controller.recv_pyobj()
 
-        if response['ret']:
+        if response['ret'] == 0:
+            self._io.log_verbose(response['message'])
+        else:
             self._io.error(response['message'])
 
         return response['ret']
@@ -79,6 +81,5 @@ class NodeActionClient:
         # Create socket for communicating with the controller.
         self._zmq_controller = self._zmq_context.socket(zmq.REQ)
         self._zmq_controller.connect(enarksh.CONTROLLER_LOCKSTEP_END_POINT)
-
 
 # ----------------------------------------------------------------------------------------------------------------------

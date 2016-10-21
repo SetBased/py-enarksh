@@ -26,7 +26,7 @@ class LoadScheduleCommand(Command):
         """
         self.output = EnarkshStyle(self.input, self.output)
 
-        client = LoadScheduleClient()
+        client = LoadScheduleClient(self.output)
         ret = client.main(self.input.get_argument('schedule.xml'))
 
         return ret

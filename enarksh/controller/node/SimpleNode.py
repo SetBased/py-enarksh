@@ -34,7 +34,6 @@ class SimpleNode(Node):
         return False
 
     # ------------------------------------------------------------------------------------------------------------------
-    @StateChange.wrapper
     def start(self):
         """
         Does the housekeeping for starting this node. Returns True if an actual job must be started by the spawner.
@@ -46,7 +45,7 @@ class SimpleNode(Node):
         self.acquire_resources()
 
         # Set the status of this node to running.
-        self._set_rst_id(enarksh.ENK_RST_ID_RUNNING)
+        self.rst_id = enarksh.ENK_RST_ID_RUNNING
 
         return True
 
@@ -66,9 +65,9 @@ class SimpleNode(Node):
 
         # Update the run status of this node based on the exit status of the job.
         if exit_status == 0:
-            self._set_rst_id(enarksh.ENK_RST_ID_COMPLETED)
+            self.rst_id = enarksh.ENK_RST_ID_COMPLETED
         else:
-            self._set_rst_id(enarksh.ENK_RST_ID_ERROR)
+            self.rst_id = enarksh.ENK_RST_ID_ERROR
 
     # ------------------------------------------------------------------------------------------------------------------
     @StateChange.wrapper

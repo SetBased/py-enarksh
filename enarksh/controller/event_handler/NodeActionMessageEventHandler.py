@@ -31,16 +31,23 @@ class NodeActionMessageEventHandler(NodeActionMessageBaseEventHandler):
 
         # Compose a response message for client.
         response = {'ret':     0,
-                    'message': ''}
+                    'message': 'OK'}
 
         try:
-            run_node = DataLayer.enk_back_run_node_get_by_uri(message.uri)
-
-            NodeActionMessageBaseEventHandler.base_handle(controller,
-                                                          response,
-                                                          run_node['sch_id'],
-                                                          run_node['rnd_id'],
-                                                          message.act_id)
+            run_node = DataLayer.enk_back_run_node_find_by_uri(message.uri)
+            
+            if run_node:
+                NodeActionMessageBaseEventHandler.base_handle(controller,
+                                                              response,
+                                                              run_node['sch_id'],
+                                                              run_node['rnd_id'],
+                                                              message.act_id)
+                response['ret'] = 0
+                response['message'] = 'Node {} has been queued'.format(message.uri)
+                
+            else:   
+                response['ret'] = 1
+                response['message'] = 'Node {} does not exists'.format(message.uri)
 
             DataLayer.commit()
         except Exception as exception:

@@ -11,8 +11,10 @@ begin
   ,      sch.sch_name
   ,      nod.nod_id
   ,      nod.nod_name
+  ,      uri.uri_uri
   from       ENK_RUN_NODE          rnd
   inner join ENK_NODE              nod  on  nod.nod_id = rnd.nod_id
+  inner join ENK_URI               uri  on  uri.uri_id = nod.uri_id
   inner join ENK_RUN               run  on  run.run_id = rnd.run_id
   inner join ENK_SCHEDULE_REVISION srv  on  srv.srv_id = run.srv_id
   inner join ENK_SCHEDULE          sch  on  sch.sch_id = srv.sch_id

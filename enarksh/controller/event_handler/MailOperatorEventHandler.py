@@ -72,7 +72,7 @@ class MailOperatorEventHandler:
 
 Job {} has run unsuccessfully.
 
-Greetings from Enarksh""".format(str(node['nod_name'], 'utf-8'))
+Greetings from Enarksh""".format(str(node['uri_uri'], 'utf-8'))
 
             subject = "Job of schedule {} failed".format(str(node['sch_name'], 'utf-8'))
 

@@ -3,9 +3,9 @@
  *
  * @param p_uri_uri The URI of the node.
  */
-create procedure enk_back_run_node_get_by_uri(in p_uri_uri @enk_uri.uri_uri%type@)
+create procedure enk_back_run_node_find_by_uri(in p_uri_uri @enk_uri.uri_uri%type@)
 reads sql data
--- type: row1
+-- type: row0
 begin
   select srv.sch_id
   ,      nod.nod_id
