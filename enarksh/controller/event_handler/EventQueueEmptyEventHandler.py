@@ -26,7 +26,7 @@ class EventQueueEmptyEventHandler:
 
         :rtype:
         """
-        return -(schedule1.get_schedule_load() - schedule2.get_schedule_load())
+        return schedule1.get_schedule_load() - schedule2.get_schedule_load()
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
