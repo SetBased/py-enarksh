@@ -35,7 +35,7 @@ class NodeActionMessageEventHandler(NodeActionMessageBaseEventHandler):
 
         try:
             run_node = DataLayer.enk_back_run_node_find_by_uri(message.uri)
-            
+
             if run_node:
                 NodeActionMessageBaseEventHandler.base_handle(controller,
                                                               response,
@@ -44,8 +44,8 @@ class NodeActionMessageEventHandler(NodeActionMessageBaseEventHandler):
                                                               message.act_id)
                 response['ret'] = 0
                 response['message'] = 'Node {} has been queued'.format(message.uri)
-                
-            else:   
+
+            else:
                 response['ret'] = 1
                 response['message'] = 'Node {} does not exists'.format(message.uri)
 

@@ -6,7 +6,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import enarksh
-from enarksh.controller.StateChange import StateChange
 from enarksh.controller.node.SimpleNode import SimpleNode
 
 
