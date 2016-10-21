@@ -260,16 +260,16 @@ class DataLayer(StaticDataLayer):
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def enk_back_run_node_get_by_uri(p_uri_uri):
+    def enk_back_run_node_find_by_uri(p_uri_uri):
         """
         Selects a current run node based on the URI of the node.
 
         :param str p_uri_uri: The URI of the node.
                               varchar(4000) character set ascii collation ascii_general_ci
 
-        :rtype: dict[str,*]
+        :rtype: None|dict[str,*]
         """
-        return StaticDataLayer.execute_sp_row1("call enk_back_run_node_get_by_uri(%s)", p_uri_uri)
+        return StaticDataLayer.execute_sp_row0("call enk_back_run_node_find_by_uri(%s)", p_uri_uri)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -381,6 +381,19 @@ class DataLayer(StaticDataLayer):
         :rtype: int
         """
         return StaticDataLayer.execute_sp_none("call enk_back_run_update_status(%s, %s, %s)", p_run_id, p_run_datetime_start, p_run_datetime_stop)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    @staticmethod
+    def enk_back_schedule_delete(p_sch_id):
+        """
+        Deletes an entire schedule.
+
+        :param int p_sch_id: 
+                             smallint(5) unsigned
+
+        :rtype: int
+        """
+        return StaticDataLayer.execute_sp_none("call enk_back_schedule_delete(%s)", p_sch_id)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
