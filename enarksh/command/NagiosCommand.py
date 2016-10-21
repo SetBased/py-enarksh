@@ -7,9 +7,7 @@ Licence MIT
 """
 from cleo import Command
 
-import enarksh
 from enarksh.controller.client.NagiosClient import NagiosClient
-from enarksh.controller.client.NodeActionClient import NodeActionClient
 from enarksh.style.EnarkshStyle import EnarkshStyle
 
 
