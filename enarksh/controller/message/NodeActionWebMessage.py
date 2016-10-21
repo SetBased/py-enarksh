@@ -20,16 +20,13 @@ class NodeActionWebMessage(Message):
     """
 
     # ------------------------------------------------------------------------------------------------------------------
-    def __init__(self, sch_id, rnd_id, act_id, usr_login, mail_on_completion, mail_on_error):
+    def __init__(self, sch_id, rnd_id, act_id):
         """
         Object constructor.
 
         :param int sch_id: The ID of the schedule.
         :param int rnd_id: The ID of the run node.
         :param int act_id: The ID of the requested action.
-        :param str usr_login: The name of the user who has requested the node action.
-        :param bool mail_on_completion: If True the user wants to receive a mail when the schedule has completed.
-        :param bool mail_on_error: If True the user wants to receive a mail when an error occurs.
         """
         Message.__init__(self, NodeActionWebMessage.MESSAGE_TYPE)
 
@@ -54,27 +51,6 @@ class NodeActionWebMessage(Message):
         :type: int
         """
 
-        self.usr_login = usr_login
-        """
-        The name of the user who has requested the node action.
-
-        :type: str
-        """
-
-        self.mail_on_completion = mail_on_completion
-        """
-        If True the user wants to receive a mail when the schedule has completed.
-
-        :type: bool
-        """
-
-        self.mail_on_error = mail_on_error
-        """
-        If True the user wants to receive a mail when an error occurs.
-
-        :type: bool
-        """
-
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def create_from_json(message):
@@ -87,10 +63,7 @@ class NodeActionWebMessage(Message):
         """
         return NodeActionWebMessage(int(message['sch_id']),
                                     int(message['rnd_id']),
-                                    int(message['act_id']),
-                                    message['usr_login'],
-                                    bool(message['mail_on_completion']),
-                                    bool(message['mail_on_error']))
+                                    int(message['act_id']))
 
     # ------------------------------------------------------------------------------------------------------------------
     def send_message(self, end_point):

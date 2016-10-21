@@ -56,7 +56,7 @@ class NodeActionClient:
         self._zmq_init()
 
         # Compose the message for the controller.
-        message = NodeActionMessage(uri, act_id, False, False)
+        message = NodeActionMessage(uri, act_id)
 
         # Send the message to the controller.
         self._zmq_controller.send_pyobj(message)
