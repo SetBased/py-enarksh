@@ -6,7 +6,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import enarksh
-from enarksh.controller.StateChange import StateChange
 from enarksh.controller.node.Node import Node
 
 
@@ -50,7 +49,6 @@ class SimpleNode(Node):
         return True
 
     # ------------------------------------------------------------------------------------------------------------------
-    @StateChange.wrapper
     def stop(self, exit_status):
         """
         Does the housekeeping when the node has stopped.
@@ -70,22 +68,20 @@ class SimpleNode(Node):
             self.rst_id = enarksh.ENK_RST_ID_ERROR
 
     # ------------------------------------------------------------------------------------------------------------------
-    @StateChange.wrapper
     def restart(self):
         """
         Restart this node and its successors.
         """
-        if self.rst_id in (enarksh.ENK_RST_ID_ERROR, enarksh.ENK_RST_ID_COMPLETED):
+        if self._rst_id in (enarksh.ENK_RST_ID_ERROR, enarksh.ENK_RST_ID_COMPLETED):
             self._renew()
             self._recompute_run_status()
 
     # ------------------------------------------------------------------------------------------------------------------
-    @StateChange.wrapper
     def restart_failed(self):
         """
         Restart this node.
         """
-        if self.rst_id == enarksh.ENK_RST_ID_ERROR:
+        if self._rst_id == enarksh.ENK_RST_ID_ERROR:
             self._renew()
             self._recompute_run_status()
         else:

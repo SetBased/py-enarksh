@@ -6,7 +6,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import enarksh
-from enarksh.controller.StateChange import StateChange
 from enarksh.controller.node.Node import Node
 
 
@@ -34,7 +33,6 @@ class ComplexNode(Node):
         return True
 
     # ------------------------------------------------------------------------------------------------------------------
-    @StateChange.wrapper
     def restart(self):
         """
         Restart this node. I.e. makes a new run node (if the run node has run before) and set the run status to
@@ -46,7 +44,6 @@ class ComplexNode(Node):
             child.restart()
 
     # ------------------------------------------------------------------------------------------------------------------
-    @StateChange.wrapper
     def restart_failed(self):
         """
         Restarts the failed child nodes of this node.

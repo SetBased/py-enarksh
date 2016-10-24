@@ -283,7 +283,6 @@ class Node(StateChange, metaclass=abc.ABCMeta):
                 self.rst_id = enarksh.ENK_RST_ID_WAITING
 
     # ------------------------------------------------------------------------------------------------------------------
-    @StateChange.wrapper
     def child_node_event_state_change_handler(self, _event, _event_data, _listener_data):
         """
         Event handler for a sate change of a child node.
@@ -303,7 +302,6 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         self.rst_id = self._weight_rst_id[weight]
 
     # ------------------------------------------------------------------------------------------------------------------
-    @StateChange.wrapper
     def predecessor_node_event_state_change_handler(self, _event, event_data, _listener_data):
         """
         Event handler for a sate change of a predecessor node.
@@ -320,11 +318,12 @@ class Node(StateChange, metaclass=abc.ABCMeta):
             self._recompute_run_status()
 
     # ------------------------------------------------------------------------------------------------------------------
+    @StateChange.wrapper
     def _renew(self):
         """
         If required renews this node, i.e. creates a new row in ENK_RUN_NODE.
         """
-        if self.rst_id in (enarksh.ENK_RST_ID_ERROR, enarksh.ENK_RST_ID_COMPLETED):
+        if self._rst_id in (enarksh.ENK_RST_ID_ERROR, enarksh.ENK_RST_ID_COMPLETED):
             self._rnd_id = DataLayer.enk_back_run_node_renew(self.rnd_id)
             self._rst_id = enarksh.ENK_RST_ID_WAITING
             self._rnd_datetime_start = None
