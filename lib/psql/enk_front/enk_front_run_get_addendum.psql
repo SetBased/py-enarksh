@@ -17,8 +17,7 @@ begin
   ,      rn3.rnd_id             rnd_id_schedule
   from       ENK_SCHEDULE_REVISION          srv
   inner join ENK_SCHEDULE_REVISION_ADDENDUM sra  on  sra.srv_id = srv.srv_id
-  inner join ENK_RUN                        run  on  run.srv_id = srv.srv_id and
-                                                     run.run_current = 1
+  inner join ENK_RUN                        run  on  run.srv_id = srv.srv_id
   inner join ENK_RUN_NODE                   rn1  on  rn1.nod_id = sra.nod_id_activate and
                                                      rn1.run_id = run.run_id and
                                                      rn1.rnd_current = 1

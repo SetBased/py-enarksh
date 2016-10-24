@@ -161,13 +161,14 @@ Greetings from Enarksh""".format(str(node['sch_name'], 'utf-8'))
         """
         del _event, _listener_data
 
-        # If status is error send mail.
-        if event_data[1]['rst_id'] == enarksh.ENK_RST_ID_ERROR:
-            MailOperatorEventHandler.__send_mail_schedule_node_failed(event_data[1]['rnd_id'])
+        if event_data[0]['rst_id'] != event_data[1]['rst_id']:
+            # If status is error send mail.
+            if event_data[1]['rst_id'] == enarksh.ENK_RST_ID_ERROR:
+                MailOperatorEventHandler.__send_mail_schedule_node_failed(event_data[1]['rnd_id'])
 
-        # If status is success send mail.
-        if event_data[1]['rst_id'] == enarksh.ENK_RST_ID_COMPLETED:
-            MailOperatorEventHandler.__send_mail_schedule_node_success(event_data[1]['rnd_id'])
+            # If status is success send mail.
+            if event_data[1]['rst_id'] == enarksh.ENK_RST_ID_COMPLETED:
+                MailOperatorEventHandler.__send_mail_schedule_node_success(event_data[1]['rnd_id'])
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod

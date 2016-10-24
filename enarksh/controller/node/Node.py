@@ -6,7 +6,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import abc
-from time import strftime, gmtime
+from time import strftime, localtime
 
 import enarksh
 from enarksh.DataLayer import DataLayer
@@ -192,12 +192,12 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         # Update the start datetime of this node.
         if rst_id == enarksh.ENK_RST_ID_RUNNING:
             if not self._rnd_datetime_start:
-                self._rnd_datetime_start = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+                self._rnd_datetime_start = strftime("%Y-%m-%d %H:%M:%S", localtime())
             self._rnd_datetime_stop = None
 
         # Update the stop datetime of this node.
         if old_rst_id != rst_id and rst_id in (enarksh.ENK_RST_ID_COMPLETED, enarksh.ENK_RST_ID_ERROR):
-            self._rnd_datetime_stop = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+            self._rnd_datetime_stop = strftime("%Y-%m-%d %H:%M:%S", localtime())
 
     # ------------------------------------------------------------------------------------------------------------------
     @property
