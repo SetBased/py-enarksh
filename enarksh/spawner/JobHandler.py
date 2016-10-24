@@ -5,6 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import getpass
 import os
 import pwd
 import sys
@@ -292,9 +293,8 @@ class JobHandler(EventActor):
                 if self.__user_name in self.__allowed_users:
                     _, _, uid, gid, _, _, _ = pwd.getpwnam(self.__user_name)
                     os.setuid(0)
-
-                    os.initgroups(self.__user_name, gid)
-                    os.setuid(uid)
+                    os.setresgid(gid, gid, gid)
+                    os.setresuid(uid, uid, uid)
                 else:
                     raise RuntimeError("Spanner is not allowed to start processes under user '%s'." % self.__user_name)
 
