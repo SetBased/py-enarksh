@@ -20,7 +20,7 @@ class Resource(StateChange, metaclass=abc.ABCMeta):
         """
         Object constructor.
 
-        :param dict data:
+        :param dict[str,*] data:
         """
         StateChange.__init__(self)
 

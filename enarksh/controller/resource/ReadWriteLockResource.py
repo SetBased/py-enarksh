@@ -115,7 +115,7 @@ class ReadWriteLockResource(Resource):
         else:
             rws_id = enarksh.ENK_RWS_ID_NONE
 
-        DataLayer.enk_back_read_write_lock_resource_update_consumpted(self.rsc_id, rws_id)
+        DataLayer.enk_back_read_write_lock_resource_update_consumpted(self._rsc_id, rws_id)
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_type(self):

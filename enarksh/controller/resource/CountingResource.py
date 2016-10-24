@@ -76,7 +76,7 @@ class CountingResource(Resource):
 
     # ------------------------------------------------------------------------------------------------------------------
     def sync_state(self):
-        DataLayer.enk_back_counting_resource_update_consumpted(self.rsc_id, self._amount_consumpted)
+        DataLayer.enk_back_counting_resource_update_consumpted(self._rsc_id, self._amount_consumpted)
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_type(self):
