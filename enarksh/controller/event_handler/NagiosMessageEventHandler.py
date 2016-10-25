@@ -6,8 +6,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import logging
-import sys
-import traceback
 
 import enarksh
 from enarksh.DataLayer import DataLayer

@@ -6,8 +6,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import logging
-import sys
-import traceback
 
 from enarksh.DataLayer import DataLayer
 from enarksh.xml_reader.XmlReader import XmlReader
