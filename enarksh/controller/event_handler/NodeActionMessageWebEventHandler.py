@@ -5,6 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import logging
 import sys
 import traceback
 
@@ -29,6 +30,8 @@ class NodeActionMessageWebEventHandler(NodeActionMessageBaseEventHandler):
         """
         del _event
 
+        log = logging.getLogger('enarksh')
+
         # Compose a response message for the web interface.
         response = {'ret':     0,
                     'new_run': 0,
@@ -42,9 +45,8 @@ class NodeActionMessageWebEventHandler(NodeActionMessageBaseEventHandler):
                                                           message.act_id)
 
             DataLayer.commit()
-        except Exception as exception:
-            print(exception, file=sys.stderr)
-            traceback.print_exc(file=sys.stderr)
+        except Exception:
+            log.exception('Error')
 
             response['ret'] = -1
             response['message'] = 'Internal error'

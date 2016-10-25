@@ -5,6 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import logging
 import os
 import pwd
 import signal
@@ -79,6 +80,13 @@ class Spawner(EventActor):
         Event for a ZMQ message is available.
 
         :type: enarksh.event.Event.Event
+        """
+
+        self.__log = logging.getLogger('enarksh')
+        """
+        The logger.
+
+        :type: logging.Logger
         """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -161,8 +169,7 @@ class Spawner(EventActor):
         """
         Performs the necessary actions for starting the spawner daemon.
         """
-        # Log stop of the spawner.
-        print('Start spawner')
+        self.__log.info('Starting spawner')
 
         # Set the effective user and group to an unprivileged user and group.
         self.__set_unprivileged_user()
@@ -174,13 +181,11 @@ class Spawner(EventActor):
         JobHandler.read_allowed_users()
 
     # ------------------------------------------------------------------------------------------------------------------
-    @staticmethod
-    def __shutdown():
+    def __shutdown(self):
         """
         Performs the necessary actions for stopping the spawner.
         """
-        # Log stop of the spawner.
-        print('Stop spawner')
+        self.__log.info('Stopping spawner')
 
     # ------------------------------------------------------------------------------------------------------------------
     def __register_sockets(self):

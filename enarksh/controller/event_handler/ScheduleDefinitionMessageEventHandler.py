@@ -5,9 +5,8 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import logging
 import os
-import sys
-import traceback
 
 from enarksh.DataLayer import DataLayer
 from enarksh.xml_reader.XmlReader import XmlReader
@@ -29,6 +28,8 @@ class ScheduleDefinitionMessageEventHandler:
         :param enarksh.controller.Controller.Controller controller: The controller.
         """
         del _event
+
+        log = logging.getLogger('enarksh')
 
         try:
             # Validate XML against XSD.
@@ -54,12 +55,11 @@ class ScheduleDefinitionMessageEventHandler:
                         'message': "Schedule '%s' successfully loaded." % name}
 
             DataLayer.commit()
-        except Exception as exception:
-            print(exception, file=sys.stderr)
-            traceback.print_exc(file=sys.stderr)
+        except Exception:
+            log.exception('Error')
 
             response = {'ret':     -1,
-                        'message': str(exception)}
+                        'message': 'Internal error'}
 
             DataLayer.rollback()
 

@@ -6,6 +6,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import gc
+import logging
 import os
 import pwd
 
@@ -76,6 +77,13 @@ class Controller(EventActor):
         :type: dict[int,enarksh.controller.Schedule.Schedule]
         """
 
+        self.__log = logging.getLogger('enarksh')
+        """
+        The logger.
+
+        :type: logging.Logger
+        """
+
         # Create event for a new node has been created.
         Node.event_new_node_creation = Event(self)
 
@@ -104,7 +112,7 @@ class Controller(EventActor):
         """
         Performs the necessary actions for starting the controller daemon.
         """
-        print('Start controller.')
+        self.__log.info('Starting controller')
 
         # Set database configuration options.
         DataLayer.config['host'] = enarksh.MYSQL_HOSTNAME
@@ -131,13 +139,11 @@ class Controller(EventActor):
         DataLayer.commit()
 
     # ------------------------------------------------------------------------------------------------------------------
-    @staticmethod
-    def __shutdown():
+    def __shutdown(self):
         """
         Performs the necessary actions for stopping the controller.
         """
-        # Log stop of the controller.
-        print('Stop controller')
+        self.__log.info('Stopping controller')
 
     # ------------------------------------------------------------------------------------------------------------------
     def slot_schedule_termination(self, event, rst_id, _listener_data):
@@ -151,7 +157,7 @@ class Controller(EventActor):
 
         schedule = event.source
 
-        print("Schedule %s has terminated with status %s" % (schedule.sch_id, rst_id))
+        self.__log.info('Schedule {} has terminated with status {}'.format(schedule.sch_id, rst_id))
 
         self.unload_schedule(schedule.sch_id)
 
@@ -162,7 +168,7 @@ class Controller(EventActor):
 
         :rtype: enarksh.controller.Schedule.Schedule
         """
-        print("Loading schedule '%s'." % sch_id)
+        self.__log.info('Loading schedule {}'.format(sch_id))
 
         # Load the schedule.
         schedule = Schedule(sch_id, self.host_resources)
@@ -178,7 +184,7 @@ class Controller(EventActor):
         """
         :param int sch_id:
         """
-        print("Unloading schedule '%s'." % sch_id)
+        self.__log.info('Unloading schedule {}'.format(sch_id))
 
         if sch_id in self.schedules:
             # Remove the schedule.

@@ -6,6 +6,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import abc
+import logging
 from time import strftime, localtime
 
 import enarksh
@@ -222,8 +223,8 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         """
         Object destructor.
         """
-        # print("Deleting node %s" % self.rnd_id)
-        pass
+        log = logging.getLogger('enarksh')
+        log.debug('Deleting node: rst_id: {}'.format(self._rst_id))
 
     # ------------------------------------------------------------------------------------------------------------------
     def acquire_resources(self):

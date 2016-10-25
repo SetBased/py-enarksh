@@ -5,8 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-import sys
-import traceback
+import logging
 
 from enarksh.event.Event import Event
 from enarksh.event.EventActor import EventActor
@@ -77,6 +76,13 @@ class EventController(EventActor):
         The queue with events that have fired but have not been processed yet.
 
         :type: list[(enarksh.event.Event.Event,*)]
+        """
+
+        self.__log = logging.getLogger('enarksh')
+        """
+        The logger.
+
+        :type: logging.Logger
         """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -160,10 +166,8 @@ class EventController(EventActor):
                         listener(listener_object(), event, event_data, listener_data)
                     else:
                         listener(event, event_data, listener_data)
-                except Exception as exception:
-                    # @todo Improve logging.
-                    print(exception, file=sys.stderr)
-                    traceback.print_exc(file=sys.stderr)
+                except Exception:
+                    self.__log.exception('Error')
 
     # ------------------------------------------------------------------------------------------------------------------
     def internal_queue_event(self, event, event_data):

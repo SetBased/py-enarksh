@@ -5,6 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import logging
 import os
 
 from enarksh.DataLayer import DataLayer
@@ -27,7 +28,8 @@ class LogFileMessageEventHandler:
         """
         del _event, _listener_data
 
-        print("%s %s %s" % (message.rnd_id, message.name, message.total_size))
+        log = logging.getLogger('enarksh')
+        log.info('rnd_id: {}, name: {}, size: {}'.format(message.rnd_id, message.name, message.total_size))
 
         DataLayer.connect()
 

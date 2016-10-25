@@ -5,6 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import logging
 import sys
 import traceback
 
@@ -30,6 +31,8 @@ class NagiosMessageEventHandler(NodeActionMessageBaseEventHandler):
         """
         del _event, _message
 
+        log = logging.getLogger('enarksh')
+
         rst_count = {enarksh.ENK_RST_ID_COMPLETED: 0,
                      enarksh.ENK_RST_ID_ERROR:     0,
                      enarksh.ENK_RST_ID_QUEUED:    0,
@@ -45,11 +48,10 @@ class NagiosMessageEventHandler(NodeActionMessageBaseEventHandler):
                 schedule.nagios_performance_data(rst_count)
 
         except Exception as exception:
-            print(exception, file=sys.stderr)
-            traceback.print_exc(file=sys.stderr)
+            log.exception('Error')
 
             response['ret'] = -1
-            response['message'] = 'Internal error'
+            response['message'] = str(exception)
 
             DataLayer.rollback()
 

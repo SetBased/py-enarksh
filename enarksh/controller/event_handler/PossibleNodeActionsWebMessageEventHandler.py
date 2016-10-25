@@ -5,6 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import logging
 import sys
 import traceback
 
@@ -30,6 +31,8 @@ class PossibleNodeActionsWebMessageEventHandler:
         """
         del _event
 
+        log = logging.getLogger('enarksh')
+
         try:
             schedule = controller.get_schedule_by_sch_id(message.sch_id)
             if schedule:
@@ -38,9 +41,8 @@ class PossibleNodeActionsWebMessageEventHandler:
                 response = Schedule.get_response_template()
 
             DataLayer.commit()
-        except Exception as exception:
-            print(exception, file=sys.stderr)
-            traceback.print_exc(file=sys.stderr)
+        except Exception:
+            log.exception('Error')
 
             response = dict()
             response['ret'] = -1

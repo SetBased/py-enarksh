@@ -5,6 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import logging
 import sys
 import traceback
 
@@ -31,8 +32,10 @@ class DynamicWorkerDefinitionMessageEventHandler:
         """
         del _event
 
+        log = logging.getLogger('enarksh')
+
         try:
-            print('rnd_id: ' + str(message.rnd_id))
+            log.debug('DynamicWorkerDefinitionMessageEventHandler: rnd_id: {}'.format(message.rnd_id))
 
             # Get info of the dynamic node.
             info = DataLayer.enk_back_run_node_get_dynamic_info_by_generator(message.rnd_id)
@@ -67,8 +70,7 @@ class DynamicWorkerDefinitionMessageEventHandler:
 
             DataLayer.commit()
         except Exception as exception:
-            print(exception, file=sys.stderr)
-            traceback.print_exc(file=sys.stderr)
+            log.exception('Error')
 
             response = {'ret':     -1,
                         'message': str(exception)}

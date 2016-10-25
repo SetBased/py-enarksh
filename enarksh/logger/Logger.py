@@ -5,6 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import logging
 import os
 import pwd
 import zmq
@@ -41,6 +42,13 @@ class Logger:
         The message controller.
 
         :type: enarksh.message.MessageController.MessageController
+        """
+
+        self.__log = logging.getLogger('enarksh')
+        """
+        The logger.
+
+        :type: logging.Logger
         """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -83,21 +91,18 @@ class Logger:
         os.setresuid(uid, uid, 0)
 
     # ------------------------------------------------------------------------------------------------------------------
-    @staticmethod
-    def __shutdown():
+    def __shutdown(self):
         """
         Performs the necessary actions for stopping the logger.
         """
-        # Log stop of the logger.
-        print('Stop logger')
+        self.__log.info('Stopping logger')
 
     # ------------------------------------------------------------------------------------------------------------------
     def __startup(self):
         """
         Performs the necessary actions for starting up the logger.
         """
-        # Log the start of the logger.
-        print('Start logger')
+        self.__log.info('Starting logger')
 
         # Set the effective user and group to an unprivileged user and group.
         self.__set_unprivileged_user()

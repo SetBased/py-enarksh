@@ -5,10 +5,10 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import logging
 import os
 import pwd
 import sys
-import traceback
 from configparser import ConfigParser
 
 import enarksh
@@ -111,6 +111,13 @@ class JobHandler(EventActor):
         :type: enarksh.event.Event.Event
         """
 
+        self.__log = logging.getLogger('enarksh')
+        """
+        The logger.
+
+        :type: logging.Logger
+        """
+
     # ------------------------------------------------------------------------------------------------------------------
     @property
     def pid(self):
@@ -166,14 +173,15 @@ class JobHandler(EventActor):
         """
         Logs the starting of a job.
         """
-        print("Start rnd_id: %10d, %8s, %s" % (self.__rnd_id, self.__user_name, str(self.__args)))
+        self.__log.info('Start rnd_id: {0:10d}, {1:8s}, {2:s}'.
+                        format(self.__rnd_id, self.__user_name, str(self.__args)))
 
     # ------------------------------------------------------------------------------------------------------------------
     def __log_job_stop(self):
         """
         Logs the end of job.
         """
-        print("End   rnd_id: %10d, %8s, %s" % (self.__rnd_id, self.__user_name, str(self.__args)))
+        self.__log.info('End   rnd_id: {0:10d}'.format(self.__rnd_id))
 
     # ------------------------------------------------------------------------------------------------------------------
     def __final(self):
@@ -216,7 +224,7 @@ class JobHandler(EventActor):
         elif std == 'err':
             chunk_logger = self.stderr_logger
         else:
-            raise Exception("Unknown output '%s'." % std)
+            raise ValueError("Unknown output '%s'." % std)
 
         return LogFileMessage(self.__rnd_id,
                               std,
@@ -305,9 +313,10 @@ class JobHandler(EventActor):
                 os.execv(self.__args[0], self.__args)
 
             except Exception as e:
-                print('Unable to start job.', file=sys.stderr)
-                print('Reason: %s' % e, file=sys.stderr)
-                traceback.print_exc(file=sys.stderr)
+                self.__log.error('Unable to start job')
+                self.__log.error('Reason: {}'.format(str(e)))
+                self.__log.exception('Error')
+
                 # Exit immediately without running the exit handlers (e.g. from daemon) from the parent process.
                 os._exit(-1)
         else:

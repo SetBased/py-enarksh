@@ -5,6 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import logging
 import os
 
 from lxml import etree
@@ -50,7 +51,8 @@ class XmlReader:
             # Set recursion and dependency levels.
             schedule.set_levels()
         except etree.XMLSyntaxError as exception:
-            print(exception.error_log.filter_from_level(etree.ErrorLevels.WARNING))
+            log = logging.getLogger('enarksh')
+            log.error(exception.error_log.filter_from_level(etree.ErrorLevels.WARNING))
             raise exception
 
         return schedule

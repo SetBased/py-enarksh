@@ -6,6 +6,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 Licence MIT
 """
 import functools
+import logging
 
 import enarksh
 from enarksh.DataLayer import DataLayer
@@ -112,7 +113,8 @@ class Schedule(EventActor):
 
     # ------------------------------------------------------------------------------------------------------------------
     def __del__(self):
-        print("Deleting schedule %s" % self.__sch_id)
+        log = logging.getLogger('enarksh')
+        log.debug('Deleting schedule {}'.format(self.__sch_id))
 
     # ------------------------------------------------------------------------------------------------------------------
     def __load(self, sch_id, host_resources):

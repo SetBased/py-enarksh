@@ -5,6 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
+import logging
 import sys
 import traceback
 
@@ -29,6 +30,8 @@ class NodeActionMessageEventHandler(NodeActionMessageBaseEventHandler):
         """
         del _event
 
+        log = logging.getLogger('enarksh')
+
         # Compose a response message for client.
         response = {'ret':     0,
                     'message': 'OK'}
@@ -51,11 +54,10 @@ class NodeActionMessageEventHandler(NodeActionMessageBaseEventHandler):
 
             DataLayer.commit()
         except Exception as exception:
-            print(exception, file=sys.stderr)
-            traceback.print_exc(file=sys.stderr)
+            log.exception('Error')
 
             response['ret'] = -1
-            response['message'] = 'Internal error'
+            response['message'] = str(exception)
 
             DataLayer.rollback()
 
