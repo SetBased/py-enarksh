@@ -61,10 +61,12 @@ class DynamicWorkerDefinitionMessageEventHandler:
             # XXX trigger reload of front end
 
             # Unload the schedule to force a reload of the schedule with new nodes added.
+            # XXX This step must be replaced with adding dependencies between the new simple nodes and existing simple
+            # nodes (successors and predecessors) and register listeners for the inner node and its new child nodes.
             controller.unload_schedule(message.sch_id)
 
             response = {'ret':     0,
-                        'message': "Worker '%s' successfully loaded." % name}
+                        'message': 'Worker {} successfully loaded'.format(name)}
 
             DataLayer.commit()
         except Exception as exception:

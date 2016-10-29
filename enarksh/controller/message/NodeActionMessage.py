@@ -24,14 +24,14 @@ class NodeActionMessage(Message):
         """
         Object constructor.
 
-        :param str uri: The URI of the (trigger) node that must be triggered.
+        :param str uri: The URI of the node for which a action is requested.
         :param int act_id: The ID of the requested action.
         """
         Message.__init__(self, NodeActionMessage.MESSAGE_TYPE)
 
         self.uri = uri
         """
-        The URI of the (trigger) node that must be triggered.
+        The URI of the node for which a action is requested.
 
         :type: str
         """

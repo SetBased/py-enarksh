@@ -24,7 +24,7 @@ class EnarkshApplication(Application):
         """
         Object constructor
         """
-        Application.__init__(self, 'Enarksh', '0.1.0')
+        Application.__init__(self, 'Enarksh', '0.9.0')
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_default_commands(self):

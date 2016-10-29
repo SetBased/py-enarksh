@@ -11,7 +11,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='Enarksh',
 
-    version='0.1.0',
+    version='0.9.0',
 
     description='A lightweight and powerful job scheduler',
     long_description=long_description,
