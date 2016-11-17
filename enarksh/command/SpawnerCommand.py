@@ -24,6 +24,6 @@ class SpawnerCommand(DaemonCommand):
         """
         spawner = Spawner()
 
-        self.handle_daemon('spawnerd', spawner)
+        self.handle_daemon('spawner', spawner)
 
 # ----------------------------------------------------------------------------------------------------------------------

@@ -24,6 +24,6 @@ class ControllerCommand(DaemonCommand):
         """
         controller = Controller()
 
-        self.handle_daemon('controllerd', controller)
+        self.handle_daemon('controller', controller)
 
 # ----------------------------------------------------------------------------------------------------------------------

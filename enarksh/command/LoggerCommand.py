@@ -24,6 +24,6 @@ class LoggerCommand(DaemonCommand):
         """
         logger = Logger()
 
-        self.handle_daemon('loggerd', logger)
+        self.handle_daemon('logger', logger)
 
 # ----------------------------------------------------------------------------------------------------------------------

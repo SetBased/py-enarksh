@@ -21,7 +21,7 @@ class HaltCommand(Command):
 
     halt
 
-        {daemon : The Enarksh daemon to halt: controllerd, loggerd, or spanwerd}
+        {daemon : The Enarksh daemon to halt: controller, logger, or spanwerd}
     """
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -38,9 +38,9 @@ class HaltCommand(Command):
         :type: Context
         """
 
-        self.__end_points = {'controllerd': enarksh.CONTROLLER_PULL_END_POINT,
-                             'loggerd':     enarksh.LOGGER_PULL_END_POINT,
-                             'spawnerd':    enarksh.SPAWNER_PULL_END_POINT}
+        self.__end_points = {'controller': enarksh.CONTROLLER_PULL_END_POINT,
+                             'logger':     enarksh.LOGGER_PULL_END_POINT,
+                             'spawner':    enarksh.SPAWNER_PULL_END_POINT}
         """
         The end points of the Enarksh daemons.
 

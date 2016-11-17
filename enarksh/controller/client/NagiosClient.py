@@ -116,7 +116,7 @@ class NagiosClient:
         Tests all 3 daemons are running.
         """
         # Test controller is running
-        for daemon in ['controllerd', 'loggerd', 'spawnerd']:
+        for daemon in ['controller', 'logger', 'spawner']:
             if not self.__test_daemon_is_running(daemon):
                 if self.__message:
                     self.__message += ' '
