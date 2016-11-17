@@ -7,9 +7,9 @@ Licence MIT
 """
 
 
-class ExitMessageEventHandler:
+class HaltMessageEventHandler:
     """
-    An event handler for a ExitMessage received events.
+    An event handler for a HaltMessage received events.
     """
 
     # ------------------------------------------------------------------------------------------------------------------

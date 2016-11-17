@@ -13,7 +13,6 @@ from enarksh.DataLayer import DataLayer
 from enarksh.controller import consumption
 from enarksh.controller import resource
 from enarksh.controller.node import create_node
-from enarksh.controller.node.SimpleNode import SimpleNode
 from enarksh.event.Event import Event
 from enarksh.event.EventActor import EventActor
 

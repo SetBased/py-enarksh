@@ -42,7 +42,7 @@ class DaemonCommand(Command):
             pid_file_name = os.path.join(enarksh.HOME, 'var/lock', name + '.pid')
 
             log_handler = logging.handlers.RotatingFileHandler(log_file_name,
-                                                               maxBytes=1024*1024,
+                                                               maxBytes=1024 * 1024,
                                                                backupCount=10)
             log_handler.setLevel(logging.DEBUG)
             log_handler.setFormatter(log_formatter)

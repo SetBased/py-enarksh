@@ -8,11 +8,11 @@ Licence MIT
 from enarksh.message.Message import Message
 
 
-class ExitMessage(Message):
+class HaltMessage(Message):
     """
-    Message type for instructing a process of Enarksh to exit.
+    Message type for instructing a daemon of Enarksh to halt.
     """
-    MESSAGE_TYPE = 'ExitMessage'
+    MESSAGE_TYPE = 'HaltMessage'
     """
     The message type.
 
@@ -24,7 +24,7 @@ class ExitMessage(Message):
         """
         Object constructor.
         """
-        Message.__init__(self, ExitMessage.MESSAGE_TYPE)
+        Message.__init__(self, HaltMessage.MESSAGE_TYPE)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -32,9 +32,9 @@ class ExitMessage(Message):
         """
         Create a message of this class based on JSON data.
 
-        :rtype: enarksh.message.ExitMessage.ExitMessage
+        :rtype: enarksh.message.HaltMessage.HaltMessage
         """
-        return ExitMessage()
+        return HaltMessage()
 
     # ------------------------------------------------------------------------------------------------------------------
     def send_message(self, end_point):

@@ -8,6 +8,7 @@ Licence MIT
 from cleo import Application
 
 from enarksh.command.BootstrapCommand import BootstrapCommand
+from enarksh.command.HaltCommand import HaltCommand
 from enarksh.command.LoadHostCommand import LoadHostCommand
 from enarksh.command.LoadScheduleCommand import LoadScheduleCommand
 from enarksh.command.NagiosCommand import NagiosCommand
@@ -36,6 +37,7 @@ class EnarkshApplication(Application):
         commands = Application.get_default_commands(self)
 
         self.add(BootstrapCommand())
+        self.add(HaltCommand())
         self.add(LoadHostCommand())
         self.add(LoadScheduleCommand())
         self.add(NagiosCommand())

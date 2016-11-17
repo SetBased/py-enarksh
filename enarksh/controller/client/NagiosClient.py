@@ -143,7 +143,7 @@ class NagiosClient:
         # Await the response from the controller.
         response = self._zmq_controller.recv_pyobj()
 
-        self.__performance_data += 'schedules={}, waiting={}, queued={}, running={}, completed={}, error={}'.\
+        self.__performance_data += 'schedules={}, waiting={}, queued={}, running={}, completed={}, error={}'. \
             format(response['sch_count'],
                    response['rst_count'][enarksh.ENK_RST_ID_WAITING],
                    response['rst_count'][enarksh.ENK_RST_ID_QUEUED],

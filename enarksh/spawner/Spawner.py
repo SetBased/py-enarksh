@@ -16,11 +16,11 @@ import enarksh
 from enarksh.event.Event import Event
 from enarksh.event.EventActor import EventActor
 from enarksh.event.EventController import EventController
-from enarksh.message.ExitMessage import ExitMessage
+from enarksh.message.HaltMessage import HaltMessage
 from enarksh.message.MessageController import MessageController
 from enarksh.spawner.JobHandler import JobHandler
 from enarksh.spawner.event_handler.EventQueueEmptyEventHandler import EventQueueEmptyEventHandler
-from enarksh.spawner.event_handler.ExitMessageEventHandler import ExitMessageEventHandler
+from enarksh.spawner.event_handler.HaltMessageEventHandler import HaltMessageEventHandler
 from enarksh.spawner.event_handler.SIGCHLDEventHandler import SIGCHLDEventHandler
 from enarksh.spawner.event_handler.SpawnJobMessageEventHandler import SpawnJobMessageEventHandler
 from enarksh.spawner.message.SpawnJobMessage import SpawnJobMessage
@@ -206,7 +206,7 @@ class Spawner(EventActor):
         """
         Registers all message type that the spawner handles at the message controller.
         """
-        self.__message_controller.register_message_type(ExitMessage.MESSAGE_TYPE)
+        self.__message_controller.register_message_type(HaltMessage.MESSAGE_TYPE)
         self.__message_controller.register_message_type(SpawnJobMessage.MESSAGE_TYPE)
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -217,7 +217,7 @@ class Spawner(EventActor):
         EventQueueEmptyEventHandler.init()
 
         # Register message received event handlers.
-        self.__message_controller.register_listener(ExitMessage.MESSAGE_TYPE, ExitMessageEventHandler.handle)
+        self.__message_controller.register_listener(HaltMessage.MESSAGE_TYPE, HaltMessageEventHandler.handle)
         self.__message_controller.register_listener(SpawnJobMessage.MESSAGE_TYPE,
                                                     SpawnJobMessageEventHandler.handle,
                                                     self)

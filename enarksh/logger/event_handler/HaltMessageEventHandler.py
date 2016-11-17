@@ -7,16 +7,16 @@ Licence MIT
 """
 
 
-class ExitMessageEventHandler:
+class HaltMessageEventHandler:
     """
-    An event handler for a ExitMessage received events.
+    An event handler for a HaltMessage received events.
     """
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def handle(event, _event_data, _listener_data):
         """
-        Handles a ExitMessage received event.
+        Handles a HaltMessage received event.
 
         :param enarksh.event.Event.Event event: The event.
         :param * _event_data: Not used.

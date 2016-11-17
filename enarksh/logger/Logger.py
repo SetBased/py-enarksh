@@ -8,15 +8,16 @@ Licence MIT
 import logging
 import os
 import pwd
+
 import zmq
 
 import enarksh
 from enarksh.DataLayer import DataLayer
 from enarksh.event.EventController import EventController
-from enarksh.logger.event_handler.ExitMessageEventHandler import ExitMessageEventHandler
+from enarksh.logger.event_handler.HaltMessageEventHandler import HaltMessageEventHandler
 from enarksh.logger.event_handler.LogFileMessageEventHandler import LogFileMessageEventHandler
 from enarksh.logger.message.LogFileMessage import LogFileMessage
-from enarksh.message.ExitMessage import ExitMessage
+from enarksh.message.HaltMessage import HaltMessage
 from enarksh.message.MessageController import MessageController
 
 
@@ -63,11 +64,11 @@ class Logger:
         self.__message_controller.register_end_point('pull', zmq.PULL, enarksh.LOGGER_PULL_END_POINT)
 
         # Register supported message types
-        self.__message_controller.register_message_type(ExitMessage.MESSAGE_TYPE)
+        self.__message_controller.register_message_type(HaltMessage.MESSAGE_TYPE)
         self.__message_controller.register_message_type(LogFileMessage.MESSAGE_TYPE)
 
         # Register message received event handlers.
-        self.__message_controller.register_listener(ExitMessage.MESSAGE_TYPE, ExitMessageEventHandler.handle)
+        self.__message_controller.register_listener(HaltMessage.MESSAGE_TYPE, HaltMessageEventHandler.handle)
         self.__message_controller.register_listener(LogFileMessage.MESSAGE_TYPE, LogFileMessageEventHandler.handle)
 
         # Register other event handlers.

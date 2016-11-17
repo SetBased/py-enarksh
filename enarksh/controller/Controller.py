@@ -19,6 +19,7 @@ from enarksh.controller.Schedule import Schedule
 from enarksh.controller.event_handler.DynamicWorkerDefinitionMessageEventHandler import \
     DynamicWorkerDefinitionMessageEventHandler
 from enarksh.controller.event_handler.EventQueueEmptyEventHandler import EventQueueEmptyEventHandler
+from enarksh.controller.event_handler.HaltMessageEventHandler import HaltMessageEventHandler
 from enarksh.controller.event_handler.JobFinishedMessageEventHandler import JobFinishedMessageEventHandler
 from enarksh.controller.event_handler.MailOperatorEventHandler import MailOperatorEventHandler
 from enarksh.controller.event_handler.NagiosMessageEventHandler import NagiosMessageEventHandler
@@ -38,6 +39,7 @@ from enarksh.controller.node import Node
 from enarksh.event.Event import Event
 from enarksh.event.EventActor import EventActor
 from enarksh.event.EventController import EventController
+from enarksh.message.HaltMessage import HaltMessage
 from enarksh.message.MessageController import MessageController
 
 
@@ -243,6 +245,7 @@ class Controller(EventActor):
         """
         self.message_controller.register_message_type(DynamicWorkerDefinitionMessage.MESSAGE_TYPE)
         self.message_controller.register_message_type(JobFinishedMessage.MESSAGE_TYPE)
+        self.message_controller.register_message_type(HaltMessage.MESSAGE_TYPE)
         self.message_controller.register_message_type(NagiosMessage.MESSAGE_TYPE)
         self.message_controller.register_message_type(NodeActionMessage.MESSAGE_TYPE)
         self.message_controller.register_message_type(ScheduleDefinitionMessage.MESSAGE_TYPE)
@@ -266,6 +269,9 @@ class Controller(EventActor):
                                                   self)
         self.message_controller.register_listener(JobFinishedMessage.MESSAGE_TYPE,
                                                   JobFinishedMessageEventHandler.handle,
+                                                  self)
+        self.message_controller.register_listener(HaltMessage.MESSAGE_TYPE,
+                                                  HaltMessageEventHandler.handle,
                                                   self)
         self.message_controller.register_listener(NagiosMessage.MESSAGE_TYPE,
                                                   NagiosMessageEventHandler.handle,

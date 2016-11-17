@@ -54,5 +54,4 @@ class NodeActionMessage(Message):
         """
         self.message_controller.send_message(end_point, self)
 
-
 # ----------------------------------------------------------------------------------------------------------------------

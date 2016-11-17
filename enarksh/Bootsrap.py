@@ -38,11 +38,11 @@ class Bootstrap:
         """
         Drops all views form the databases.
         """
-        rows = DataLayer.execute_rows('SELECT TABLE_NAME table_name '
-                                      'FROM   information_schema.TABLES '
-                                      'WHERE  TABLE_SCHEMA = database() '
-                                      'AND    TABLE_TYPE   = "VIEW" '
-                                      'ORDER BY table_name')
+        rows = DataLayer.execute_rows('select TABLE_NAME table_name '
+                                      'from   information_schema.TABLES '
+                                      'where  TABLE_SCHEMA = database() '
+                                      'and    TABLE_TYPE   = VIEW '
+                                      'order by table_name')
         for row in rows:
             print('Dropping view %s' % row['table_name'])
             DataLayer.execute_none('drop view %s' % row['table_name'])
@@ -55,11 +55,11 @@ class Bootstrap:
         """
         DataLayer.execute_none('set foreign_key_checks = off')
 
-        rows = DataLayer.execute_rows('SELECT TABLE_NAME table_name '
-                                      'FROM   information_schema.TABLES '
-                                      'WHERE  TABLE_SCHEMA = database() '
-                                      'AND    TABLE_TYPE   = "BASE TABLE" '
-                                      'ORDER BY TABLE_NAME')
+        rows = DataLayer.execute_rows('select TABLE_NAME table_name '
+                                      'from   information_schema.TABLES '
+                                      'where  TABLE_SCHEMA = database() '
+                                      'and    TABLE_TYPE   = "BASE TABLE" '
+                                      'order by TABLE_NAME')
         for row in rows:
             print('Dropping table %s' % row['table_name'])
             DataLayer.execute_none('drop table %s cascade' % row['table_name'])

@@ -188,5 +188,4 @@ Greetings from Enarksh""".format(str(node['sch_name'], 'utf-8'))
         if isinstance(node, ScheduleNode):
             node.event_state_change.register_listener(MailOperatorEventHandler.__handle_schedule_stop)
 
-
 # ----------------------------------------------------------------------------------------------------------------------
