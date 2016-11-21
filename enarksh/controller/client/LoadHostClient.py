@@ -5,8 +5,6 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-
-import enarksh
 from enarksh.Credentials import Credentials
 from enarksh.DataLayer import DataLayer
 from enarksh.xml_reader.XmlReader import XmlReader
@@ -38,7 +36,6 @@ class LoadHostClient:
 
         :param str filename: The filename with the XML definition of the host.
         """
-
         try:
             DataLayer.connect()
 

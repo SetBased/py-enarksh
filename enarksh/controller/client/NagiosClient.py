@@ -9,7 +9,6 @@ import os
 
 import zmq
 
-import enarksh
 from enarksh.C import C
 from enarksh.Config import Config
 from enarksh.controller.message.NagiosMessage import NagiosMessage

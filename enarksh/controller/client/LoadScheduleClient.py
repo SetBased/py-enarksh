@@ -94,8 +94,8 @@ class LoadScheduleClient:
 
         :rtype bool: True on success. Otherwise False.
         """
-        with open(filename, 'rt', encoding='utf-8') as f:
-            xml = f.read()
+        with open(filename, 'rt', encoding='utf-8') as stream:
+            xml = stream.read()
 
         # Compose the message for the controller.
         message = ScheduleDefinitionMessage(xml, os.path.realpath(filename))

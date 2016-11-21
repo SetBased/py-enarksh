@@ -101,11 +101,11 @@ class XmlReader:
 
         :rtype: enarksh.xml_reader.Host.Host
         """
-        with open(filename, 'rt', encoding='utf-8') as f:
-            xml = f.read()
+        with open(filename, 'rt', encoding='utf-8') as stream:
+            xml = stream.read()
 
-        with open(os.path.join(C.HOME, 'etc/enarksh.xsd'), 'rb') as f:
-            xsd = f.read()
+        with open(os.path.join(C.HOME, 'etc/enarksh.xsd'), 'rb') as stream:
+            xsd = stream.read()
 
         schema_root = etree.XML(xsd)
         schema = etree.XMLSchema(schema_root)

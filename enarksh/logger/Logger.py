@@ -11,7 +11,6 @@ import pwd
 
 import zmq
 
-import enarksh
 from enarksh.Config import Config
 from enarksh.Credentials import Credentials
 from enarksh.DataLayer import DataLayer

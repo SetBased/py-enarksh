@@ -49,9 +49,9 @@ class MailOperatorEventHandler:
         msg['From'] = from_email
 
         # Send the message via our local SMTP server.
-        s = smtplib.SMTP('localhost')
-        s.send_message(msg)
-        s.quit()
+        smtp = smtplib.SMTP('localhost')
+        smtp.send_message(msg)
+        smtp.quit()
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod

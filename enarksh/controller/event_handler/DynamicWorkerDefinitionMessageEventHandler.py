@@ -24,7 +24,7 @@ class DynamicWorkerDefinitionMessageEventHandler:
         Handles a DynamicWorkerDefinitionMessage received event.
 
         :param * _event: Not used.
-        :param enarksh.controller.message.DynamicWorkerDefinitionMessage.DynamicWorkerDefinitionMessage message: 
+        :param enarksh.controller.message.DynamicWorkerDefinitionMessage.DynamicWorkerDefinitionMessage message:
                The message.
         :param enarksh.controller.Controller.Controller controller: The controller.
         """
