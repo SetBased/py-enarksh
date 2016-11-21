@@ -12,7 +12,7 @@ import signal
 
 import zmq
 
-import enarksh
+from enarksh.Config import Config
 from enarksh.event.Event import Event
 from enarksh.event.EventActor import EventActor
 from enarksh.event.EventController import EventController
@@ -192,14 +192,16 @@ class Spawner(EventActor):
         """
         Registers ZMQ sockets for communication with other processes in Enarksh.
         """
+        config = Config.get()
+
         # Register socket for receiving asynchronous incoming messages.
-        self.__message_controller.register_end_point('pull', zmq.PULL, enarksh.SPAWNER_PULL_END_POINT)
+        self.__message_controller.register_end_point('pull', zmq.PULL, config.get_spawner_pull_end_point())
 
         # Register socket for sending asynchronous messages to the controller.
-        self.__message_controller.register_end_point('controller', zmq.PUSH, enarksh.CONTROLLER_PULL_END_POINT)
+        self.__message_controller.register_end_point('controller', zmq.PUSH, config.get_controller_pull_end_point())
 
         # Register socket for sending asynchronous messages to the logger.
-        self.__message_controller.register_end_point('logger', zmq.PUSH, enarksh.LOGGER_PULL_END_POINT)
+        self.__message_controller.register_end_point('logger', zmq.PUSH, config.get_logger_pull_end_point())
 
     # ------------------------------------------------------------------------------------------------------------------
     def __register_message_types(self):

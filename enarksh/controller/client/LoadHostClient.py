@@ -7,6 +7,7 @@ Licence MIT
 """
 
 import enarksh
+from enarksh.Credentials import Credentials
 from enarksh.DataLayer import DataLayer
 from enarksh.xml_reader.XmlReader import XmlReader
 
@@ -21,11 +22,13 @@ class LoadHostClient:
         """
         Object constructor.
         """
-        DataLayer.config['host'] = enarksh.MYSQL_HOSTNAME
-        DataLayer.config['user'] = enarksh.MYSQL_USERNAME
-        DataLayer.config['password'] = enarksh.MYSQL_PASSWORD
-        DataLayer.config['database'] = enarksh.MYSQL_SCHEMA
-        DataLayer.config['port'] = enarksh.MYSQL_PORT
+        credentials = Credentials.get()
+
+        DataLayer.config['host'] = credentials.get_host()
+        DataLayer.config['user'] = credentials.get_user()
+        DataLayer.config['password'] = credentials.get_password()
+        DataLayer.config['database'] = credentials.get_database()
+        DataLayer.config['port'] = credentials.get_port()
         DataLayer.config['autocommit'] = False
 
     # ------------------------------------------------------------------------------------------------------------------

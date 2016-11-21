@@ -7,7 +7,7 @@ Licence MIT
 """
 import zmq
 
-import enarksh
+from enarksh.Config import Config
 from enarksh.controller.message.NodeActionMessage import NodeActionMessage
 
 
@@ -23,14 +23,14 @@ class NodeActionClient:
 
         :param enarksh.style.EnarkshStyle.EnarkshStyle io: The output decorator.
         """
-        self._zmq_context = None
+        self.__zmq_context = None
         """
         The ZMQ context.
 
         :type: Context
         """
 
-        self._zmq_controller = None
+        self.__zmq_controller = None
         """
         The socket for communicating with the controller.
 
@@ -53,16 +53,16 @@ class NodeActionClient:
         :param int act_id: The ID of the requested action.
         """
         # Initialize ZMQ.
-        self._zmq_init()
+        self.__zmq_init()
 
         # Compose the message for the controller.
         message = NodeActionMessage(uri, act_id)
 
         # Send the message to the controller.
-        self._zmq_controller.send_pyobj(message)
+        self.__zmq_controller.send_pyobj(message)
 
         # Await the response from the controller.
-        response = self._zmq_controller.recv_pyobj()
+        response = self.__zmq_controller.recv_pyobj()
 
         if response['ret'] == 0:
             self._io.log_verbose(response['message'])
@@ -72,14 +72,16 @@ class NodeActionClient:
         return response['ret']
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _zmq_init(self):
+    def __zmq_init(self):
         """
         Initializes ZMQ.
         """
-        self._zmq_context = zmq.Context()
+        config = Config.get()
+
+        self.__zmq_context = zmq.Context()
 
         # Create socket for communicating with the controller.
-        self._zmq_controller = self._zmq_context.socket(zmq.REQ)
-        self._zmq_controller.connect(enarksh.CONTROLLER_LOCKSTEP_END_POINT)
+        self.__zmq_controller = self.__zmq_context.socket(zmq.REQ)
+        self.__zmq_controller.connect(config.get_controller_lockstep_end_point())
 
 # ----------------------------------------------------------------------------------------------------------------------

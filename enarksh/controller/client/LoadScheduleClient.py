@@ -11,7 +11,7 @@ import traceback
 
 import zmq
 
-import enarksh
+from enarksh.Config import Config
 from enarksh.controller.message.ScheduleDefinitionMessage import ScheduleDefinitionMessage
 
 
@@ -27,14 +27,14 @@ class LoadScheduleClient:
 
         :param enarksh.style.EnarkshStyle.EnarkshStyle io: The output decorator.
         """
-        self._zmq_context = None
+        self.__zmq_context = None
         """
         The ZMQ context.
 
         :type: Context
         """
 
-        self._zmq_controller = None
+        self.__zmq_controller = None
         """
         The socket for communicating with the controller.
 
@@ -56,13 +56,13 @@ class LoadScheduleClient:
         :param list[str] filenames: The filenames of the schedules to be loaded.
         """
         # Initialize ZMQ.
-        self._zmq_init()
+        self.__zmq_init()
 
         # Send XML files to the controller.
         status = 0
         for filename in filenames:
             try:
-                err = self._load_schedule(filename)
+                err = self.__load_schedule(filename)
                 if err:
                     status = -1
             except Exception as exception:
@@ -73,18 +73,20 @@ class LoadScheduleClient:
         return status
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _zmq_init(self):
+    def __zmq_init(self):
         """
         Initializes ZMQ.
         """
-        self._zmq_context = zmq.Context()
+        config = Config.get()
+
+        self.__zmq_context = zmq.Context()
 
         # Create socket for communicating with the controller.
-        self._zmq_controller = self._zmq_context.socket(zmq.REQ)
-        self._zmq_controller.connect(enarksh.CONTROLLER_LOCKSTEP_END_POINT)
+        self.__zmq_controller = self.__zmq_context.socket(zmq.REQ)
+        self.__zmq_controller.connect(config.get_controller_lockstep_end_point())
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _load_schedule(self, filename):
+    def __load_schedule(self, filename):
         """
         Sends a message to the controller to load a new schedule definition.
 
@@ -99,10 +101,10 @@ class LoadScheduleClient:
         message = ScheduleDefinitionMessage(xml, os.path.realpath(filename))
 
         # Send the message to the controller.
-        self._zmq_controller.send_pyobj(message)
+        self.__zmq_controller.send_pyobj(message)
 
         # Await the response from the controller.
-        response = self._zmq_controller.recv_json()
+        response = self.__zmq_controller.recv_json()
 
         if response['ret'] == 0:
             self._io.log_verbose(response['message'])

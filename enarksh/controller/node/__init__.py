@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------------------------------------------------
-import enarksh
+from enarksh.C import C
 from enarksh.controller.node.CommandJobNode import CommandJobNode
 from enarksh.controller.node.CompoundJobNode import CompoundJobNode
 from enarksh.controller.node.DynamicInnerWorkerNode import DynamicInnerWorkerNode
@@ -21,28 +21,28 @@ def create_node(data):
     :rtype: enarksh.controller.node.Node.Node
     """
 
-    if data['ntp_id'] == enarksh.ENK_NTP_SCHEDULE:
+    if data['ntp_id'] == C.ENK_NTP_SCHEDULE:
         return ScheduleNode(data)
 
-    if data['ntp_id'] == enarksh.ENK_NTP_COMMAND_JOB:
+    if data['ntp_id'] == C.ENK_NTP_COMMAND_JOB:
         return CommandJobNode(data)
 
-    if data['ntp_id'] == enarksh.ENK_NTP_COMPOUND_JOB:
+    if data['ntp_id'] == C.ENK_NTP_COMPOUND_JOB:
         return CompoundJobNode(data)
 
-    if data['ntp_id'] == enarksh.ENK_NTP_MANUAL_TRIGGER:
+    if data['ntp_id'] == C.ENK_NTP_MANUAL_TRIGGER:
         return ManualTriggerNode(data)
 
-    if data['ntp_id'] == enarksh.ENK_NTP_TERMINATOR:
+    if data['ntp_id'] == C.ENK_NTP_TERMINATOR:
         return TerminatorNode(data)
 
-    if data['ntp_id'] == enarksh.ENK_NTP_DYNAMIC_JOB:
+    if data['ntp_id'] == C.ENK_NTP_DYNAMIC_JOB:
         return DynamicJobNode(data)
 
-    if data['ntp_id'] == enarksh.ENK_NTP_DYNAMIC_OUTER_WORKER:
+    if data['ntp_id'] == C.ENK_NTP_DYNAMIC_OUTER_WORKER:
         return DynamicOuterWorkerNode(data)
 
-    if data['ntp_id'] == enarksh.ENK_NTP_DYNAMIC_INNER_WORKER:
+    if data['ntp_id'] == C.ENK_NTP_DYNAMIC_INNER_WORKER:
         return DynamicInnerWorkerNode(data)
 
     raise Exception("Unexpected node type ID '%s'.", data['ntp_id'])

@@ -5,7 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-import enarksh
+from enarksh.C import C
 from enarksh.controller.node.Node import Node
 
 
@@ -51,7 +51,7 @@ class ComplexNode(Node):
         for child in self._child_nodes:
             # If child is a simple node and its status is ENK_RST_ID_ERROR restart this node.
             if child.is_simple_node():
-                if child.rst_id == enarksh.ENK_RST_ID_ERROR:
+                if child.rst_id == C.ENK_RST_ID_ERROR:
                     child.restart_failed()
 
             # If child is a complex node cascade the process of restarting failed nodes.

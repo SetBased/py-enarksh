@@ -47,8 +47,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: int
         """
-        return StaticDataLayer.execute_sp_none("call enk_back_counting_resource_update_consumpted(%s, %s)", p_rsc_id,
-                                               p_rsc_amount_consumpted)
+        return StaticDataLayer.execute_sp_none("call enk_back_counting_resource_update_consumpted(%s, %s)", p_rsc_id, p_rsc_amount_consumpted)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -82,8 +81,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: int
         """
-        return StaticDataLayer.execute_sp_none("call enk_back_node_dynamic_add_dependencies(%s, %s)",
-                                               p_nod_id_outer_worker, p_nod_id_inner_worker)
+        return StaticDataLayer.execute_sp_none("call enk_back_node_dynamic_add_dependencies(%s, %s)", p_nod_id_outer_worker, p_nod_id_inner_worker)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -111,8 +109,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: int
         """
-        return StaticDataLayer.execute_sp_none("call enk_back_read_write_lock_resource_update_consumpted(%s, %s)",
-                                               p_rsc_id, p_rws_id_consumpted)
+        return StaticDataLayer.execute_sp_none("call enk_back_read_write_lock_resource_update_consumpted(%s, %s)", p_rsc_id, p_rws_id_consumpted)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -298,8 +295,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: dict[str,*]
         """
-        return StaticDataLayer.execute_sp_row1("call enk_back_run_node_get_dynamic_info_by_generator(%s)",
-                                               p_rnd_id_generator)
+        return StaticDataLayer.execute_sp_row1("call enk_back_run_node_get_dynamic_info_by_generator(%s)", p_rnd_id_generator)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -329,8 +325,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: int
         """
-        return StaticDataLayer.execute_sp_none("call enk_back_run_node_update_err(%s, %s, %s)", p_rnd_id, p_blb_id,
-                                               p_rnd_size_err)
+        return StaticDataLayer.execute_sp_none("call enk_back_run_node_update_err(%s, %s, %s)", p_rnd_id, p_blb_id, p_rnd_size_err)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -347,13 +342,11 @@ class DataLayer(StaticDataLayer):
 
         :rtype: int
         """
-        return StaticDataLayer.execute_sp_none("call enk_back_run_node_update_log(%s, %s, %s)", p_rnd_id, p_blb_id,
-                                               p_rnd_size_log)
+        return StaticDataLayer.execute_sp_none("call enk_back_run_node_update_log(%s, %s, %s)", p_rnd_id, p_blb_id, p_rnd_size_log)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def enk_back_run_node_update_status(p_rnd_id, p_rst_id, p_rnd_datetime_start, p_rnd_datetime_stop,
-                                        p_rnd_exit_status):
+    def enk_back_run_node_update_status(p_rnd_id, p_rst_id, p_rnd_datetime_start, p_rnd_datetime_stop, p_rnd_exit_status):
         """
         Marks node @a p_rnd_id as stopped with status @a p_rst_id.
 
@@ -370,8 +363,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: int
         """
-        return StaticDataLayer.execute_sp_none("call enk_back_run_node_update_status(%s, %s, %s, %s, %s)", p_rnd_id,
-                                               p_rst_id, p_rnd_datetime_start, p_rnd_datetime_stop, p_rnd_exit_status)
+        return StaticDataLayer.execute_sp_none("call enk_back_run_node_update_status(%s, %s, %s, %s, %s)", p_rnd_id, p_rst_id, p_rnd_datetime_start, p_rnd_datetime_stop, p_rnd_exit_status)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -388,8 +380,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: int
         """
-        return StaticDataLayer.execute_sp_none("call enk_back_run_update_status(%s, %s, %s)", p_run_id,
-                                               p_run_datetime_start, p_run_datetime_stop)
+        return StaticDataLayer.execute_sp_none("call enk_back_run_update_status(%s, %s, %s)", p_run_id, p_run_datetime_start, p_run_datetime_stop)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -497,8 +488,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1("call enk_blob_insert_blob(%s, %s, %s)", p_filename, p_mime_type,
-                                                     p_data)
+        return StaticDataLayer.execute_sp_singleton1("call enk_blob_insert_blob(%s, %s, %s)", p_filename, p_mime_type, p_data)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -672,9 +662,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1(
-            "call enk_reader_consumption_store_counting_consumption(%s, %s, %s, %s)", p_nod_id, p_rsc_id, p_uri_id,
-            p_cns_amount)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_consumption_store_counting_consumption(%s, %s, %s, %s)", p_nod_id, p_rsc_id, p_uri_id, p_cns_amount)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -693,9 +681,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1(
-            "call enk_reader_consumption_store_read_write_lock_consumption(%s, %s, %s, %s)", p_nod_id, p_rsc_id,
-            p_rws_id, p_uri_id)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_consumption_store_read_write_lock_consumption(%s, %s, %s, %s)", p_nod_id, p_rsc_id, p_rws_id, p_uri_id)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -710,8 +696,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: int
         """
-        return StaticDataLayer.execute_sp_none("call enk_reader_dependency_store_dependency(%s, %s)",
-                                               p_prt_id_dependant, p_prt_id_predecessor)
+        return StaticDataLayer.execute_sp_none("call enk_reader_dependency_store_dependency(%s, %s)", p_prt_id_dependant, p_prt_id_predecessor)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -754,8 +739,7 @@ class DataLayer(StaticDataLayer):
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def enk_reader_node_store_command_job(p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level,
-                                          p_nod_dependency_level, p_nod_user_name, p_nod_command, p_nod_master):
+    def enk_reader_node_store_command_job(p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_user_name, p_nod_command, p_nod_master):
         """
         Stores a node of type "command job" and selects the ID of the new node.
 
@@ -780,15 +764,11 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1(
-            "call enk_reader_node_store_command_job(%s, %s, %s, %s, %s, %s, %s, %s, %s)", p_srv_id, p_uri_id,
-            p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_user_name, p_nod_command,
-            p_nod_master)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_node_store_command_job(%s, %s, %s, %s, %s, %s, %s, %s, %s)", p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_user_name, p_nod_command, p_nod_master)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def enk_reader_node_store_compound_job(p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level,
-                                           p_nod_dependency_level, p_nod_master):
+    def enk_reader_node_store_compound_job(p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master):
         """
         Stores a node of type "compound job" and selects the ID of the new node.
 
@@ -809,14 +789,11 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1(
-            "call enk_reader_node_store_compound_job(%s, %s, %s, %s, %s, %s, %s)", p_srv_id, p_uri_id, p_nod_id_parent,
-            p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_node_store_compound_job(%s, %s, %s, %s, %s, %s, %s)", p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def enk_reader_node_store_dynamic_inner_worker(p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name,
-                                                   p_nod_recursion_level, p_nod_dependency_level, p_nod_master):
+    def enk_reader_node_store_dynamic_inner_worker(p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master):
         """
         Stores a node of type "dynamic inner worker" and selects the ID of the new node.
 
@@ -837,14 +814,11 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1(
-            "call enk_reader_node_store_dynamic_inner_worker(%s, %s, %s, %s, %s, %s, %s)", p_srv_id, p_uri_id,
-            p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_node_store_dynamic_inner_worker(%s, %s, %s, %s, %s, %s, %s)", p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def enk_reader_node_store_dynamic_job(p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level,
-                                          p_nod_dependency_level, p_nod_master):
+    def enk_reader_node_store_dynamic_job(p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master):
         """
         Stores a node of type "dynamic job" and selects the ID of the new node.
 
@@ -865,14 +839,11 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1(
-            "call enk_reader_node_store_dynamic_job(%s, %s, %s, %s, %s, %s, %s)", p_srv_id, p_uri_id, p_nod_id_parent,
-            p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_node_store_dynamic_job(%s, %s, %s, %s, %s, %s, %s)", p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def enk_reader_node_store_dynamic_outer_worker(p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name,
-                                                   p_nod_recursion_level, p_nod_dependency_level, p_nod_master):
+    def enk_reader_node_store_dynamic_outer_worker(p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master):
         """
         Stores a node of type "dynamic outer worker" and selects the ID of the new node.
 
@@ -893,14 +864,11 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1(
-            "call enk_reader_node_store_dynamic_outer_worker(%s, %s, %s, %s, %s, %s, %s)", p_srv_id, p_uri_id,
-            p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_node_store_dynamic_outer_worker(%s, %s, %s, %s, %s, %s, %s)", p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def enk_reader_node_store_manual_trigger(p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level,
-                                             p_nod_dependency_level, p_nod_master):
+    def enk_reader_node_store_manual_trigger(p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master):
         """
         Stores a node of type "manual trigger" and selects the ID of the new node.
 
@@ -921,9 +889,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1(
-            "call enk_reader_node_store_manual_trigger(%s, %s, %s, %s, %s, %s, %s)", p_srv_id, p_uri_id,
-            p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_node_store_manual_trigger(%s, %s, %s, %s, %s, %s, %s)", p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -942,8 +908,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1("call enk_reader_node_store_schedule(%s, %s, %s, %s)", p_srv_id,
-                                                     p_uri_id, p_nod_name, p_nod_master)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_node_store_schedule(%s, %s, %s, %s)", p_srv_id, p_uri_id, p_nod_name, p_nod_master)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -962,13 +927,11 @@ class DataLayer(StaticDataLayer):
 
         :rtype: int
         """
-        return StaticDataLayer.execute_sp_none("call enk_reader_node_store_schedule_addendum(%s, %s, %s, %s)", p_srv_id,
-                                               p_nod_id_activate, p_nod_id_arrest, p_nod_id_schedule)
+        return StaticDataLayer.execute_sp_none("call enk_reader_node_store_schedule_addendum(%s, %s, %s, %s)", p_srv_id, p_nod_id_activate, p_nod_id_arrest, p_nod_id_schedule)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def enk_reader_node_store_terminator(p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level,
-                                         p_nod_dependency_level, p_nod_master):
+    def enk_reader_node_store_terminator(p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master):
         """
         Stores a node of type "terminator" and selects the ID of the new node.
 
@@ -989,9 +952,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1(
-            "call enk_reader_node_store_terminator(%s, %s, %s, %s, %s, %s, %s)", p_srv_id, p_uri_id, p_nod_id_parent,
-            p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_node_store_terminator(%s, %s, %s, %s, %s, %s, %s)", p_srv_id, p_uri_id, p_nod_id_parent, p_nod_name, p_nod_recursion_level, p_nod_dependency_level, p_nod_master)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -1008,8 +969,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1("call enk_reader_port_store_input_port(%s, %s, %s)", p_nod_id,
-                                                     p_uri_id, p_prt_name)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_port_store_input_port(%s, %s, %s)", p_nod_id, p_uri_id, p_prt_name)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -1026,8 +986,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1("call enk_reader_port_store_output_port(%s, %s, %s)", p_nod_id,
-                                                     p_uri_id, p_prt_name)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_port_store_output_port(%s, %s, %s)", p_nod_id, p_uri_id, p_prt_name)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -1061,9 +1020,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1(
-            "call enk_reader_resource_store_counting_resource(%s, %s, %s, %s, %s)", p_hst_id, p_nod_id, p_uri_id,
-            p_rsc_name, p_rsc_amount)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_resource_store_counting_resource(%s, %s, %s, %s, %s)", p_hst_id, p_nod_id, p_uri_id, p_rsc_name, p_rsc_amount)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -1082,9 +1039,7 @@ class DataLayer(StaticDataLayer):
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1(
-            "call enk_reader_resource_store_read_write_lock_resource(%s, %s, %s, %s)", p_hst_id, p_nod_id, p_uri_id,
-            p_rsc_name)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_resource_store_read_write_lock_resource(%s, %s, %s, %s)", p_hst_id, p_nod_id, p_uri_id, p_rsc_name)
 
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
@@ -1100,7 +1055,7 @@ If the schedule revision in ID is already loaded and up-to-date NULL is selected
 
         :rtype: *
         """
-        return StaticDataLayer.execute_sp_singleton1("call enk_reader_schedule_create_revision(%s, %s)", p_blb_id,
-                                                     p_node_name)
+        return StaticDataLayer.execute_sp_singleton1("call enk_reader_schedule_create_revision(%s, %s)", p_blb_id, p_node_name)
+
 
 # ----------------------------------------------------------------------------------------------------------------------

@@ -9,9 +9,8 @@ import logging
 import os
 import pwd
 import sys
-from configparser import ConfigParser
 
-import enarksh
+from enarksh.Config import Config
 from enarksh.event.Event import Event
 from enarksh.event.EventActor import EventActor
 from enarksh.logger.message.LogFileMessage import LogFileMessage
@@ -269,10 +268,9 @@ class JobHandler(EventActor):
         """
         Reads the user names under which enarksh is allowed to start processes.
         """
-        config = ConfigParser()
-        config.read(os.path.join(enarksh.HOME, 'etc/enarksh.cfg'))
+        config = Config.get()
 
-        JobHandler.__allowed_users = config.get('spawner', 'users').split()
+        JobHandler.__allowed_users = config.get_spawner_get_users()
 
     # ------------------------------------------------------------------------------------------------------------------
     def start_job(self):

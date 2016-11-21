@@ -5,12 +5,11 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-import os
 import smtplib
-from configparser import ConfigParser
 from email.mime.text import MIMEText
 
-import enarksh
+from enarksh.C import C
+from enarksh.Config import Config
 from enarksh.DataLayer import DataLayer
 from enarksh.controller.node import ScheduleNode
 from enarksh.controller.node.SimpleNode import SimpleNode
@@ -31,10 +30,8 @@ class MailOperatorEventHandler:
         :param str subject: The subject op the email.
         :param str body: The email body.
         """
-        config = ConfigParser()
-        config.read(os.path.join(enarksh.HOME, 'etc/enarksh.cfg'))
-
-        from_email = config.get('controller', 'email')
+        config = Config.get()
+        from_email = config.get_controller_email()
 
         # Concat To mail addresses
         to_email = ''
@@ -146,7 +143,7 @@ Greetings from Enarksh""".format(str(node['sch_name'], 'utf-8'))
         """
         del _event, _listener_data
 
-        if event_data[1]['rst_id'] == enarksh.ENK_RST_ID_ERROR:
+        if event_data[1]['rst_id'] == C.ENK_RST_ID_ERROR:
             MailOperatorEventHandler.__send_mail_simple_node_failed(event_data[1]['rnd_id'])
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -163,11 +160,11 @@ Greetings from Enarksh""".format(str(node['sch_name'], 'utf-8'))
 
         if event_data[0]['rst_id'] != event_data[1]['rst_id']:
             # If status is error send mail.
-            if event_data[1]['rst_id'] == enarksh.ENK_RST_ID_ERROR:
+            if event_data[1]['rst_id'] == C.ENK_RST_ID_ERROR:
                 MailOperatorEventHandler.__send_mail_schedule_node_failed(event_data[1]['rnd_id'])
 
             # If status is success send mail.
-            if event_data[1]['rst_id'] == enarksh.ENK_RST_ID_COMPLETED:
+            if event_data[1]['rst_id'] == C.ENK_RST_ID_COMPLETED:
                 MailOperatorEventHandler.__send_mail_schedule_node_success(event_data[1]['rnd_id'])
 
     # ------------------------------------------------------------------------------------------------------------------

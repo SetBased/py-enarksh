@@ -7,7 +7,7 @@ Licence MIT
 """
 import logging
 
-import enarksh
+from enarksh.C import C
 from enarksh.DataLayer import DataLayer
 from enarksh.controller.event_handler.NodeActionMessageBaseEventHandler import NodeActionMessageBaseEventHandler
 
@@ -31,11 +31,11 @@ class NagiosMessageEventHandler(NodeActionMessageBaseEventHandler):
 
         log = logging.getLogger('enarksh')
 
-        rst_count = {enarksh.ENK_RST_ID_COMPLETED: 0,
-                     enarksh.ENK_RST_ID_ERROR:     0,
-                     enarksh.ENK_RST_ID_QUEUED:    0,
-                     enarksh.ENK_RST_ID_RUNNING:   0,
-                     enarksh.ENK_RST_ID_WAITING:   0}
+        rst_count = {C.ENK_RST_ID_COMPLETED: 0,
+                     C.ENK_RST_ID_ERROR:     0,
+                     C.ENK_RST_ID_QUEUED:    0,
+                     C.ENK_RST_ID_RUNNING:   0,
+                     C.ENK_RST_ID_WAITING:   0}
 
         response = {'ret':       0,
                     'rst_count': rst_count,

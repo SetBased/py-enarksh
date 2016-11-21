@@ -9,7 +9,7 @@ import abc
 import logging
 from time import strftime, localtime
 
-import enarksh
+from enarksh.C import C
 from enarksh.DataLayer import DataLayer
 from enarksh.controller.StateChange import StateChange
 
@@ -18,17 +18,17 @@ class Node(StateChange, metaclass=abc.ABCMeta):
     """
     Abstract class for objects in the controller of type 'Node'.
     """
-    _rst_id_weight = {enarksh.ENK_RST_ID_RUNNING:   5,
-                      enarksh.ENK_RST_ID_QUEUED:    4,
-                      enarksh.ENK_RST_ID_ERROR:     3,
-                      enarksh.ENK_RST_ID_WAITING:   2,
-                      enarksh.ENK_RST_ID_COMPLETED: 1}
+    _rst_id_weight = {C.ENK_RST_ID_RUNNING:   5,
+                      C.ENK_RST_ID_QUEUED:    4,
+                      C.ENK_RST_ID_ERROR:     3,
+                      C.ENK_RST_ID_WAITING:   2,
+                      C.ENK_RST_ID_COMPLETED: 1}
 
-    _weight_rst_id = {5: enarksh.ENK_RST_ID_RUNNING,
-                      4: enarksh.ENK_RST_ID_QUEUED,
-                      3: enarksh.ENK_RST_ID_ERROR,
-                      2: enarksh.ENK_RST_ID_WAITING,
-                      1: enarksh.ENK_RST_ID_COMPLETED}
+    _weight_rst_id = {5: C.ENK_RST_ID_RUNNING,
+                      4: C.ENK_RST_ID_QUEUED,
+                      3: C.ENK_RST_ID_ERROR,
+                      2: C.ENK_RST_ID_WAITING,
+                      1: C.ENK_RST_ID_COMPLETED}
 
     event_new_node_creation = None
     """
@@ -191,13 +191,13 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         self.__rst_id_wrapper(rst_id)
 
         # Update the start datetime of this node.
-        if rst_id == enarksh.ENK_RST_ID_RUNNING:
+        if rst_id == C.ENK_RST_ID_RUNNING:
             if not self._rnd_datetime_start:
                 self._rnd_datetime_start = strftime("%Y-%m-%d %H:%M:%S", localtime())
             self._rnd_datetime_stop = None
 
         # Update the stop datetime of this node.
-        if old_rst_id != rst_id and rst_id in (enarksh.ENK_RST_ID_COMPLETED, enarksh.ENK_RST_ID_ERROR):
+        if old_rst_id != rst_id and rst_id in (C.ENK_RST_ID_COMPLETED, C.ENK_RST_ID_ERROR):
             self._rnd_datetime_stop = strftime("%Y-%m-%d %H:%M:%S", localtime())
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -267,21 +267,21 @@ class Node(StateChange, metaclass=abc.ABCMeta):
             count_not_completed = 0
             count_not_finished = 0
             for predecessor in self._predecessor_nodes:
-                if predecessor.rst_id != enarksh.ENK_RST_ID_COMPLETED:
+                if predecessor.rst_id != C.ENK_RST_ID_COMPLETED:
                     count_not_completed += 1
-                if predecessor.rst_id != enarksh.ENK_RST_ID_COMPLETED \
-                        and predecessor.rst_id != enarksh.ENK_RST_ID_ERROR:
+                if predecessor.rst_id != C.ENK_RST_ID_COMPLETED \
+                        and predecessor.rst_id != C.ENK_RST_ID_ERROR:
                     count_not_finished += 1
 
             if count_not_completed == 0:
                 # All predecessors have run status completed.
                 self._renew()
-                self.rst_id = enarksh.ENK_RST_ID_QUEUED
+                self.rst_id = C.ENK_RST_ID_QUEUED
 
-            if count_not_finished != 0 and self.rst_id != enarksh.ENK_RST_ID_WAITING:
+            if count_not_finished != 0 and self.rst_id != C.ENK_RST_ID_WAITING:
                 # A predecessors is been restarted.
                 self._renew()
-                self.rst_id = enarksh.ENK_RST_ID_WAITING
+                self.rst_id = C.ENK_RST_ID_WAITING
 
     # ------------------------------------------------------------------------------------------------------------------
     def child_node_event_state_change_handler(self, _event, _event_data, _listener_data):
@@ -324,9 +324,9 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         """
         If required renews this node, i.e. creates a new row in ENK_RUN_NODE.
         """
-        if self._rst_id in (enarksh.ENK_RST_ID_ERROR, enarksh.ENK_RST_ID_COMPLETED):
+        if self._rst_id in (C.ENK_RST_ID_ERROR, C.ENK_RST_ID_COMPLETED):
             self._rnd_id = DataLayer.enk_back_run_node_renew(self.rnd_id)
-            self._rst_id = enarksh.ENK_RST_ID_WAITING
+            self._rst_id = C.ENK_RST_ID_WAITING
             self._rnd_datetime_start = None
             self._rnd_datetime_stop = None
             self._exit_status = None

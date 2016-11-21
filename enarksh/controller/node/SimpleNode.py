@@ -5,7 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-import enarksh
+from enarksh.C import C
 from enarksh.controller.node.Node import Node
 
 
@@ -44,7 +44,7 @@ class SimpleNode(Node):
         self.acquire_resources()
 
         # Set the status of this node to running.
-        self.rst_id = enarksh.ENK_RST_ID_RUNNING
+        self.rst_id = C.ENK_RST_ID_RUNNING
 
         return True
 
@@ -63,16 +63,16 @@ class SimpleNode(Node):
 
         # Update the run status of this node based on the exit status of the job.
         if exit_status == 0:
-            self.rst_id = enarksh.ENK_RST_ID_COMPLETED
+            self.rst_id = C.ENK_RST_ID_COMPLETED
         else:
-            self.rst_id = enarksh.ENK_RST_ID_ERROR
+            self.rst_id = C.ENK_RST_ID_ERROR
 
     # ------------------------------------------------------------------------------------------------------------------
     def restart(self):
         """
         Restart this node and its successors.
         """
-        if self._rst_id in (enarksh.ENK_RST_ID_ERROR, enarksh.ENK_RST_ID_COMPLETED):
+        if self._rst_id in (C.ENK_RST_ID_ERROR, C.ENK_RST_ID_COMPLETED):
             self._renew()
             self._recompute_run_status()
 
@@ -81,7 +81,7 @@ class SimpleNode(Node):
         """
         Restart this node.
         """
-        if self._rst_id == enarksh.ENK_RST_ID_ERROR:
+        if self._rst_id == C.ENK_RST_ID_ERROR:
             self._renew()
             self._recompute_run_status()
         else:

@@ -1,4 +1,4 @@
-import enarksh
+from enarksh.C import C
 from enarksh.controller.consumption.Consumption import Consumption
 from enarksh.controller.consumption.CountingConsumption import CountingConsumption
 from enarksh.controller.consumption.ReadWriteLockConsumption import ReadWriteLockConsumption
@@ -15,10 +15,10 @@ def create_consumption(data, host_resources, schedule_resources):
 
     :rtype: enarksh.controller.consumption.Consumption.Consumption
     """
-    if data['ctp_id'] == enarksh.ENK_CTP_ID_COUNTING:
+    if data['ctp_id'] == C.ENK_CTP_ID_COUNTING:
         return CountingConsumption(data, host_resources, schedule_resources)
 
-    if data['ctp_id'] == enarksh.ENK_CTP_ID_READ_WRITE:
+    if data['ctp_id'] == C.ENK_CTP_ID_READ_WRITE:
         return ReadWriteLockConsumption(data, host_resources, schedule_resources)
 
     raise Exception("Unexpected consumption type ID '%s'.", data['ctp_id'])

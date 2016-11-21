@@ -1,4 +1,4 @@
-import enarksh
+from enarksh.C import C
 from enarksh.xml_reader.resource.CountingResource import CountingResource
 from enarksh.xml_reader.resource.ReadWriteLockResource import ReadWriteLockResource
 from enarksh.xml_reader.resource.Resource import Resource
@@ -15,10 +15,10 @@ def create_resource(rtp_id, rsc_id, node):
 
     :rtype: enarksh.xml_reader.resource.Resource.Resource
     """
-    if rtp_id == enarksh.ENK_RTP_ID_COUNTING:
+    if rtp_id == C.ENK_RTP_ID_COUNTING:
         resource = CountingResource(node)
 
-    elif rtp_id == enarksh.ENK_RTP_ID_READ_WRITE:
+    elif rtp_id == C.ENK_RTP_ID_READ_WRITE:
         resource = ReadWriteLockResource(node)
 
     else:

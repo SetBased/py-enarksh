@@ -5,7 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-import enarksh
+from enarksh.C import C
 from enarksh.controller.node.SimpleNode import SimpleNode
 
 
@@ -22,8 +22,8 @@ class ActivateNode(SimpleNode):
         :rtype: bool
         """
         self._exit_status = 0
-        self.rst_id = enarksh.ENK_RST_ID_RUNNING
-        self.rst_id = enarksh.ENK_RST_ID_COMPLETED
+        self.rst_id = C.ENK_RST_ID_RUNNING
+        self.rst_id = C.ENK_RST_ID_COMPLETED
 
         return False
 

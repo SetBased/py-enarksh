@@ -5,7 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-import enarksh
+from enarksh.C import C
 from enarksh.controller.Schedule import Schedule
 
 
@@ -45,7 +45,7 @@ class NodeActionMessageBaseEventHandler:
                 # reloading the schedule. So, resend the trigger.
                 schedule.request_node_action(schedule.get_activate_node().rnd_id, act_id)
 
-            if act_id == enarksh.ENK_ACT_ID_TRIGGER:
+            if act_id == C.ENK_ACT_ID_TRIGGER:
                 response['new_run'] = 1
 
 # ----------------------------------------------------------------------------------------------------------------------

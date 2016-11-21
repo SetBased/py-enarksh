@@ -13,6 +13,8 @@ import pwd
 import zmq
 
 import enarksh
+from enarksh.Config import Config
+from enarksh.Credentials import Credentials
 from enarksh.DataLayer import DataLayer
 from enarksh.controller import resource
 from enarksh.controller.Schedule import Schedule
@@ -116,12 +118,14 @@ class Controller(EventActor):
         """
         self.__log.info('Starting controller')
 
+        credentials = Credentials.get()
+
         # Set database configuration options.
-        DataLayer.config['host'] = enarksh.MYSQL_HOSTNAME
-        DataLayer.config['user'] = enarksh.MYSQL_USERNAME
-        DataLayer.config['password'] = enarksh.MYSQL_PASSWORD
-        DataLayer.config['database'] = enarksh.MYSQL_SCHEMA
-        DataLayer.config['port'] = enarksh.MYSQL_PORT
+        DataLayer.config['host'] = credentials.get_host()
+        DataLayer.config['user'] = credentials.get_user()
+        DataLayer.config['password'] = credentials.get_password()
+        DataLayer.config['database'] = credentials.get_database()
+        DataLayer.config['port'] = credentials.get_port()
         DataLayer.config['autocommit'] = False
 
         # Connect to the MySQL.
@@ -226,17 +230,19 @@ class Controller(EventActor):
         """
         Registers ZMQ sockets for communication with other processes in Enarksh.
         """
-        # Register socket for receiving asynchronous incoming messages.
-        self.message_controller.register_end_point('pull', zmq.PULL, enarksh.CONTROLLER_PULL_END_POINT)
+        config = Config.get()
 
-        # Create socket for lockstep incoming messages.       .
-        self.message_controller.register_end_point('lockstep', zmq.REP, enarksh.CONTROLLER_LOCKSTEP_END_POINT)
+        # Register socket for receiving asynchronous incoming messages.
+        self.message_controller.register_end_point('pull', zmq.PULL, config.get_controller_pull_end_point())
+
+        # Create socket for lockstep incoming messages.
+        self.message_controller.register_end_point('lockstep', zmq.REP, config.get_controller_lockstep_end_point())
 
         # Create socket for sending asynchronous messages to the spanner.
-        self.message_controller.register_end_point('spawner', zmq.PUSH, enarksh.SPAWNER_PULL_END_POINT)
+        self.message_controller.register_end_point('spawner', zmq.PUSH, config.get_spawner_pull_end_point())
 
         # Create socket for sending asynchronous messages to the logger.
-        self.message_controller.register_end_point('logger', zmq.PUSH, enarksh.LOGGER_PULL_END_POINT)
+        self.message_controller.register_end_point('logger', zmq.PUSH, config.get_logger_pull_end_point())
 
     # ------------------------------------------------------------------------------------------------------------------
     def __register_message_types(self):

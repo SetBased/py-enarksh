@@ -9,8 +9,8 @@ import os
 
 from cleo import Command
 
-import enarksh
 from enarksh.Bootsrap import Bootstrap
+from enarksh.C import C
 from enarksh.style.EnarkshStyle import EnarkshStyle
 
 
@@ -28,7 +28,7 @@ class BootstrapCommand(Command):
         """
         self.output = EnarkshStyle(self.input, self.output)
 
-        os.chdir(enarksh.HOME)
+        os.chdir(C.HOME)
 
         bootstrap = Bootstrap()
         bootstrap.main()

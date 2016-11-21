@@ -11,7 +11,8 @@ import sys
 
 from pystratum_mysql.StaticDataLayer import StaticDataLayer
 
-import enarksh
+from enarksh.C import C
+from enarksh.Credentials import Credentials
 from enarksh.DataLayer import DataLayer
 
 
@@ -77,7 +78,7 @@ class Bootstrap:
         """
         print("Executing script '%s'." % filename)
 
-        file = open(os.path.join(enarksh.HOME, filename), 'rt', encoding=encoding)
+        file = open(os.path.join(C.HOME, filename), 'rt', encoding=encoding)
         sql = file.read()
         file.close()
 
@@ -104,7 +105,7 @@ class Bootstrap:
         sys.stdout.flush()
         sys.stderr.flush()
 
-        ret = subprocess.call(['pystratum', 'stratum', os.path.join(enarksh.HOME, 'etc/stratum.cfg')])
+        ret = subprocess.call(['pystratum', 'stratum', os.path.join(C.HOME, 'etc/stratum.cfg')])
         if ret != 0:
             raise RuntimeError('Error loading stored procedures and user defined functions.')
 
@@ -113,12 +114,14 @@ class Bootstrap:
         """
         Bootstrap the database for our WOB enarksh. Removes all database objects and (re)creates all databases objects.
         """
+        credentials = Credentials.get()
+
         # Set database configuration options.
-        DataLayer.config['host'] = enarksh.MYSQL_HOSTNAME
-        DataLayer.config['user'] = enarksh.MYSQL_USERNAME
-        DataLayer.config['password'] = enarksh.MYSQL_PASSWORD
-        DataLayer.config['database'] = enarksh.MYSQL_SCHEMA
-        DataLayer.config['port'] = enarksh.MYSQL_PORT
+        DataLayer.config['host'] = credentials.get_host()
+        DataLayer.config['user'] = credentials.get_user()
+        DataLayer.config['password'] = credentials.get_password()
+        DataLayer.config['database'] = credentials.get_database()
+        DataLayer.config['port'] = credentials.get_port()
         DataLayer.config['autocommit'] = False
 
         # Connect to the MySQL.

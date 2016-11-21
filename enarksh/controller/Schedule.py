@@ -8,7 +8,7 @@ Licence MIT
 import functools
 import logging
 
-import enarksh
+from enarksh.C import C
 from enarksh.DataLayer import DataLayer
 from enarksh.controller import consumption
 from enarksh.controller import resource
@@ -261,7 +261,7 @@ class Schedule(EventActor):
                 direct_lookup[node_data['rnd_id']] = []
                 if node_data['rnd_id'] in node_ports_data:
                     for port in node_ports_data[node_data['rnd_id']]:
-                        if port['ptt_id'] == enarksh.ENK_PTT_ID_OUTPUT:
+                        if port['ptt_id'] == C.ENK_PTT_ID_OUTPUT:
                             if port['prt_id'] in dependants_data:
                                 for edge in dependants_data[port['prt_id']]:
                                     rnd_id = ports_data[edge['prt_id_dependant']]['rnd_id']
@@ -395,15 +395,15 @@ class Schedule(EventActor):
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
     def get_response_template():
-        actions = {enarksh.ENK_ACT_ID_TRIGGER:        {'act_id':      enarksh.ENK_ACT_ID_TRIGGER,
-                                                       'act_title':   'Trigger',
-                                                       'act_enabled': False},
-                   enarksh.ENK_ACT_ID_RESTART:        {'act_id':      enarksh.ENK_ACT_ID_RESTART,
-                                                       'act_title':   'Restart',
-                                                       'act_enabled': False},
-                   enarksh.ENK_ACT_ID_RESTART_FAILED: {'act_id':      enarksh.ENK_ACT_ID_RESTART_FAILED,
-                                                       'act_title':   'Restart Failed',
-                                                       'act_enabled': False}}
+        actions = {C.ENK_ACT_ID_TRIGGER:        {'act_id':      C.ENK_ACT_ID_TRIGGER,
+                                                 'act_title':   'Trigger',
+                                                 'act_enabled': False},
+                   C.ENK_ACT_ID_RESTART:        {'act_id':      C.ENK_ACT_ID_RESTART,
+                                                 'act_title':   'Restart',
+                                                 'act_enabled': False},
+                   C.ENK_ACT_ID_RESTART_FAILED: {'act_id':      C.ENK_ACT_ID_RESTART_FAILED,
+                                                 'act_title':   'Restart Failed',
+                                                 'act_enabled': False}}
 
         return {'actions':            actions,
                 'mail_on_completion': False,
@@ -431,27 +431,27 @@ class Schedule(EventActor):
 
         if self.__schedule_node.rnd_id == rnd_id:
             # Node rnd_id is the schedule it self.
-            if rst_id == enarksh.ENK_RST_ID_WAITING:
-                response['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
-                errors = self.__test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_ERROR,), set())
+            if rst_id == C.ENK_RST_ID_WAITING:
+                response['actions'][C.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
+                errors = self.__test_node_run_status_of_successor(rnd_id, (C.ENK_RST_ID_ERROR,), set())
                 if errors:
-                    response['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
+                    response['actions'][C.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
 
-            elif rst_id == enarksh.ENK_RST_ID_QUEUED:
+            elif rst_id == C.ENK_RST_ID_QUEUED:
                 # No actions are possible.
                 pass
 
-            elif rst_id == enarksh.ENK_RST_ID_RUNNING:
-                errors = self.__test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_ERROR,), set())
+            elif rst_id == C.ENK_RST_ID_RUNNING:
+                errors = self.__test_node_run_status_of_successor(rnd_id, (C.ENK_RST_ID_ERROR,), set())
                 if errors:
-                    response['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
+                    response['actions'][C.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
 
-            elif rst_id == enarksh.ENK_RST_ID_COMPLETED:
-                response['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
+            elif rst_id == C.ENK_RST_ID_COMPLETED:
+                response['actions'][C.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
 
-            elif rst_id == enarksh.ENK_RST_ID_ERROR:
-                response['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
-                response['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
+            elif rst_id == C.ENK_RST_ID_ERROR:
+                response['actions'][C.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
+                response['actions'][C.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
 
             else:
                 raise Exception("Unexpected rst_id '%s'." % rst_id)
@@ -460,10 +460,10 @@ class Schedule(EventActor):
 
         if self.__activate_node.rnd_id == rnd_id:
             # Node rnd_id is the trigger of the schedule.
-            busy = self.__test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_RUNNING,
-                                                                     enarksh.ENK_RST_ID_QUEUED), set())
+            busy = self.__test_node_run_status_of_successor(rnd_id, (C.ENK_RST_ID_RUNNING,
+                                                                     C.ENK_RST_ID_QUEUED), set())
             if not busy:
-                response['actions'][enarksh.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
+                response['actions'][C.ENK_ACT_ID_TRIGGER]['act_enabled'] = True
 
             return response
 
@@ -472,37 +472,37 @@ class Schedule(EventActor):
             return response
 
         # Node is not an activate node nor an arrest node of the schedule.
-        if rst_id == enarksh.ENK_RST_ID_WAITING:
+        if rst_id == C.ENK_RST_ID_WAITING:
             # Node is waiting for 1 or more predecessors are completed.
             # No actions are possible.
             pass
 
-        elif rst_id == enarksh.ENK_RST_ID_QUEUED:
+        elif rst_id == C.ENK_RST_ID_QUEUED:
             # All predecessor are completed, but node is waiting for resources become available.
             # No actions are possible.
             pass
 
-        elif rst_id == enarksh.ENK_RST_ID_RUNNING:
+        elif rst_id == C.ENK_RST_ID_RUNNING:
             # Node is running.
             # No actions are possible for simple nodes.
             if node.is_complex_node():
-                errors = self.__test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_ERROR,), set())
+                errors = self.__test_node_run_status_of_successor(rnd_id, (C.ENK_RST_ID_ERROR,), set())
                 if errors:
-                    response['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
+                    response['actions'][C.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
 
-        elif rst_id == enarksh.ENK_RST_ID_COMPLETED:
+        elif rst_id == C.ENK_RST_ID_COMPLETED:
             # Node has completed successfully.
-            busy = self.__test_node_run_status_of_successor(rnd_id, (enarksh.ENK_RST_ID_RUNNING,), set())
+            busy = self.__test_node_run_status_of_successor(rnd_id, (C.ENK_RST_ID_RUNNING,), set())
             if not busy:
-                response['actions'][enarksh.ENK_ACT_ID_RESTART]['act_enabled'] = True
+                response['actions'][C.ENK_ACT_ID_RESTART]['act_enabled'] = True
 
-        elif rst_id == enarksh.ENK_RST_ID_ERROR:
+        elif rst_id == C.ENK_RST_ID_ERROR:
             if node.is_complex_node():
-                response['actions'][enarksh.ENK_ACT_ID_RESTART]['act_enabled'] = True
-                response['actions'][enarksh.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
+                response['actions'][C.ENK_ACT_ID_RESTART]['act_enabled'] = True
+                response['actions'][C.ENK_ACT_ID_RESTART_FAILED]['act_enabled'] = True
 
             elif node.is_simple_node():
-                response['actions'][enarksh.ENK_ACT_ID_RESTART]['act_enabled'] = True
+                response['actions'][C.ENK_ACT_ID_RESTART]['act_enabled'] = True
 
             else:
                 raise Exception('Internal error.')
@@ -588,6 +588,7 @@ class Schedule(EventActor):
         del _listener_data
 
         node = event.source
+        ":type: enarksh.controller.node.Node.Node"
         old, new = event_data
 
         # If required: sync the status of the node to the database.
@@ -596,17 +597,17 @@ class Schedule(EventActor):
 
         # If required: update the queue.
         if old['rst_id'] != new['rst_id'] and node.is_simple_node():
-            if new['rst_id'] == enarksh.ENK_RST_ID_QUEUED:
+            if new['rst_id'] == C.ENK_RST_ID_QUEUED:
                 self.__queue.add(node)
-            elif old['rst_id'] == enarksh.ENK_RST_ID_QUEUED:
+            elif old['rst_id'] == C.ENK_RST_ID_QUEUED:
                 self.__queue.discard(node)
 
         # Adjust the schedule load (i.e. number of running nodes) of this schedule.
         if node.is_simple_node():
             if old['rst_id'] != new['rst_id']:
-                if new['rst_id'] == enarksh.ENK_RST_ID_RUNNING:
+                if new['rst_id'] == C.ENK_RST_ID_RUNNING:
                     self.__schedule_load += 1
-                if old['rst_id'] == enarksh.ENK_RST_ID_RUNNING:
+                if old['rst_id'] == C.ENK_RST_ID_RUNNING:
                     self.__schedule_load -= 1
 
         # Adjust all mappings from rnd_id.
@@ -624,7 +625,7 @@ class Schedule(EventActor):
 
         # If the schedule has terminated inform all observer of this event.
         if node == self.__schedule_node and old['rst_id'] != new['rst_id']:
-            if new['rst_id'] in (enarksh.ENK_RST_ID_ERROR, enarksh.ENK_RST_ID_COMPLETED):
+            if new['rst_id'] in (C.ENK_RST_ID_ERROR, C.ENK_RST_ID_COMPLETED):
                 self.event_schedule_termination.fire(new['rst_id'])
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -638,6 +639,7 @@ class Schedule(EventActor):
         del _event_data, _listener_data
 
         rsc = event.source
+        ":type: enarksh.controller.resource.Resource.Resource"
         rsc.sync_state()
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -681,17 +683,17 @@ class Schedule(EventActor):
         """
         if self.__schedule_node.rnd_id == rnd_id:
             # Node is the schedule is self.
-            if act_id == enarksh.ENK_ACT_ID_TRIGGER:
+            if act_id == C.ENK_ACT_ID_TRIGGER:
                 return self.__node_action_trigger_schedule()
 
-            if act_id == enarksh.ENK_ACT_ID_RESTART_FAILED:
+            if act_id == C.ENK_ACT_ID_RESTART_FAILED:
                 return self.__node_action_restart_failed(rnd_id)
 
             raise RuntimeError("Unknown or unsupported act_id '%s'." % act_id)
 
         if self.__activate_node.rnd_id == rnd_id:
             # Node is the activate node of the schedule.
-            if act_id == enarksh.ENK_ACT_ID_TRIGGER:
+            if act_id == C.ENK_ACT_ID_TRIGGER:
                 return self.__node_action_trigger_schedule()
 
             raise RuntimeError("Unknown or unsupported act_id '%s'." % act_id)
@@ -701,10 +703,10 @@ class Schedule(EventActor):
             raise RuntimeError("Unknown or unsupported act_id '%s'." % act_id)
 
         # Node is a "normal" node in the schedule.
-        if act_id == enarksh.ENK_ACT_ID_RESTART:
+        if act_id == C.ENK_ACT_ID_RESTART:
             return self.__node_action_restart(rnd_id)
 
-        if act_id == enarksh.ENK_ACT_ID_RESTART_FAILED:
+        if act_id == C.ENK_ACT_ID_RESTART_FAILED:
             return self.__node_action_restart_failed(rnd_id)
 
         raise RuntimeError("Unknown or unsupported act_id '%s'." % act_id)
@@ -715,8 +717,8 @@ class Schedule(EventActor):
         """
         Compares two nodes for sorting queued nodes.
 
-        :param enarksh.controller.node.Node node1:
-        :param enarksh.controller.node.Node node2:
+        :param enarksh.controller.node.Node.Node node1: The first node.
+        :param enarksh.controller.node.Node.Node node2: The second node.
 
         :rtype: int
         """

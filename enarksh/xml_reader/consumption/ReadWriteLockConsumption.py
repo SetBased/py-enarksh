@@ -5,7 +5,7 @@ Copyright 2013-2016 Set Based IT Consultancy
 
 Licence MIT
 """
-import enarksh
+from enarksh.C import C
 from enarksh.DataLayer import DataLayer
 from enarksh.xml_reader.consumption.Consumption import Consumption
 
@@ -42,10 +42,10 @@ class ReadWriteLockConsumption(Consumption):
         if tag == 'Mode':
             mode = xml.text
             if mode == 'read':
-                self.rws_id = enarksh.ENK_RWS_ID_READ
+                self.rws_id = C.ENK_RWS_ID_READ
 
             elif mode == 'write':
-                self.rws_id = enarksh.ENK_RWS_ID_WRITE
+                self.rws_id = C.ENK_RWS_ID_WRITE
 
             else:
                 raise Exception("Unexpected mode '{0!s}'.".format(mode))

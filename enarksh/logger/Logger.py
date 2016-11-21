@@ -12,6 +12,8 @@ import pwd
 import zmq
 
 import enarksh
+from enarksh.Config import Config
+from enarksh.Credentials import Credentials
 from enarksh.DataLayer import DataLayer
 from enarksh.event.EventController import EventController
 from enarksh.logger.event_handler.HaltMessageEventHandler import HaltMessageEventHandler
@@ -57,11 +59,13 @@ class Logger:
         """
         The main of the logger.
         """
+        config = Config.get()
+
         # Startup logger.
         self.__startup()
 
         # Register our socket for asynchronous incoming messages.
-        self.__message_controller.register_end_point('pull', zmq.PULL, enarksh.LOGGER_PULL_END_POINT)
+        self.__message_controller.register_end_point('pull', zmq.PULL, config.get_logger_pull_end_point())
 
         # Register supported message types
         self.__message_controller.register_message_type(HaltMessage.MESSAGE_TYPE)
@@ -103,16 +107,18 @@ class Logger:
         """
         Performs the necessary actions for starting up the logger.
         """
+        credentials = Credentials.get()
+
         self.__log.info('Starting logger')
 
         # Set the effective user and group to an unprivileged user and group.
         self.__set_unprivileged_user()
 
         # Set database configuration options.
-        DataLayer.config['host'] = enarksh.MYSQL_HOSTNAME
-        DataLayer.config['user'] = enarksh.MYSQL_USERNAME
-        DataLayer.config['password'] = enarksh.MYSQL_PASSWORD
-        DataLayer.config['database'] = enarksh.MYSQL_SCHEMA
-        DataLayer.config['port'] = enarksh.MYSQL_PORT
+        DataLayer.config['host'] = credentials.get_host()
+        DataLayer.config['user'] = credentials.get_user()
+        DataLayer.config['password'] = credentials.get_password()
+        DataLayer.config['database'] = credentials.get_database()
+        DataLayer.config['port'] = credentials.get_port()
 
 # ----------------------------------------------------------------------------------------------------------------------

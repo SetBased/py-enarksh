@@ -10,6 +10,8 @@ import os
 import zmq
 
 import enarksh
+from enarksh.C import C
+from enarksh.Config import Config
 from enarksh.controller.message.NagiosMessage import NagiosMessage
 
 
@@ -25,14 +27,14 @@ class NagiosClient:
 
         :param enarksh.style.EnarkshStyle.EnarkshStyle io: The output decorator.
         """
-        self._zmq_context = None
+        self.__zmq_context = None
         """
         The ZMQ context.
 
         :type: Context
         """
 
-        self._zmq_controller = None
+        self.__zmq_controller = None
         """
         The socket for communicating with the controller.
 
@@ -78,7 +80,9 @@ class NagiosClient:
         :rtype: str|None
         """
         try:
-            pid_file = os.path.join(enarksh.HOME, 'var/lock', daemon + '.pid')
+            config = Config.get()
+
+            pid_file = os.path.join(C.HOME, config.get_enarksh_lock_dir(), daemon + '.pid')
             with open(pid_file) as handle:
                 pid = handle.read(1000)
 
@@ -138,26 +142,26 @@ class NagiosClient:
         message = NagiosMessage()
 
         # Send the message to the controller.
-        self._zmq_controller.send_pyobj(message)
+        self.__zmq_controller.send_pyobj(message)
 
         # Await the response from the controller.
-        response = self._zmq_controller.recv_pyobj()
+        response = self.__zmq_controller.recv_pyobj()
 
         self.__performance_data += 'schedules={}, waiting={}, queued={}, running={}, completed={}, error={}'. \
             format(response['sch_count'],
-                   response['rst_count'][enarksh.ENK_RST_ID_WAITING],
-                   response['rst_count'][enarksh.ENK_RST_ID_QUEUED],
-                   response['rst_count'][enarksh.ENK_RST_ID_RUNNING],
-                   response['rst_count'][enarksh.ENK_RST_ID_COMPLETED],
-                   response['rst_count'][enarksh.ENK_RST_ID_ERROR])
+                   response['rst_count'][C.ENK_RST_ID_WAITING],
+                   response['rst_count'][C.ENK_RST_ID_QUEUED],
+                   response['rst_count'][C.ENK_RST_ID_RUNNING],
+                   response['rst_count'][C.ENK_RST_ID_COMPLETED],
+                   response['rst_count'][C.ENK_RST_ID_ERROR])
 
         self.__message += 'Schedules = {}, Waiting = {}, Queued = {}, Running = {}, Completed = {}, Error = {}'. \
             format(response['sch_count'],
-                   response['rst_count'][enarksh.ENK_RST_ID_WAITING],
-                   response['rst_count'][enarksh.ENK_RST_ID_QUEUED],
-                   response['rst_count'][enarksh.ENK_RST_ID_RUNNING],
-                   response['rst_count'][enarksh.ENK_RST_ID_COMPLETED],
-                   response['rst_count'][enarksh.ENK_RST_ID_ERROR])
+                   response['rst_count'][C.ENK_RST_ID_WAITING],
+                   response['rst_count'][C.ENK_RST_ID_QUEUED],
+                   response['rst_count'][C.ENK_RST_ID_RUNNING],
+                   response['rst_count'][C.ENK_RST_ID_COMPLETED],
+                   response['rst_count'][C.ENK_RST_ID_ERROR])
 
     # ------------------------------------------------------------------------------------------------------------------
     def main(self):
@@ -165,7 +169,7 @@ class NagiosClient:
         The main function of Nagios.
         """
         # Initialize ZMQ.
-        self._zmq_init()
+        self.__zmq_init()
 
         self.__test_daemons_are_running()
 
@@ -177,14 +181,16 @@ class NagiosClient:
         return self.__state
 
     # ------------------------------------------------------------------------------------------------------------------
-    def _zmq_init(self):
+    def __zmq_init(self):
         """
         Initializes ZMQ.
         """
-        self._zmq_context = zmq.Context()
+        config = Config.get()
+
+        self.__zmq_context = zmq.Context()
 
         # Create socket for communicating with the controller.
-        self._zmq_controller = self._zmq_context.socket(zmq.REQ)
-        self._zmq_controller.connect(enarksh.CONTROLLER_LOCKSTEP_END_POINT)
+        self.__zmq_controller = self.__zmq_context.socket(zmq.REQ)
+        self.__zmq_controller.connect(config.get_controller_lockstep_end_point())
 
 # ----------------------------------------------------------------------------------------------------------------------

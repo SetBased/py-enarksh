@@ -10,7 +10,8 @@ import os
 import zmq
 from cleo import Command
 
-import enarksh
+from enarksh.C import C
+from enarksh.Config import Config
 from enarksh.message.HaltMessage import HaltMessage
 from enarksh.style.EnarkshStyle import EnarkshStyle
 
@@ -38,9 +39,7 @@ class HaltCommand(Command):
         :type: Context
         """
 
-        self.__end_points = {'controller': enarksh.CONTROLLER_PULL_END_POINT,
-                             'logger':     enarksh.LOGGER_PULL_END_POINT,
-                             'spawner':    enarksh.SPAWNER_PULL_END_POINT}
+        self.__end_points = {}
         """
         The end points of the Enarksh daemons.
 
@@ -48,7 +47,17 @@ class HaltCommand(Command):
         """
 
     # ------------------------------------------------------------------------------------------------------------------
+    def __read_config(self):
+        """
+        Reads the pull end point of the controller, logger, and spawner.
+        """
+        config = Config.get()
 
+        self.__end_points['controller'] = config.get_controller_pull_end_point()
+        self.__end_points['logger'] = config.get_logger_pull_end_point()
+        self.__end_points['spawner'] = config.get_spawner_pull_end_point()
+
+    # ------------------------------------------------------------------------------------------------------------------
     def __zmq_init(self):
         """
         Initializes ZMQ.
@@ -62,8 +71,9 @@ class HaltCommand(Command):
         """
         self.output = EnarkshStyle(self.input, self.output)
 
-        os.chdir(enarksh.HOME)
+        os.chdir(C.HOME)
 
+        self.__read_config()
         self.__zmq_init()
 
         daemon = self.input.get_argument('daemon')

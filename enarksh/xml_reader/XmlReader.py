@@ -10,7 +10,7 @@ import os
 
 from lxml import etree
 
-import enarksh
+from enarksh.C import C
 from enarksh.xml_reader.Host import Host
 from enarksh.xml_reader.node import create_node
 
@@ -27,7 +27,7 @@ class XmlReader:
 
         :rtype: enarksh.xml_reader.node.ScheduleNode
         """
-        with open(os.path.join(enarksh.HOME, 'etc/enarksh.xsd'), 'rb') as f:
+        with open(os.path.join(C.HOME, 'etc/enarksh.xsd'), 'rb') as f:
             xsd = f.read()
 
         etree.clear_error_log()
@@ -68,7 +68,7 @@ class XmlReader:
 
         :rtype: enarksh.xml_reader.node.CompoundJobNode
         """
-        with open(os.path.join(enarksh.HOME, 'etc/enarksh.xsd'), 'rb') as f:
+        with open(os.path.join(C.HOME, 'etc/enarksh.xsd'), 'rb') as f:
             xsd = f.read()
 
         schema_root = etree.XML(xsd)
@@ -104,7 +104,7 @@ class XmlReader:
         with open(filename, 'rt', encoding='utf-8') as f:
             xml = f.read()
 
-        with open(os.path.join(enarksh.HOME, 'etc/enarksh.xsd'), 'rb') as f:
+        with open(os.path.join(C.HOME, 'etc/enarksh.xsd'), 'rb') as f:
             xsd = f.read()
 
         schema_root = etree.XML(xsd)

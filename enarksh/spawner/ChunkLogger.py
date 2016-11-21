@@ -7,7 +7,7 @@ Licence MIT
 """
 import os
 
-import enarksh
+from enarksh.C import C
 
 
 class ChunkLogger:
@@ -40,7 +40,7 @@ class ChunkLogger:
         :type: int
         """
 
-        self.__buffer = bytearray(b' ' * enarksh.CHUNK_SIZE)
+        self.__buffer = bytearray(b' ' * C.CHUNK_SIZE)
         """
         The buffer.
 
@@ -91,7 +91,7 @@ class ChunkLogger:
         """
         ChunkLogger.__file_count += 1
 
-        return os.path.join(enarksh.HOME, 'var/lib/logger', '{0:010d}.log'.format(ChunkLogger.__file_count))
+        return os.path.join(C.HOME, 'var/lib/logger', '{0:010d}.log'.format(ChunkLogger.__file_count))
 
     # ------------------------------------------------------------------------------------------------------------------
     def write(self, buffer):
@@ -104,14 +104,14 @@ class ChunkLogger:
         pos = 0
 
         while bytes_remaining > 0:
-            size = min(bytes_remaining, enarksh.CHUNK_SIZE - self.__position)
+            size = min(bytes_remaining, C.CHUNK_SIZE - self.__position)
             self.__buffer[self.__position:self.__position + size] = buffer[pos:pos + size]
 
             if size < bytes_remaining:
                 if self.__chunk_count == 0:
                     self.__filename1 = self.__get_filename()
                     with open(self.__filename1, "wb") as file:
-                        file.write(self.__buffer[:enarksh.CHUNK_SIZE])
+                        file.write(self.__buffer[:C.CHUNK_SIZE])
 
                 self.__position = 0
                 self.__chunk_count += 1
@@ -128,7 +128,7 @@ class ChunkLogger:
 
         :rtype: int
         """
-        return self.__chunk_count * enarksh.CHUNK_SIZE + self.__position
+        return self.__chunk_count * C.CHUNK_SIZE + self.__position
 
     # ------------------------------------------------------------------------------------------------------------------
     def close(self):
@@ -147,7 +147,7 @@ class ChunkLogger:
                 self.__filename2 = self.__get_filename()
                 with open(self.__filename2, "wb") as file:
                     if self.__chunk_count >= 2:
-                        file.write(self.__buffer[self.__position:enarksh.CHUNK_SIZE])
+                        file.write(self.__buffer[self.__position:C.CHUNK_SIZE])
                     file.write(self.__buffer[:self.__position])
                     file.close()
 

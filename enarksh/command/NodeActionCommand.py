@@ -7,7 +7,7 @@ Licence MIT
 """
 from cleo import Command
 
-import enarksh
+from enarksh.C import C
 from enarksh.controller.client.NodeActionClient import NodeActionClient
 from enarksh.style.EnarkshStyle import EnarkshStyle
 
@@ -30,11 +30,11 @@ class NodeActionCommand(Command):
 
         action = self.input.get_argument('action')
         if action == 'trigger':
-            act_id = enarksh.ENK_ACT_ID_TRIGGER
+            act_id = C.ENK_ACT_ID_TRIGGER
         elif action == 'restart':
-            act_id = enarksh.ENK_ACT_ID_RESTART
+            act_id = C.ENK_ACT_ID_RESTART
         elif action == 'restart_failed':
-            act_id = enarksh.ENK_ACT_ID_RESTART_FAILED
+            act_id = C.ENK_ACT_ID_RESTART_FAILED
         else:
             raise RuntimeError("Unknown action '{}'".format(action))
 
