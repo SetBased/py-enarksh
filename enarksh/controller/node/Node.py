@@ -53,7 +53,7 @@ class Node(StateChange, metaclass=abc.ABCMeta):
         :type: int
         """
 
-        self._node_name = str(node_data['nod_name'], 'utf-8')  # @todo XXX DataLayer encoding issue
+        self._node_name = node_data['nod_name']
         """
         The name of this node.
 

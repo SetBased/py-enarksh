@@ -48,7 +48,7 @@ class CountingResource(Resource):
         details = DataLayer.enk_reader_resource_load_resource(rsc_id)
 
         self._rsc_id = rsc_id
-        self._resource_name = str(details['rsc_name'], 'utf8')  # @todo XXX DL issue
+        self._resource_name = details['rsc_name']
         self._amount = details['rsc_amount']
 
     # ------------------------------------------------------------------------------------------------------------------

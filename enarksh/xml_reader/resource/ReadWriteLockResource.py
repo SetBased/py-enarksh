@@ -24,7 +24,7 @@ class ReadWriteLockResource(Resource):
         details = DataLayer.enk_reader_resource_load_resource(rsc_id)
 
         self._rsc_id = rsc_id
-        self._resource_name = str(details['rsc_name'], 'utf8')  # XXX DL issue
+        self._resource_name = details['rsc_name']
 
     # ------------------------------------------------------------------------------------------------------------------
     def store(self, hst_id, nod_id):

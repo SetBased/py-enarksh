@@ -24,7 +24,7 @@ class Resource(StateChange, metaclass=abc.ABCMeta):
         """
         StateChange.__init__(self)
 
-        self._name = str(data['rsc_name'], 'utf-8')  # @todo XXX pystratum
+        self._name = data['rsc_name']
         """
         The name of this resource.
 
