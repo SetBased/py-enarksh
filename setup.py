@@ -34,16 +34,16 @@ setup(
         'License :: OSI Approved :: MIT License',
 
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
 
     keywords='job, scheduler',
 
     packages=find_packages(exclude=['build', 'test']),
 
-    install_requires=['cleo==0.5.0', 'pystratum-mysql', 'pyzmq', 'lxml', 'python-daemon'],
+    install_requires=['cleo==0.6.8', 'pystratum-mysql', 'pyzmq', 'lxml', 'python-daemon'],
 
     entry_points={}
 )

@@ -69,9 +69,9 @@ class MailOperatorEventHandler:
 
 Job {} has run unsuccessfully.
 
-Greetings from Enarksh""".format(str(node['uri_uri'], 'utf-8'))
+Greetings from Enarksh""".format(node['uri_uri'])
 
-            subject = "Job of schedule {} failed".format(str(node['sch_name'], 'utf-8'))
+            subject = "Job of schedule {} failed".format(node['sch_name'])
 
             to = []
             for operator in operators:
@@ -95,9 +95,9 @@ Greetings from Enarksh""".format(str(node['uri_uri'], 'utf-8'))
 
 Schedule {} finished unsuccessfully.
 
-Greetings from Enarksh""".format(str(node['sch_name'], 'utf-8'))
+Greetings from Enarksh""".format(node['sch_name'])
 
-            subject = "Schedule {} finished unsuccessfully".format(str(node['sch_name'], 'utf-8'))
+            subject = "Schedule {} finished unsuccessfully".format(node['sch_name'])
 
             to = []
             for operator in operators:
@@ -121,9 +121,9 @@ Greetings from Enarksh""".format(str(node['sch_name'], 'utf-8'))
 
 Schedule {} finished successfully.
 
-Greetings from Enarksh""".format(str(node['sch_name'], 'utf-8'))
+Greetings from Enarksh""".format(node['sch_name'])
 
-            subject = "Schedule {} finished successfully".format(str(node['sch_name'], 'utf-8'))
+            subject = "Schedule {} finished successfully".format(node['sch_name'])
 
             to = []
             for operator in operators:
